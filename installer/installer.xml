@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+<info>
+  <appname>Reliable Response Notification</appname>
+  <appversion>1.0</appversion>
+  <url>http://www.reliableresponse.net/</url>
+  <authors>
+    <author name="Reliable Response, LLC" email="info@reliableresponse.net"/>
+  </authors>
+  <javaversion>1.4</javaversion>
+</info>  
+
+     <jar src="lib/rrnotification.jar"/>
+     <jar src="../lib/aspectjrt.jar"/>
+     <jar src="../lib/axis.jar"/>
+     <jar src="../lib/commons-beanutils-bean-collections.jar"/>
+     <jar src="../lib/commons-beanutils-core.jar"/>
+     <jar src="../lib/commons-beanutils.jar"/>
+     <jar src="../lib/commons-codec-1.3.jar"/>
+     <jar src="../lib/commons-collections-3.1.jar"/>
+     <jar src="../lib/commons-dbcp-1.2.1.jar"/>
+     <jar src="../lib/commons-digester.jar"/>
+     <jar src="../lib/commons-discovery.jar"/>
+     <jar src="../lib/commons-httpclient.jar"/>
+     <jar src="../lib/commons-logging.jar"/>
+     <jar src="../lib/commons-pool-1.2.jar"/>
+     <jar src="../lib/jaimlib.jar"/>
+     <jar src="../lib/jmml.jar"/>
+     <jar src="../lib/ymsg_support_v0_6.jar"/>
+     <jar src="../lib/ymsg_network_v0_6.jar"/>
+     <jar src="../lib/jakarta-oro-2.0.4.jar"/>
+     <jar src="../lib/jaxp-1.1.jar"/>
+     <jar src="../lib/jaxrpc.jar"/>
+     <jar src="../lib/jdbc2_0-stdext.jar"/>
+     <jar src="../lib/jdom-b8.jar"/>
+     <jar src="../lib/joscar.jar"/>
+     <jar src="../lib/jstl.jar"/>
+     <jar src="../lib/jta.jar"/>
+     <jar src="../lib/jvr.jar"/>
+     <jar src="../lib/ldapbp.jar"/>
+     <jar src="../lib/ldap.jar"/>
+     <jar src="../lib/ldapsec.jar"/>
+     <jar src="../lib/log4j-1.2.8.jar"/>
+     <jar src="../installer/mailapi.jar" />
+     <jar src="../lib/msbase.jar"/>
+     <jar src="../lib/mssqlserver.jar"/>
+     <jar src="../lib/msutil.jar"/>
+     <jar src="../lib/muse-0.8a1.jar"/>
+     <jar src="../lib/mysql-connector-java-3.0.9-stable-bin.jar"/>
+     <jar src="../lib/ojdbc14.jar"/>
+     <jar src="../lib/pg74.1jdbc2ee.jar"/>
+     <jar src="../lib/quartz.jar"/>
+     <jar src="../lib/resolver.jar"/>
+     <jar src="../lib/saaj.jar"/>
+     <jar src="../lib/standard.jar"/>
+     <jar src="../lib/wsdl4j.jar"/>
+     <jar src="../lib/xercesImpl.jar"/>
+     <jar src="../lib/xercesSamples.jar"/>
+     <jar src="../lib/xml-apis.jar"/>
+     <jar src="../lib/xmlParserAPIs.jar"/>
+
+    <guiprefs width="640" height="480" resizable="yes"/>
+
+   <locale>
+        <langpack iso3="eng"/>
+	</locale>
+	
+<resources>
+	<res id="LicencePanel.licence" src="legal/license.txt"/>
+	<res id="HTMLInfoPanel.info" src="../installer/readme.html"/>
+	<res id="userInputSpec.xml" src="../resources/userInputSpec.xml"/>
+	<res id="ProcessPanel.Spec.xml" src="../resources/processSpec.xml"/>
+</resources>
+
+    <panels>
+        <panel classname="HelloPanel"/>
+        <panel classname="HTMLInfoPanel"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="TargetPanel"/>
+        <panel classname="PacksPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="DatabaseValidatorPanel"/>
+        <panel classname="SQLScriptPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="LDAPValidatorPanel" />
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="CalendarValidatorPanel" />
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="JabberValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="AIMValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="MSNValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SameTimeValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="YahooValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="PopValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="DialogicValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="MIBDisplayPanel" />
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="ConfigurationPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="DatabaseInitializePanel"/>
+        <panel classname="FinishPanel"/>
+    </panels>
+
+    <packs>
+        <pack name="Base" required="yes">
+            <description>The base files</description>
+            <file src="legal/license.txt" targetdir="$INSTALL_PATH"/>
+            <fileset dir="." targetdir="$INSTALL_PATH"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/catalina.50.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/catalina.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/digest.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/setclasspath.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/shutdown.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/shutdown-using-launcher.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/startup.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/startup-using-launcher.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/tool-wrapper.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/tool-wrapper-using-launcher.sh" type="bin" failure="warn" os="unix" keep="true"/>
+			<executable targetfile="$INSTALL_PATH/jakarta-tomcat-5.0.28/bin/version.sh" type="bin" failure="warn" os="unix" keep="true"/>
+        </pack>
+        <pack name="LDAP Support" required="no">
+            <description>Supports Importing from and Authenticating Against LDAP</description>
+        </pack>
+        <pack name="Exchange Web Calendaring" required="no">
+            <description>Supports querying the Exchange Web Calendar for free/busy information</description>
+        </pack>
+        <pack name="Jabber IM Support" required="no">
+            <description>Supports using the Jabber Instant Messenger system for sending notifications</description>
+        </pack>
+        <pack name="AOL IM Support" required="no">
+            <description>Supports using the AOL Instant Messenger system for sending notifications</description>
+        </pack>
+        <pack name="MSN Messenger Support" required="no">
+            <description>Supports using the MSN Instant Messenger system for sending notifications</description>
+        </pack>
+        <pack name="Yahoo Messenger Support" required="no">
+            <description>Supports using the Yahoo Instant Messenger system for sending notifications</description>
+        </pack>
+        <pack name="Dialogic Support" required="no">
+            <description>If you have a Dialogic Voice card, you can use this option to allow confirming notifications by phone</description>
+        </pack>
+        <pack name="SIP Phone Support" required="no">
+            <description>Supports incoming phone via the SIP protocol.  This allows you to use the IVR without any additional hardware, except possibly an external media gateway</description>
+        </pack>
+        <pack name="SNMP Support" required="no">
+            <description>Use this pack to enable querying of basic information via SNMP</description>
+        </pack>
+        <pack name="Syslog Support" required="no">
+            <description>Use this pack to enable logging via syslog</description>
+        </pack>
+        <pack name="Clustering" required="no">
+            <description>This turns on multi-server clustering and/or failover</description>
+        </pack>
+    </packs>
+</installation>
+    

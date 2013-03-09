@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions targetNamespace="http://localhost:8080/notification/SendSOAPNotification.jws" xmlns="http://schemas.xmlsoap.org/wsdl/" xmlns:apachesoap="http://xml.apache.org/xml-soap" xmlns:impl="http://localhost:8080/notification/SendSOAPNotification.jws" xmlns:intf="http://localhost:8080/notification/SendSOAPNotification.jws" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsdlsoap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:xsd="http://www.w3.org/2001/XMLSchema"><wsdl:types><schema targetNamespace="http://localhost:8080/notification/SendSOAPNotification.jws" xmlns="http://www.w3.org/2001/XMLSchema"><import namespace="http://schemas.xmlsoap.org/soap/encoding/"/><complexType name="ArrayOf_xsd_string"><complexContent><restriction base="soapenc:Array"><attribute ref="soapenc:arrayType" wsdl:arrayType="xsd:string[]"/></restriction></complexContent></complexType></schema></wsdl:types>
+  <wsdl:message name="sendNotificationRequest">
+    <wsdl:part name="memberName" type="xsd:string"/>
+    <wsdl:part name="summary" type="xsd:string"/>
+    <wsdl:part name="message" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="sendNotificationToManyResponse">
+    <wsdl:part name="sendNotificationToManyReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:message name="sendNotificationToManyRequest">
+    <wsdl:part name="members" type="impl:ArrayOf_xsd_string"/>
+    <wsdl:part name="summary" type="xsd:string"/>
+    <wsdl:part name="message" type="xsd:string"/>
+  </wsdl:message>
+  <wsdl:message name="sendNotificationResponse">
+    <wsdl:part name="sendNotificationReturn" type="impl:ArrayOf_xsd_string"/>
+  </wsdl:message>
+  <wsdl:portType name="SendSOAPNotification">
+    <wsdl:operation name="sendNotification" parameterOrder="memberName summary message">
+      <wsdl:input message="impl:sendNotificationRequest" name="sendNotificationRequest"/>
+      <wsdl:output message="impl:sendNotificationResponse" name="sendNotificationResponse"/>
+    </wsdl:operation>
+    <wsdl:operation name="sendNotificationToMany" parameterOrder="members summary message">
+      <wsdl:input message="impl:sendNotificationToManyRequest" name="sendNotificationToManyRequest"/>
+      <wsdl:output message="impl:sendNotificationToManyResponse" name="sendNotificationToManyResponse"/>
+    </wsdl:operation>
+  </wsdl:portType>
+  <wsdl:binding name="SendSOAPNotificationSoapBinding" type="impl:SendSOAPNotification">
+    <wsdlsoap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+    <wsdl:operation name="sendNotification">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="sendNotificationRequest">
+        <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://DefaultNamespace" use="encoded"/>
+      </wsdl:input>
+      <wsdl:output name="sendNotificationResponse">
+        <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/notification/SendSOAPNotification.jws" use="encoded"/>
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="sendNotificationToMany">
+      <wsdlsoap:operation soapAction=""/>
+      <wsdl:input name="sendNotificationToManyRequest">
+        <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://DefaultNamespace" use="encoded"/>
+      </wsdl:input>
+      <wsdl:output name="sendNotificationToManyResponse">
+        <wsdlsoap:body encodingStyle="http://schemas.xmlsoap.org/soap/encoding/" namespace="http://localhost:8080/notification/SendSOAPNotification.jws" use="encoded"/>
+      </wsdl:output>
+    </wsdl:operation>
+  </wsdl:binding>
+  <wsdl:service name="SendSOAPNotificationService">
+    <wsdl:port binding="impl:SendSOAPNotificationSoapBinding" name="SendSOAPNotification">
+      <wsdlsoap:address location="http://localhost:8080/notification/SendSOAPNotification.jws"/>
+    </wsdl:port>
+  </wsdl:service>
+</wsdl:definitions>

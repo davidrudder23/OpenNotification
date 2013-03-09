@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+
+<installation version="1.0">
+<info>
+  <appname>Reliable Response Notification Plugin for RT v3</appname>
+  <appversion>1.0</appversion>
+  <url>http://www.reliableresponse.net/</url>
+  <authors>
+    <author name="Reliable Response, LLC" email="info@reliableresponse.net"/>
+  </authors>
+  <javaversion>1.4</javaversion>
+</info>  
+
+     <jar src="lib/rrnotification.jar"/>
+
+    <guiprefs width="640" height="480" resizable="yes"/>
+
+   <locale>
+        <langpack iso3="eng"/>
+	</locale>
+	
+<resources>
+	<res id="userInputSpec.xml" src="../resources/rt3userInputSpec.xml"/>
+</resources>
+
+    <panels>
+        <panel classname="HelloPanel"/>
+        <panel classname="HTMLInfoPanel"/>
+        <panel classname="LicencePanel"/>
+        <panel classname="TargetPanel"/>
+        <panel classname="PacksPanel"/>
+        <panel classname="InstallPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="DatabaseValidatorPanel"/>
+        <panel classname="SQLScriptPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="LDAPValidatorPanel" />
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="JabberValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="AIMValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="MSNValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="YahooValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="PopValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="DialogicValidatorPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="MIBDisplayPanel" />
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="ConfigurationPanel"/>
+        <panel classname="SkippableUserInputPanel"/>
+        <panel classname="DatabaseInitializePanel"/>
+        <panel classname="FinishPanel"/>
+    </panels>
+
+    <packs>
+        <pack name="Base" required="yes">
+            <description>The install files</description>
+            <file src="legal/license.txt" targetdir="$INSTALL_PATH"/>
+            <fileset dir="." targetdir="$INSTALL_PATH"/>
+        </pack>
+        <pack name="LDAP Support" required="no">
+            <description>Supports Importing from and Authenticating Against LDAP</description>
+        </pack>
+        <pack name="Jabber IM Support" required="no">
+            <description>Supports using the Jabber Instant Messenger system for sending notifications</description>
+        </pack>
+        <pack name="AOL IM Support" required="no">
+            <description>Supports using the AOL Instant Messenger system for sending notifications</description>
+        </pack>
+        <pack name="MSN Messenger Support" required="no">
+            <description>Supports using the MSN Instant Messenger system for sending notifications</description>
+        </pack>
+        <pack name="Yahoo Messenger Support" required="no">
+            <description>Supports using the Yahoo Instant Messenger system for sending notifications</description>
+        </pack>
+        <pack name="Dialogic Support" required="no">
+            <description>If you have a Dialogic Voice card, you can use this option to allow confirming notifications by phone</description>
+        </pack>
+        <pack name="SNMP Support" required="no">
+            <description>Use this pack to enable querying of basic information via SNMP</description>
+        </pack>
+        <pack name="Syslog Support" required="no">
+            <description>Use this pack to enable logging via syslog</description>
+        </pack>
+        <pack name="Clustering" required="no">
+            <description>This turns on multi-server clustering and/or failover</description>
+        </pack>
+    </packs>
+</installation>
+    

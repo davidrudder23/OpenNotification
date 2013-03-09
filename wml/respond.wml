@@ -1,0 +1,35 @@
+<%@ page import="net.reliableresponse.notification.*" %><%@ page import="net.reliableresponse.notification.usermgmt.*" %><%@ page import="net.reliableresponse.notification.broker.*" %><%
+response.setContentType("text/vnd.wap.wml");
+response.setHeader("Cache-Control", "must-revalidate, no-store");
+%>
+<?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="respond" title="Reliable Response Notification">
+<p>
+<img src="images/RRlogo.wbmp" alt="Reliable Response Notification" /><br/>
+<%
+String uuid = request.getParameter("uuid");
+String responseType = request.getParameter("response");
+String comment = request.getParameter("comment");
+User user = BrokerFactory.getUserMgmtBroker().getUserByUuid((String)session.getAttribute("user"));
+BrokerFactory.getLoggingBroker().logDebug (user+"responding to "+uuid+" with response "+responseType+" and comment: "+comment);
+
+Notification notification = BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid);
+if (notification == null) {
+%>
+I'm sorry, but that notification could not be found<br/>
+<%
+} else {
+	notification.getSender().handleResponse (notification, user, responseType, comment);
+%>
+Responded to notification with "<%= responseType %>"<br/>
+<%
+}
+%>
+<a href="manage.wml">Return to Manage</a><br/>
+<a href="send.wml">Send a New Notification</a><br/>
+</p>
+</card>
+</wml>

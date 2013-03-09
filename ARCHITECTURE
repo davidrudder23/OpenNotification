@@ -1,0 +1,56 @@
+Broker Structure
+
+A broker, also know as a DAO, is used to access stored data.  It is
+similar to an entity EJB.  In MVC-speak, the Broker is the model. 
+
+Brokers also contain business logic.  They can load information, store
+it, group it, or manipulate the data.  
+
+Brokers all have an interface, which is the public API, and an
+implementation, which is private.  The BrokerFactory is used to load
+the appropriate Broker.  It is the only class which isn't either a
+broker interface or implementation.
+
+The UserMgmtBroker is a good example.  The class
+net.reliableresponse.notification.broker.UserMgmtBroker is actually an interface, it
+has no code.  There is also the class
+net.reliableresponse.notification.broker.impl.MemoryUserMgmtBroker, which implements
+the functions in the interface.  It stores the user's information in a
+Hashtable.  It also has the logic to perform basic searches on the
+data.  
+
+Soon, there will also be the OracleUserMgmtBroker, which uses the
+Oracle database.  Later, an LDAP interface, then MYSQL, MSSQL, Sybase,
+flat-file, etc. 
+
+This type of interface has two big advantages.  It makes it easier to
+write unit tests. This makes the application much more robust and cuts
+down the release cycle.  
+
+And, the broker structure makes it easy to add new features.   This is
+of particular benefit to the PSO organization who can develop new
+features on-site.  Of particular interest to an enterprise application
+is support for the customer's environment.  We can add new databases,
+new security features, new paging mechanisms, etc.
+
+Escalation and Confirmation Handling
+Notification and Rollover group handling is easy.  Find out who to
+page and page 'em.  Escalation and pages requiring confirmation are
+more difficult.  An escalation page lasts time.
+
+To handle the long-term nature of escalations, we have to spawn a thread 
+for each escalation page that comes in.  This way, there is something 
+running which sends out the escalation threads.  The escalation threads 
+are implemented as net.reliableresponse.notification.actions.EscalationThread.
+
+The application needs some way of managing those threads.  Abilities like 
+finding what escalations are pending for a user, confirming existing 
+escalations, and canceling bad escalations, are important to the running 
+of the product.  So, we have 
+net.reliableresponse.notification.actions.EscalationThreadManager, which managers the 
+escalation threads.
+
+Confirmation is another issue.  Right now, we only have confirmations on 
+escalation threads.
+
+

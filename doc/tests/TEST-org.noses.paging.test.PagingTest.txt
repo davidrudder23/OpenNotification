@@ -1,0 +1,32 @@
+Testsuite: org.noses.paging.test.PagingTest
+Tests run: 2, Failures: 0, Errors: 1, Time elapsed: 11.957 sec
+------------- Standard Output ---------------
+DEBUG: Client Response=200 Accepted: Tracking number 0005062811: 
+        Your message for 3032013132 has been accepted for delivery.
+
+INFO: Created new escalation thread;  Thread[Thread-1,5,main]
+Escalation id = 0065109
+DEBUG: Client Response=200 Accepted: Tracking number 0013451419: 
+        Your message for 3032013132 has been accepted for delivery.
+
+Page org.noses.paging.Page@121ab80 confirmed by David Rudder at Sat May 15 22:05:47 MDT 2004
+------------- ---------------- ---------------
+------------- Standard Error -----------------
+java.lang.NoSuchMethodError: org.noses.paging.providers.PagingProvider.getStatus(Ljava/lang/String;)Ljava/lang/String;
+	at org.noses.paging.Page.doSend(Page.java:142)
+	at org.noses.paging.Page.doSend(Page.java:186)
+	at org.noses.paging.actions.EscalationThread.run(EscalationThread.java:41)
+------------- ---------------- ---------------
+
+Testcase: testSendPage took 1.863 sec
+	Caused an ERROR
+org.noses.paging.providers.PagingProvider.getStatus(Ljava/lang/String;)Ljava/lang/String;
+java.lang.NoSuchMethodError: org.noses.paging.providers.PagingProvider.getStatus(Ljava/lang/String;)Ljava/lang/String;
+	at org.noses.paging.Page.doSend(Page.java:142)
+	at org.noses.paging.Page.doSend(Page.java:186)
+	at org.noses.paging.test.PagingTest.testSendPage(Unknown Source)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+
+Testcase: testSendPageTestcase: testSendEscalation took 10.085 sec

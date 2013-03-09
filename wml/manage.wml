@@ -1,0 +1,91 @@
+<%@ page import="net.reliableresponse.notification.usermgmt.*" %>
+<%@ page import="net.reliableresponse.notification.sender.*" %>
+<%@ page import="net.reliableresponse.notification.*" %>
+<%@ page import="net.reliableresponse.notification.util.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="net.reliableresponse.notification.broker.*" %>
+<%
+response.setContentType("text/vnd.wap.wml");
+response.setHeader("Cache-Control", "no-cache,must-revalidate, no-store");
+response.setHeader("Pragma", "no-cache");
+response.setHeader("Expires", "Mon, 26 Jul 1997 05:00:00 GMT");
+%><?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="index" title="Reliable Response Notification">
+<p>
+<img src="images/RRlogo.wbmp" alt="Reliable Response Notification" /><br/>
+Notifications Sent To You<br/>
+<%
+	User user = BrokerFactory.getUserMgmtBroker().getUserByUuid((String)session.getAttribute("user"));
+	NotificationBroker broker = BrokerFactory.getNotificationBroker();
+	Notification[] recentNotifications = broker.getNotificationsSince(7200000);
+	
+	Vector sorted = new SortedVector();
+	for (int i = 0; i < recentNotifications.length; i++) {
+		if (recentNotifications[i].getParentUuid() == null) {
+			Member recipient = recentNotifications[i].getRecipient();
+			if (recipient.getType() == Member.USER) {
+				if (recipient.equals(user)) {
+					sorted.addElement(recentNotifications[i]);
+				}
+			} else {
+				Group group= (Group)recipient;
+				if (group.isMember(user)) {
+					sorted.addElement(recentNotifications[i]);
+				}
+			}
+		}
+	}
+	
+	if (sorted.size() <= 0) {
+	%>You have no notifications<br/><%
+	}
+	
+	for (int i = 0; i < sorted.size(); i++) {
+		Notification notification = (Notification)sorted.elementAt(i);
+		String status = "A";
+		switch (notification.getStatus()) {
+			case Notification.CONFIRMED: status = "C";
+				break;
+			case Notification.EXPIRED: status = "X";
+				break;
+		}
+		%><anchor>
+			<go method="post" href="notification.wml">
+				<postfield name="uuid"  value="<%= notification.getUuid() %>"/>
+			</go>
+		<%= status %>: <%= notification.getSubject() %></anchor><br/><%
+	}
+%>
+<br/>Notifications Sent By You<br/>
+<%
+	sorted = new SortedVector();
+	for (int i = 0; i < recentNotifications.length; i++) {
+		NotificationSender sender = recentNotifications[i].getSender();
+		if ( (sender instanceof EmailSender) && ( ((EmailSender)sender).getAddress().equals (user.getEmailAddress()))) {
+			sorted.addElement(recentNotifications[i]);
+		}
+	}
+	
+	if (sorted.size() <= 0) {
+	%>You have sent no notifications<br/><%
+	}
+	
+	for (int i = 0; i < sorted.size(); i++) {
+		Notification notification = (Notification)sorted.elementAt(i);
+		String status = "A";
+		switch (notification.getStatus()) {
+			case Notification.CONFIRMED: status = "C";
+				break;
+			case Notification.EXPIRED: status = "X";
+				break;
+		}
+		%>
+		<%= status %>: <%= notification.getSubject() %><br/><%
+	}
+%>
+<a href="index.wml">Back</a>
+</p>
+</card>
+</wml>

@@ -1,0 +1,20 @@
+Databases
+PostgreSQL, MySQL, MSSQL, or Oracle 8i
+
+Calendaring
+Exchange 2000
+
+OS
+Linux, Windows 2000, HP/UX 11
+
+Java
+JDK 1.4.2 or higher
+
+LDAP Import and Authentication
+Tested against Exchange 2000
+OpenLDAP 2.2.x or higher
+Probably works with any LDAP
+
+Voice
+Dialogic ?
+

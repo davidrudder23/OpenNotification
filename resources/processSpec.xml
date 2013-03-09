@@ -1,0 +1,14 @@
+<processing>
+  <job name="Install System Data">
+    <os family="windows" />
+    <executefile name="$INSTALL_PATH/scripts/systemdata.bat">
+      <arg>doit</arg><arg>$variable</arg>
+    </executefile>
+  </job>
+  <job name="Install System Data">
+    <os family="unix" />
+    <executefile name="$INSTALL_PATH/scripts/systemdata.sh">
+      <arg>doit</arg><arg>$variable</arg>
+    </executefile>
+  </job>
+</processing>

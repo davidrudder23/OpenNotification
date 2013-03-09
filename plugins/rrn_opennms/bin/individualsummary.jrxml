@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="individualsummary"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="0"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="2" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+	<parameter name="uuid" isForPrompting="true" class="java.lang.String">
+		<parameterDescription><![CDATA[The uuid of the individual to query]]></parameterDescription>
+		<defaultValueExpression ><![CDATA["0000001"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="to" isForPrompting="true" class="java.sql.Timestamp">
+		<parameterDescription><![CDATA[The end of the timespan to display]]></parameterDescription>
+		<defaultValueExpression ><![CDATA[new java.sql.Timestamp(System.currentTimeMillis())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="from" isForPrompting="true" class="java.sql.Timestamp">
+		<parameterDescription><![CDATA[The beginning of the timespan to display]]></parameterDescription>
+		<defaultValueExpression ><![CDATA[new java.sql.Timestamp(0L)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT (SELECT count(*) FROM notification WHERE status='confirmed' AND recipient=$P{uuid} AND time>=$P{from} AND time<=$P{to}) AS confirmed, 
+(SELECT count(e.notification) FROM escalationlog e, notification n WHERE e.memberfrom=$P{uuid} AND e.passed='t' AND e.notification=n.uuid AND n.time>=$P{from} AND n.time<=$P{to}) as passed, 
+(SELECT count(*) FROM notification WHERE status='expired' AND recipient=$P{uuid} AND time>=$P{from} AND time<=$P{to} AND uuid not in (SELECT notification FROM escalationlog WHERE memberfrom=$P{uuid} AND passed='t')) as expired, 
+(SELECT count(*) FROM notification WHERE status<>'confirmed' AND status<>'expired' AND recipient=$P{uuid} AND time>=$P{from} AND time<=$P{to}) AS pending,
+m.firstname, m.lastname
+FROM member m WHERE m.uuid=$P{uuid}]]></queryString>
+	<field name="confirmed" class="java.lang.Long"/>
+	<field name="passed" class="java.lang.Long"/>
+	<field name="expired" class="java.lang.Long"/>
+	<field name="pending" class="java.lang.Long"/>
+	<field name="firstname" class="java.lang.String"/>
+	<field name="lastname" class="java.lang.String"/>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="34"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="1"
+						width="611"
+						height="33"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{firstname}+($F{lastname}!=null?"":" "+$F{lastname})+" confirmed "+$F{confirmed}+", missed "+$F{expired}+", passed "+$F{passed}+", and is still in process on "+$F{pending}+" notifications"]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

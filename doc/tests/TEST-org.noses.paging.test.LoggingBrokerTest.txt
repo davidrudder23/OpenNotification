@@ -1,0 +1,7 @@
+Testsuite: org.noses.paging.test.LoggingBrokerTest
+Tests run: 1, Failures: 0, Errors: 0, Time elapsed: 0.038 sec
+------------- Standard Error -----------------
+ERROR: TestLog
+------------- ---------------- ---------------
+
+Testcase: testErrorLog took 0.02 sec

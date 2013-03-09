@@ -1,0 +1,493 @@
+<userInput>
+    <!-- - - -first panel with general info- - - - - - - - - - - - - - - - -->
+    <panel order="0">
+    	<field type="text" variable="smtp.server">
+		  <description align="left" txt="The out-bound SMTP server to use"
+               id="description.text"/>
+		  <spec txt="Out-Bound SMTP Server:" id="text.label" size="15" set=""/>
+		</field>
+		<field type="radio" variable="email.method">
+		  <description align="left" txt="How To Accept Incoming Mail"
+               id="description.radio"/>
+		  <spec>
+		    <choice txt="Local SMTP Server" id="radio.label.1" value="SMTP" set="true"/>
+		    <choice txt="Access an External POP Account" id="radio.label.2" value="POP" />
+		  </spec>
+		</field>
+    </panel>
+    
+    <panel order="1">
+    	<field type="radio" variable="databaseSelection">
+		  <description align="left" txt="Which Database Will You Use?"
+               id="description.radio"/>
+		  <spec>
+			<choice txt="Oracle" id="radio.label.1" value="oracle" set="true" />
+			<choice txt="PostgreSQL" id="radio.label.2" value="postgresql"/>
+			<choice txt="MySQL" id="radio.label.3" value="mysql" />
+			<choice txt="MS SQL Server" id="radio.label.4" value="msssql" />
+		  </spec>
+		</field>
+   	</panel>
+   	
+    <panel order="2">
+		<field type="text" variable="database.hostname">
+		  <description align="left" txt="The hostname of the database server"
+               id="description.text"/>
+		  <spec txt="Database Server Hostname:" id="text.label" size="15" set=""/>
+		</field>
+		<field type="text" variable="database.database">
+		  <description align="left" txt="The name or SID of the database instance to use"
+               id="description.text"/>
+		  <spec txt="Database Instance Name/SID:" id="text.label" size="15" set=""/>
+		</field>
+		<field type="text" variable="database.username">
+		  <description align="left" txt="The username to use to connect to the database"
+               id="description.text"/>
+		  <spec txt="Database Username:" id="text.label" size="15" set=""/>
+		</field>
+		<field type="text" variable="database.password">
+		  <description align="left" txt="The password to use to connect to the database"
+               id="description.text"/>
+		  <spec txt="Database Password:" id="text.label" size="15" set=""/>
+		</field>
+		<field type="check" variable="database.runinit">
+		  <description align="left" txt="Check this to run the database initialization"
+		               id="description.check.1"/>
+		  <spec txt="Initialize Database?" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+
+    </panel>
+    <panel order="3">
+    	<createForPack name="LDAP Support" />
+		<field type="text" variable="ldap.host">
+		  <description align="left" txt="The name of the server where the LDAP directory lives"
+               id="description.text"/>
+		  <spec txt="LDAP Server Hostname:" id="text.label" size="15" set=""/>
+		</field>
+		
+		<field type="text" variable="ldap.username">
+		  <description align="left" txt="The name of the account on the LDAP server to authenticate as"
+               id="description.text"/>
+		  <spec txt="LDAP Account Name:" id="text.label" size="15" set="cn=user,dc=company,dc=com"/>
+		</field>
+		
+		<field type="password" variable="ldap.password">
+		   <description align="left" txt="The password of the account on the LDAP Server" id="password"/>
+		   <spec>
+    		 <pwd txt="Password" id="key for the label" size="10" set=""/>
+    		 <pwd txt="Retype password" id="another key for the label" size="10" set=""/>
+   			</spec>
+		</field>
+		<field type="text" variable="ldap.base">
+		  <description align="left" txt="The base DN of your LDAP server"
+               id="description.text"/>
+		  <spec txt="LDAP Base DN:" id="text.label" size="15" set="ou=Users"/>
+		</field>
+		<field type="text" variable="ldap.searchString">
+		  <description align="left" txt="The string to search LDAP with"
+               id="description.text"/>
+		  <spec txt="LDAP Search String:" id="text.label" size="15" set="cn=*"/>
+		</field>
+		
+		<field type="text" variable="ldap.authn.compare">
+		  <description align="left" txt="The LDAP variable to use for authentication"
+               id="description.text"/>
+		  <spec txt="LDAP Authentication Variable:" id="text.label" size="15" set="cn"/>
+		</field>
+		<field type="check" variable="ldap.useSSL">
+		  <description align="left" txt="Check this to use SSL when contacting the LDAP server"
+		               id="description.check.1"/>
+		  <spec txt="Use SSL" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+   	</panel>
+   	
+    <panel order="4">
+    	<createForPack name="Exchange Web Calendaring" />
+		<field type="text" variable="calendar.exchange.hostname">
+		  <description align="left" txt="The name of the server where the Exchange web calendar"
+               id="description.text"/>
+		  <spec txt="Exchange Web Server Hostname:" id="text.label" size="15" set=""/>
+		</field>
+		
+		<field type="text" variable="calendar.exchange.port">
+		  <description align="left" txt="The port which is used by the Exchange web calendar service"
+               id="description.text"/>
+		  <spec txt="Exchange Web Server Port:" id="text.label" size="15" set="80"/>
+		</field>
+		
+		<field type="text" variable="calendar.exchange.username">
+		  <description align="left" txt="The username to use when logging into the Exchange web calender"
+               id="description.text"/>
+		  <spec txt="Exchange Web Server Username:" id="text.label" size="15" set=""/>
+		</field>
+
+		<field type="password" variable="calendar.exchange.password">
+		   <description align="left" txt="The password of the account on the Exchange Web Calendar" id="password"/>
+		   <spec>
+    		 <pwd txt="Password" id="key for the label" size="10" set=""/>
+    		 <pwd txt="Retype password" id="another key for the label" size="10" set=""/>
+   			</spec>
+		</field>
+		<field type="text" variable="calendar.exchange.domain">
+		  <description align="left" txt="The domain to login to"
+               id="description.text"/>
+		  <spec txt="Exchange Domain:" id="text.label" size="15" set=""/>
+		</field>
+		
+   	</panel>
+
+    <panel order="5">
+    	<createForPack name="Jabber IM Support" />
+		<field type="text" variable="jabber.server">
+		  <description align="left" txt="The hostname of the Jabber server"
+               id="description.text"/>
+		  <spec txt="Jabber Server Hostname:" id="text.label" size="15" set=""/>
+		</field>
+
+		<field type="text" variable="jabber.account">
+		  <description align="left" txt="The name of the account on the Jabber server to use"
+               id="description.text"/>
+		  <spec txt="Jabber Account Name:" id="text.label" size="15" set=""/>
+		</field>
+		
+		<field type="text" variable="jabber.password">
+		  <description align="left" txt="The password of the account on the Jabber server to use"
+               id="description.text"/>
+		  <spec txt="Jabber Account Password:" id="text.label" size="15" set=""/>
+		</field>
+	</panel>
+
+    <panel order="6">
+    	<createForPack name="AOL IM Support" />
+		<field type="text" variable="aim.account">
+		  <description align="left" txt="The name of the account on the AIM server to use"
+               id="description.text"/>
+		  <spec txt="AIM Account Name:" id="text.label" size="15" set=""/>
+		</field>
+		
+		<field type="text" variable="aim.password">
+		  <description align="left" txt="The password of the account on the AIM server to use"
+               id="description.text"/>
+		  <spec txt="AIM Account Password:" id="text.label" size="15" set=""/>
+		</field>
+ 	</panel>
+ 	
+    <panel order="7">
+    	<createForPack name="MSN Messenger Support" />
+		<field type="text" variable="msn.account">
+		  <description align="left" txt="The name of the account on the MSN server to use"
+               id="description.text"/>
+		  <spec txt="MSN Messenger Account Name:" id="text.label" size="15" set=""/>
+		</field>
+		
+		<field type="text" variable="msn.password">
+		  <description align="left" txt="The password of the account on the MSN server to use"
+               id="description.text"/>
+		  <spec txt="MSN Messenger Account Password:" id="text.label" size="15" set=""/>
+		</field>
+ 	</panel>
+
+    <panel order="8">
+    	<createForPack name="SameTime IM Support" />
+		<field type="text" variable="sametime.server">
+		  <description align="left" txt="The hostname of the SameTime server to use"
+               id="description.text"/>
+		  <spec txt="SameTime Server Name:" id="text.label" size="15" set=""/>
+		</field>
+
+		<field type="text" variable="sametime.account">
+		  <description align="left" txt="The name of the account on the SameTime server to use"
+               id="description.text"/>
+		  <spec txt="SameTime Account Name:" id="text.label" size="15" set=""/>
+		</field>
+		
+		<field type="text" variable="sametime.password">
+		  <description align="left" txt="The password of the account on the SameTime server to use"
+               id="description.text"/>
+		  <spec txt="SameTime Account Password:" id="text.label" size="15" set=""/>
+		</field>
+ 	</panel>
+
+    <panel order="9">
+    	<createForPack name="Yahoo Messenger Support" />
+		<field type="text" variable="yahoo.account">
+		  <description align="left" txt="The name of the account on the Yahoo server to use"
+               id="description.text"/>
+		  <spec txt="Yahoo Messenger Account Name:" id="text.label" size="15" set=""/>
+		</field>
+		
+		<field type="text" variable="yahoo.password">
+		  <description align="left" txt="The password of the account on the Yahoo server to use"
+               id="description.text"/>
+		  <spec txt="Yahoo Messenger Account Password:" id="text.label" size="15" set=""/>
+		</field>
+ 	</panel>
+
+ 	<panel order="10" cond_name="email.method" cond_value="smtp">
+		<field type="text" variable="smtp.server.hostname">
+		  <description align="left" txt="The Incoming SMTP server hostname"
+               id="description.text"/>
+		  <spec txt="Incoming SMTP Hostname:" id="text.label" size="15" set=""/>
+		</field>
+		
+		<field type="text" variable="smtp.port">
+		  <description align="left" txt="The port to listen on for SMTP mail"
+               id="description.text"/>
+		  <spec txt="Incoming SMTP Port:" id="text.label" size="6" set="2525"/>
+		</field>
+ 	</panel>
+   	<panel order="11" cond_name="email.method" cond_value="pop">
+		<field type="text" variable="email.pop.address">
+		  <description align="left" txt="The incoming POP email ddress"
+               id="description.text"/>
+		  <spec txt="Incoming POP Email Address:" id="text.label" size="15" set=""/>
+		</field>
+		
+		<field type="text" variable="email.pop.hostname">
+		  <description align="left" txt="The POP mail server"
+               id="description.text"/>
+		  <spec txt="POP Server:" id="text.label" size="15" set=""/>
+		</field>
+
+		<field type="text" variable="email.pop.username">
+		  <description align="left" txt="The username to connect to the POP server with"
+               id="description.text"/>
+		  <spec txt="POP Username:" id="text.label" size="15" set=""/>
+		</field>
+
+		<field type="text" variable="email.pop.password">
+		  <description align="left" txt="The password to use to authenticate to the POP server"
+               id="description.text"/>
+		  <spec txt="POP Password:" id="text.label" size="15" set=""/>
+		</field>
+
+		<field type="check" variable="email.pop.checkall">
+		  <description align="left" txt="This pop mailbox supports receiving for multiple mail boxes"
+               id="description.text"/>
+		  <spec txt="Check for Recipient Name in To: Field:" id="checkall.check.1" true="true" false="false" 
+		        set="true"/>
+		</field>
+ 	</panel>
+ 	<panel order="12">
+    	<createForPack name="Dialogic Support" />
+    	
+    	<field type="check" variable="dialogic.incoming">
+		  <description align="left" txt="Support an notification management via a dial-in IVR?"
+		               id="description.check.1"/>
+		  <spec txt="Incoming Calls" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>    	
+		<field type="text" variable="dialogic.incoming.boardname">
+		  <description align="left" txt="The Dialogic device handle to use for incoming calls"
+               id="description.text"/>
+		  <spec txt="Dialogic device for incoming calls:" id="text.label" size="15" set="dxxxB1C1"/>
+		</field>
+		
+	   	<field type="check" variable="dialogic.outgoing">
+		  <description align="left" txt="Support standard numeric pagers and telephones?"
+		               id="description.check.1"/>
+		  <spec txt="Outgoing Calls" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>		
+		<field type="text" variable="dialogic.outgoing.boardname">
+		  <description align="left" txt="The Dialogic device handle to use for making outgoing calls"
+               id="description.text"/>
+		  <spec txt="Dialogic device for incoming calls:" id="text.label" size="15" set="dxxxB1C1"/>
+		</field>
+ 	</panel>
+ 	<panel order="13">
+    	<createForPack name="SIP Phone Support" />
+    	
+		<field type="text" variable="sip.gateway.host">
+		  <description align="left" txt="The IP address of your SIP Media Gateway"
+               id="description.text"/>
+		  <spec txt="IP address of your SIP Media Gateway:" id="text.label" size="15" set="192.168.1.100"/>
+		</field>
+		
+		<field type="text" variable="sip.gateway.port">
+		  <description align="left" txt="The network port of your SIP Media Gateway"
+               id="description.text"/>
+		  <spec txt="Network port of your SIP Media Gateway:" id="text.label" size="15" set="5061"/>
+		</field>
+ 	</panel>
+ 	
+ 	<panel order="14">
+	 	<field type="staticText" align="left" 
+    	   txt="When sending a notification, the sender may choose to send to specific devices or to"
+       		id="staticText.text"/>
+	 	<field type="staticText" align="left" 
+    	   txt="the person, without specifing devices.  You may want to limit the devices used, if "
+       		id="staticText.text"/>
+	 	<field type="staticText" align="left" 
+    	   txt="specific devices were not chosen."
+       		id="staticText.text"/>
+	 	<field type="staticText" align="left" 
+    	   txt="If you don't want to use any of these devices, unless explicitly checked, you "
+       		id="staticText.text"/>
+	 	<field type="staticText" align="left" 
+    	   txt="may deselect them now."
+       		id="staticText.text"/>
+       	<divider />
+		<field type="check" variable="sendto.bydefault.email">
+		  <description align="left" txt="Check this to include email when sending notifications to users"
+		               id="description.check.1"/>
+		  <spec txt="Email" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+		<field type="check" variable="sendto.bydefault.pager">
+		  <description align="left" txt="Check this to include pagers when sending notifications to users"
+		               id="description.check.1"/>
+		  <spec txt="Pagers" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+		<field type="check" variable="sendto.bydefault.cell">
+		  <description align="left" txt="Check this to include cell phones when sending notifications to users"
+		               id="description.check.1"/>
+		  <spec txt="Cell Phones" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+		<field type="check" variable="sendto.bydefault.aim">
+		  <description align="left" txt="Check this to include AIM when sending notifications to users"
+		               id="description.check.1"/>
+		  <spec txt="AIM" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+		<field type="check" variable="sendto.bydefault.msn">
+		  <description align="left" txt="Check this to include MSN Messenger when sending notifications to users"
+		               id="description.check.1"/>
+		  <spec txt="MSN Messenger" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+		<field type="check" variable="sendto.bydefault.yahoo">
+		  <description align="left" txt="Check this to include Yahoo Messenger when sending notifications to users"
+		               id="description.check.1"/>
+		  <spec txt="Yahoo Messenger" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+		<field type="check" variable="sendto.bydefault.jabber">
+		  <description align="left" txt="Check this to include Jabber when sending notifications to users"
+		               id="description.check.1"/>
+		  <spec txt="Jabber" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+		<field type="check" variable="sendto.bydefault.sametime">
+		  <description align="left" txt="Check this to include SameTimeIM when sending notifications to users"
+		               id="description.check.1"/>
+		  <spec txt="SameTime" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+		<field type="check" variable="sendto.bydefault.telephone">
+		  <description align="left" txt="Check this to include analog telephone calls when sending notifications to users"
+		               id="description.check.1"/>
+		  <spec txt="Telephone" id="check.label.1" true="on" false="off" 
+		        set="true"/>
+		</field>
+ 	</panel>
+ 	<panel order="15">
+     	<createForPack name="SNMP Support" />
+	 	<field type="staticText" align="left" 
+    	   txt="SNMP normally listens on port 161, but this requires root privileges on Unix"
+       		id="staticText.text"/>
+	 	<field type="staticText" align="left" 
+    	   txt="and may interfere with other SNMP listeners."
+       		id="staticText.text"/>
+	 	<field type="staticText" align="left" 
+    	   txt="Please choose the SNMP port to listen on."
+       		id="staticText.text"/>
+		<field type="text" variable="snmp.port">
+		  <description align="left" txt="The port to use when listening for SNMP GET requests"
+               id="description.text"/>
+		  <spec txt="SNMP Listen Port:" id="text.label" size="15" set="2161"/>
+		  <validator class="com.izforge.izpack.util.RegularExpressionValidator" 
+      		txt="The port must be a positive integer">
+		    <param 
+		        name="pattern" 
+    		    value="^[0-9]+$"
+   			 />
+   		  </validator>
+		</field>
+ 	</panel>
+ 	<panel order="16">
+     	<createForPack name="Syslog Support" />
+	 	<field type="staticText" align="left" 
+    	   txt="Please make sure that your syslog server is listening for network connections"
+       		id="staticText.text"/>
+		<field type="text" variable="syslog.host">
+		  <description align="left" txt="The hostname of the syslog server"
+               id="description.text"/>
+		  <spec txt="Syslog Server's Hostname:" id="text.label" size="25" set="localhost" />
+	    </field>
+		<field type="text" variable="syslog.port">
+		  <description align="left" txt="The port which the syslog server is listening on"
+               id="description.text"/>
+		  <spec txt="Syslog Port:" id="text.label" size="5" set="514"/>
+		  <validator class="com.izforge.izpack.util.RegularExpressionValidator" 
+      		txt="The port must be a positive integer">
+		    <param 
+		        name="pattern" 
+    		    value="^[0-9]+$"
+   			 />
+   		  </validator>
+		</field>
+ 	</panel>
+    <panel order="17">
+    	<createForPack name="Clustering" />
+	 	<field type="staticText" align="left" 
+    	   txt="When using clusters, it becomes important for the system to know how to"
+       		id="staticText.text"/>
+	 	<field type="staticText" align="left" 
+    	   txt="contact itself."
+       		id="staticText.text"/>
+		<field type="text" variable="cluster.name">
+		  <description align="left" txt="Please enter the URL used to contact this server."
+               id="description.text"/>
+		  <spec txt="This Server's URL:" id="text.label" size="25" set="http://hostname:8080/notification"/>
+		</field>
+	 	<field type="staticText" align="left" 
+    	   txt="You may enter up to 5 hosts to include in the cluster"
+       		id="staticText.text"/>
+	 	<field type="staticText" align="left" 
+    	   txt="If you need more, please call Reliable Response support"
+       		id="staticText.text"/>
+		<field type="text" variable="cluster.server.1">
+		  <description align="left" txt="The name of the first server to include in the cluster"
+               id="description.text"/>
+		  <spec txt="Cluster Server #1:" id="text.label" size="25" set="http://remote-hostname:8080/notification"/>
+		</field>
+		<field type="text" variable="cluster.server.2">
+		  <description align="left" txt="The name of the first server to include in the cluster"
+               id="description.text"/>
+		  <spec txt="Cluster Server #2:" id="text.label" size="25" set=""/>
+		</field>
+		<field type="text" variable="cluster.server.3">
+		  <description align="left" txt="The name of the first server to include in the cluster"
+               id="description.text"/>
+		  <spec txt="Cluster Server #3:" id="text.label" size="25" set=""/>
+		</field>
+		<field type="text" variable="cluster.server.4">
+		  <description align="left" txt="The name of the first server to include in the cluster"
+               id="description.text"/>
+		  <spec txt="Cluster Server #4:" id="text.label" size="25" set=""/>
+		</field>
+		<field type="text" variable="cluster.server.5">
+		  <description align="left" txt="The name of the first server to include in the cluster"
+               id="description.text"/>
+		  <spec txt="Cluster Server #5:" id="text.label" size="25" set=""/>
+		</field>
+		
+   	</panel>
+ 	<panel order="18" cond_name="database.runinit" cond_value="on">
+		<field type="password" variable="admin.password">
+		   <description align="left" txt="Enter a password for the system administrator" id="password"/>
+		   <spec>
+    		 <pwd txt="Admin Password" id="key for the label" size="10" set=""/>
+    		 <pwd txt="Retype password" id="another key for the label" size="10" set=""/>
+   			</spec>
+		 	<validator class="com.izforge.izpack.util.PWDValidator" 
+	    	  txt="Your passwords don't match!" />
+		</field>
+ 	</panel>
+</userInput>
+       

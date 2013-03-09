@@ -1,0 +1,18 @@
+#!/bin/sh
+
+cd `dirname $0`/..
+dir=`pwd`
+echo dir=$dir
+. $dir/tools/setclasspath 
+cd /opt/tomcat/webapps
+../bin/shutdown.sh && 
+rm -rf ../logs/* notification* 
+cd $dir
+echo compiling with `which ant`
+ant clean_jsp jspc war &&
+#cd /opt/tomcat/webapps/ && 
+echo copying war &&
+cp $dir/notification.war  /opt/tomcat/webapps && 
+echo stopping dialogic &&
+/opt/tomcat/bin/startup.sh && 
+tail -f /opt/tomcat/logs/catalina.out

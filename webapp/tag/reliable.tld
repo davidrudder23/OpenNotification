@@ -1,0 +1,53 @@
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+  xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd" 
+  version="2.0">  
+  
+  <tlib-version>1.0</tlib-version>
+  <short-name>bar-baz</short-name>
+    <tag>
+  	<name>collapseable</name>
+    <tagclass>net.reliableresponse.notification.web.tags.CollapseableTag
+  	</tagclass>
+  	<attribute>
+  		<name>title</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+  	<attribute>
+  		<name>tag</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+  	<attribute>
+  		<name>tagClass</name>
+  		<required>false</required>
+  		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+  	<attribute>
+  		<name>contentURL</name>
+  		<required>false</required>
+  		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+  	<attribute>
+  		<name>color</name>
+  		<required>false</required>
+  		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+  	<attribute>
+  		<name>opened</name>
+  		<required>false</required>
+  		<rtexprvalue>true</rtexprvalue>
+	</attribute>
+	 <bodycontent>JSP</bodycontent>
+  </tag>
+  
+  <tag>
+ 	<name>configurator</name>
+	<tagclass>net.reliableresponse.notification.web.tags.ConfiguratorTag
+  	</tagclass>
+	<bodycontent>JSP</bodycontent>
+  </tag>
+  
+
+ </taglib>

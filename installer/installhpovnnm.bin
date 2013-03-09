@@ -1,0 +1,199 @@
+#!/bin/sh
+clear
+
+# Welcome banner
+
+echo
+echo Welcome to Reliable Response Notification
+echo HP OpenView Network Node Manager Integration
+echo --------------------------------------------
+echo Please press enter to continue
+read eof
+
+# License
+
+more <<"EOF"
+Reliable Response, LLC
+License Agreement
+
+1.  LICENSE TO USE.  
+Reliable Response grants you a non-exclusive and non-transferable license for the internal use only of the accompanying software and documentation and any error corrections provided by Reliable Response (collectively "Software"), by the number of users and the class of computer hardware for which the corresponding fee has been paid.
+
+2.  RESTRICTIONS.  
+Software is confidential and copyrighted. Title to Software and all associated intellectual property rights is retained by Reliable Response and/or its licensors. Except as specifically authorized in any Supplemental License Terms, you may not make copies of Software, other than a single copy of Software for archival purposes.  Unless enforcement is prohibited by applicable law, you may not modify, decompile, or reverse engineer Software. Reliable Response, LLC. disclaims any express or implied warranty of fitness for such uses.  No right, title or interest in or to any trademark, service mark, logo or trade name of Reliable Response or its licensors is granted under this Agreement.
+
+3.  LIMITED WARRANTY.  
+Reliable Response warrants to you that for a period of ninety (90) days from the date of purchase, as evidenced by a copy of the receipt, the media on which Software is furnished (if any) will be free of defects in materials and workmanship under normal use.  Except for the foregoing, Software is provided "AS IS".  Your exclusive remedy and Reliable Response's entire liability under this limited warranty will be at Reliable Response's option to replace Software media or refund the fee paid for Software.
+
+4.  DISCLAIMER OF WARRANTY.  
+UNLESS SPECIFIED IN THIS AGREEMENT, ALL EXPRESS OR IMPLIED CONDITIONS, REPRESENTATIONS AND WARRANTIES, INCLUDING ANY IMPLIED WARRANTY OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE OR NON-INFRINGEMENT ARE DISCLAIMED, EXCEPT TO THE EXTENT THAT THESE DISCLAIMERS ARE HELD TO BE LEGALLY INVALID.
+
+5.  LIMITATION OF LIABILITY.  
+TO THE EXTENT NOT PROHIBITED BY LAW, IN NO EVENT WILL RELIABLE RESPONSE OR ITS LICENSORS BE LIABLE FOR ANY LOST REVENUE, PROFIT OR DATA, OR FOR SPECIAL, INDIRECT, CONSEQUENTIAL, INCIDENTAL OR PUNITIVE DAMAGES, HOWEVER CAUSED REGARDLESS OF THE THEORY OF LIABILITY, ARISING OUT OF OR RELATED TO THE USE OF OR INABILITY TO USE SOFTWARE, EVEN IF RELIABLE RESPONSE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.  In no event will Reliable Response's liability to you, whether in contract, tort (including negligence), or otherwise, exceed the amount paid by you for Software under this Agreement.  The foregoing limitations will apply even if the above stated warranty fails of its essential purpose.
+
+6.  Termination.  
+This Agreement is effective until terminated.  You may terminate this Agreement at any time by destroying all copies of Software.  This Agreement will terminate immediately without notice from Reliable Response if you fail to comply with any provision of this
+Agreement.  Upon Termination, you must destroy all copies of Software.
+
+9.  Governing Law.  
+Any action related to this Agreement will be governed by Colorado law and controlling U.S. federal law.  No choice of law rules of any jurisdiction will apply.
+
+10. Severability. 
+If any provision of this Agreement is held to be unenforceable, this Agreement will remain in effect with the provision omitted, unless omission would frustrate the intent of the parties, in which case this Agreement will immediately terminate.
+
+11. Integration.  
+This Agreement is the entire agreement between you and Reliable Response relating to its subject matter.  It supersedes all prior or contemporaneous oral or written communications, proposals, representations and warranties and prevails over any conflicting or additional terms of any quote, order, acknowledgment, or other communication between the parties relating to its subject matter during the term of this Agreement.  No modification of this Agreement will be binding, unless in writing and
+signed by an authorized representative of each party.
+
+For inquiries please contact: 
+Reliable Response, LLC
+1600 Broadway, Suite 2400
+Denver, Colorado 80202
+EOF
+
+# make sure the user agrees
+
+agreed=
+while [ x$agreed = x ]; do
+    echo
+    echo "Do you agree to the above license terms? [yes or no] "
+    read reply leftover
+    case $reply in
+        y* | Y*)
+            agreed=1;;
+        n* | N*)
+    echo "If you don't agree to the license you can't install this software";
+    exit 1;;
+    esac
+done
+
+# Find the path to OpenView
+OVPATH=""
+if [ -d /opt/OV ]
+then
+	OVPATH="/opt/OV"
+elif [ -d /usr/local/OV ]
+then
+	OVPATH="/usr/local/OV"
+fi
+echo -n "Location of OpenView Network Node Manager? [$OVPATH] "
+read INPUT
+if [ x$INPUT != x ]
+then
+	OVPATH=$INPUT
+fi
+
+while [ ! -d $OVPATH ]
+do
+	echo -n "Location of OpenView Network Node Manager? [$OVPATH] "
+	read INPUT
+	if [ x$INPUT != x ]
+	then
+		OVPATH=$INPUT
+	fi
+done
+
+# Unpack the files
+echo Unpacking files into rrn_ovplugin
+mkdir rrn_ovplugin
+cat <<"EOF" > rrn_ovplugin/add_action
+ACTION 60 "Send To Reliable Response" sendToReliableResponse
+SDESC
+Sends the alert to Reliable Response Notification
+EDESC
+
+EOF
+cat <<"EOF" > rrn_ovplugin/add_exec_to_event
+EVENT OV_IF_Down .1.3.6.1.4.1.11.2.17.1.0.58916867 "Status Alarms" Warning
+FORMAT IF $7 Down $12  Capabilities: $13  Root Cause: $14 $15
+EXEC sendToReliableResponse "$14" "OV: $14 Down" "HP Openview Warning: $7 Down $12." $U
+SDESC
+This event is generated by HP OpenView when
+it detects the status of an interface has gone
+down.  Normally this happens when an interface with
+an IP address no longer responds to ICMP Echo (ping)
+requests.
+ 
+The data passed with the event is
+    1) The ID of application sending the event
+    2) The hostname of the node that caused the event
+    3) The HP OpenView object identifier of the node that
+       caused the event
+    4) The database name, if applicable
+    5) A time stamp for when the event occurred
+    6) The HP OpenView object identifier of the interface
+       that caused the event
+    7) The name or label for the interface that caused the
+       event
+    8) The IP address for the interface that caused the
+       event, or "0" if unavailable
+    9) The NNM management station ID
+   10) Event correlation event UUID which identifies
+       the primary failure.
+   11) Number of bits in the subnet mask of entity.
+   12) Locale neutral description of the entity.
+   13) Locale neutral comma separated list of capabilities of
+       the entity.  For example, isSwitch,isIPRouter.
+   14) Name of the primary failure host if available.
+   15) Name of the primary failure entity if available.
+   16) The HP OpenView object identifier of primary failure
+       entity if available.
+   17) Locale neutral description of the primary failure
+       entity if available.
+   18) Locale neutral comma separated list of capabilities of
+       the primary failure entity if available.
+                                                                                
+On UNIX, see the trapd.conf(4) manpage for complete details.
+On Windows, see the trapd.conf reference page in the help
+file.
+EDESC
+
+EOF
+
+# Install the registration files
+echo Installing /etc$OVPATH/share/registration/C/reliableresponsenotification
+cat >  /etc$OVPATH/share/registration/C/reliableresponsenotification <<"EOF"
+Application "Reliable Response Notification"
+{
+        Description {
+                "Reliable Response",
+                "Notification",
+                "This application sends alerts to the Reliable Response Notification alert management console"
+        }
+ 
+        DisplayString "Reliable Response Notification Recipient";
+ 
+        Version "1.1";
+ 
+        Copyright {
+            "(c) Copyright 2004-2005 Reliable Response, LLC",
+            "All rights reserved"
+        }
+ 
+        Enroll Describe {
+                If (isNode) {
+                        Field "Recipient" {
+                                Label "Recipient: " ;
+                                EditPolicy Edit ;
+                        }
+                }
+        }
+}
+EOF
+echo "Installing /etc$OVPATH/share/fields/C/reliableresponsenotification"
+cat > /etc$OVPATH/share/fields/C/reliableresponsenotification <<"EOF"
+Field "Recipient" {
+        Type    StringType;
+        Flags   name;
+}
+EOF
+
+echo Installing the changes to trapd.conf
+$OVPATH/bin/xnmevents -load rrn_ovplugin/add_action
+$OVPATH/bin/xnmevents -merge rrn_ovplugin/add_exec_to_event
+
+echo Finished installing
+#rm -rf rrn_ovplugin
+
+rrn_ovplugin/                                                                                        40755       0       0            0 10223326552  10634  5                                                                                                    ustar                                                                        0       0                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         
+

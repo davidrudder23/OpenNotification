@@ -1,0 +1,379 @@
+<?xml version="1.0"?>
+<project name="Notification" default="compile" basedir=".">
+	<description>
+        Reliable Response Notification
+    </description>
+
+	<!-- These are basic variables.  If you want to, for example,
+    	change the location of the source directory, change it here
+    	and it'll be reflected throughout the script
+    	-->
+
+	<property name="project.name" value="Notification"/>
+	<property name="src.dir" value="src"/>
+	<property name="build.dir" value="bin"/>
+	<property name="jws.src.dir" value="jws"/>
+	<property name="jws.build.dir" value="bin/jws"/>
+	<property name="doc.dir" value="doc"/>
+	<property name="lib.dir" value="lib"/>
+	<property name="tomcat.home" value="/opt/tomcat/" />
+	<property name="java.home" value="/opt/java" />
+	<property name="webapp.path" value="webapp" />
+
+	<path id="main.classpath">
+		<fileset dir="${lib.dir}">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${tomcat.home}/common/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+		<fileset dir="${tomcat.home}/server/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+		<pathelement path="${build.dir}"/>
+	</path>
+	<path id="opennms.classpath">
+		<fileset dir="plugins/rrn_opennms/lib">
+			<include name="**/*.jar"/>
+		</fileset>
+	</path>
+
+	<target name="compile">
+		<javac srcdir="${src.dir}"
+	         destdir="${build.dir}"
+	         debug="true"
+	         fork="true"
+	    	compiler="modern" >
+			<classpath refid="main.classpath"/>
+		</javac>		
+	</target>
+
+	<target name="reports">
+	<taskdef name="jrc" classname="net.sf.jasperreports.ant.JRAntCompileTask"> 
+	  <classpath>
+	    <fileset dir="./lib">
+	      <include name="**/*.jar"/>
+	    </fileset>
+	  </classpath>
+	</taskdef>
+
+	<jrc
+		srcdir="src/reports/"
+		destdir="bin/reports"
+		xmlvalidation="false"
+		keepjava="true"
+	>
+		<include name="**/*.jrxml" />
+		<classpath refid="main.classpath"/>
+	</jrc>
+		
+	<mkdir dir="${build.dir}/reports"/>
+	<mkdir dir="${build.dir}/reports/images"/>
+	<copy todir="${build.dir}/reports/images" file="html/images/RRlogo.gif" />
+
+	</target>
+
+	<target name="jspc">
+		<taskdef classname="org.apache.jasper.JspC" name="jasper2" >
+			<classpath id="jspc.classpath">
+				<pathelement location="${java.home}/../lib/tools.jar"/>
+				<pathelement path="${build.dir}"/>
+				<fileset dir="${tomcat.home}/bin">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${lib.dir}">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${tomcat.home}/server/lib">
+					<include name="*.jar"/>
+				</fileset>
+				<fileset dir="${tomcat.home}/common/lib">
+					<include name="*.jar"/>
+				</fileset>
+			</classpath>
+		</taskdef>
+
+		<jasper2 
+	             validateXml="false" 
+	             uriroot="html" 
+	             webXmlFragment="${webapp.path}/generated_web.xml" 
+	             outputDir="${src.dir}" />
+	</target>
+
+	<target name="war"
+		description="Generates a WAR file for webapp deployment"
+		depends="clean,compile" >
+		
+		<mkdir dir="sound_output"/>
+		
+		<delete file="${webapp.path}/web.xml" />
+
+		<concat destfile="${webapp.path}/web.xml" force="true">
+			<filelist dir="${webapp.path}" files="top_web.xml,generated_web.xml,bot_web.xml" />
+		</concat>
+			
+		<war destfile="notification.war" webxml="webapp/web.xml">
+			<fileset dir="html" />
+			<fileset dir="noncompiled" />
+			<fileset dir="wml" />
+			<fileset dir="jws" />
+			<fileset dir="webapp/tag" />
+			<fileset dir=".">
+				<include name="conf/**" />
+				<include name="sound_output/**" />
+                <include name="mckoidb/**" />
+			</fileset>
+			<classes dir="bin" />
+			<lib dir="lib">
+				<exclude name="servlet.jar"/>
+			</lib>
+		</war>
+	</target>
+	
+	<target name="changelog" 
+    	description="Generates a CVS Changelog" >
+		<cvschangelog dir="."
+                destfile="Changelog.xml"
+  		/>
+		<style 
+	  			in="Changelog.xml"
+	  			out="Changelog.html"
+	  			extension=".html" style="html.xsl">
+			<param name="title" expression="CVS Changelog for ${project.name}"/>
+			<param name="cvsweb" expression="file:///home/drig/workspace/"/>
+			<param name="module" expression="${project.name}"/>
+		</style>
+	</target>
+
+	<!-- Documentation targets -->
+	<target name="doc"
+  		description="Builds the JavaDoc files from sources"
+  		>
+		<javadoc 
+  			sourcepath="${src.dir}"
+  			destdir="${doc.dir}/api"
+  			private="false"
+			use="true"
+  			>
+			<classpath refid="main.classpath"/>
+			<fileset dir="src">
+				<include name="net/reliableresponse/notification/*.java" />
+				<include name="net/reliableresponse/notification/broker/*.java" />
+				<include name="net/reliableresponse/notification/usermgmt/*.java" />
+				<include name="net/reliableresponse/notification/actions/*.java" />
+				<include name="net/reliableresponse/notification/priority/*.java" />
+				<include name="net/reliableresponse/notification/scheduling/*.java" />
+				<include name="net/reliableresponse/notification/device/*.java" />
+			</fileset>
+		</javadoc>
+	</target>
+
+	<target name="junit" depends="compile">
+		<junit printsummary="yes" haltonfailure="yes">
+			<classpath refid="main.classpath"/>
+
+			<formatter type="plain"/>
+
+			<batchtest fork="yes" todir="${doc.dir}/tests">
+				<fileset dir="${src.dir}">
+					<include name="**/*Test*.java"/>
+				</fileset>
+			</batchtest>
+		</junit>
+	</target>
+
+	<!-- Cleaning targets. Generally, you can just use "clean", which
+    	is the meta-target -->
+	<target name="clean_classes"
+ 	   description="Cleans out the built classes"
+    >
+		<delete dir="${build.dir}/net" />
+	</target>
+
+	<target name="clean_reports"
+ 	   description="Cleans out the built reports"
+    >
+		<delete dir="${build.dir}/reports" />
+		<mkdir dir="${build.dir}/reports" />
+	</target>
+
+	<target name="clean_docs"
+ 		description="Cleans out the built docs"
+    >
+		<delete dir="${doc.dir}/api" />
+	</target>
+
+	<target name="clean_war"
+		description="Cleans out the built war files"
+	>
+		<delete file="notification.war" />
+	</target>
+
+	<target name="clean_jsp"
+		description="Cleans out the java files generated from jsp"
+	>
+		<delete dir="${build.dir}/org" />
+		<delete dir="${src.dir}/org/apache/jsp/" />
+		<delete file="${webapp.path}/generated_web.xml" />
+	</target>
+
+	<target name="clean" depends="clean_classes,clean_docs,clean_reports"
+    	description="Cleans out all build files"
+    	>
+	</target>
+
+	<target name="hpovnnminstaller" depends="">
+		<tar destfile="installer/hpovnnm_plugin.tar"
+			basedir=".">
+			<include name="rrn_ovplugin" />
+		</tar>
+		<copy file="installer/installhpovnnm.input"
+			tofile="installer/installhpovnnm.bin" />
+		<loadfile srcFile="installer/hpovnnm_plugin.tar"
+			property="tarfile" />
+		<replace file="installer/installhpovnnm.bin"
+			token="TARFILE"
+			value="${tarfile}"
+			summary="yes"
+			/>
+		<loadfile srcFile="rrn_ovplugin/add_action"
+			property="addaction" />
+		<replace file="installer/installhpovnnm.bin"
+			token="ADDACTION"
+			value="${addaction}"
+			summary="yes"
+			/>
+		<loadfile srcFile="rrn_ovplugin/add_exec_to_event"
+			property="addexec" />
+		<replace file="installer/installhpovnnm.bin"
+			token="ADDEXEC"
+			value="${addexec}"
+			summary="yes"
+			/>
+		<chmod file="installer/installhpovnnm.bin" perm="755" />
+	</target>
+	
+	<target name="installer" depends="release">
+		<taskdef name="izpack" classpath="tools/lib/standalone-compiler.jar"
+		         classname="com.izforge.izpack.ant.IzPackTask"/>
+		
+		<izpack input="installer/installer.xml"
+		        output="notification_installer"
+		        installerType="standard"
+		        basedir="release" />
+	</target>
+	
+	<target name="rt3installer" depends="release">
+		<taskdef name="izpack" classpath="tools/lib/standalone-compiler.jar"
+		         classname="com.izforge.izpack.ant.IzPackTask"/>
+		
+		<izpack input="installer/rt3installer.xml"
+		        output="notification_rt3plugin_installer"
+		        installerType="standard"
+		        basedir="release" />
+	</target>
+	
+	<target name="release" description="Makes a release build"
+		depends="clean_jsp,jspc,clean,war,doc">
+		<delete dir="release"/>
+		<mkdir dir="release"/>
+		<mkdir dir="release/lib"/>
+		<mkdir dir="release/sql"/>
+		<mkdir dir="release/doc"/>
+                <mkdir dir="release/plugins"/>
+                <mkdir dir="release/plugins/rrn_nagios"/>
+
+		
+		<jar destfile="release/lib/rrnotification.jar">
+			<fileset dir="bin">
+				<include name="**/*"/>
+			</fileset>
+		</jar>
+		
+		<copy todir="release/" >
+			<fileset dir=".">
+				<include name="c-client/**/*"/>
+				<include name="doc/**/*"/>
+				<include name="legal/**/*"/>
+				<include name="scripts/**/*"/>
+				<include name="sql/postgresql.sql" />
+				<include name="sql/oracle.sql" />
+				<include name="sql/mysql.sql" />
+				<include name="mibs/**/*" />
+                                <include name="plugins/rrn_nagios/**/*" />
+			</fileset>
+		</copy>
+		<copy todir="release/">
+			<fileset dir="resources">
+				<include name="startrrn.sh" />
+			</fileset>
+		</copy>
+		<unzip src="resources/tomcat.zip" dest="release"/>
+		<copy todir="release/tomcat/webapps" >
+			<fileset dir=".">
+				<include name="notification.war" />
+			</fileset>
+		</copy>
+		<mkdir dir="release/tomcat/webapps/notification"/>
+		<unzip src="notification.war" dest="release/tomcat/webapps/notification"/>
+	</target>
+	
+	<target name="prepare_test_deploy">
+		<copy file="conf/test.properties" tofile="conf/reliable.properties" overwrite="true"/>
+	</target>
+	
+	<target name="opennms" depends="compile">
+		<javac srcdir="plugins/rrn_opennms/src/"
+	         destdir="plugins/rrn_opennms/bin/"
+	         debug="true"
+	         fork="true"
+	    	compiler="modern" >
+			<classpath refid="main.classpath"/>
+		</javac>	
+		
+		<unjar dest="plugins/rrn_opennms/bin/" src="plugins/rrn_opennms/lib/axis.jar">
+		</unjar>
+		
+		<unjar dest="plugins/rrn_opennms/bin/" src="plugins/rrn_opennms/lib/jaxrpc.jar">
+		</unjar>
+
+		<unjar dest="plugins/rrn_opennms/bin/" src="plugins/rrn_opennms/lib/saaj.jar">
+		</unjar>
+
+		<unjar dest="plugins/rrn_opennms/bin/" src="plugins/rrn_opennms/lib/wsdl4j.jar">
+		</unjar>
+
+		<unjar dest="plugins/rrn_opennms/bin/" src="plugins/rrn_opennms/lib/commons-logging.jar">
+		</unjar>
+
+		<unjar dest="plugins/rrn_opennms/bin/" src="plugins/rrn_opennms/lib/commons-discovery.jar">
+		</unjar>
+
+			<jar destfile="plugins/rrn_opennms/rrn_opennms.jar">
+			<fileset dir="plugins/rrn_opennms/bin">
+				<include name="**/*"/>
+			</fileset>
+		</jar>
+	</target>
+	
+	<target name="deploy" depends="war">
+		<exec executable="c:/reliable/tomcat/bin/shutdown.bat" 
+			newenvironment="true" 
+		>
+			<env key="CATALINA_HOME" value="c:/reliable/tomcat" />
+			<env key="CATALINA_BASE" value="c:/reliable/tomcat" />
+			<env key="JAVA_HOME" value="c:/j2sdk1.4.2_08" />
+		</exec>
+		<sleep seconds="30" />
+		<delete dir="c:/reliable/tomcat/webapps/notification"/>
+		<delete file="c:/reliable/tomcat/webapps/notification.war"/>
+		<copy file="notification.war" todir="c:/reliable/tomcat/webapps/" />
+		<exec executable="c:/reliable/tomcat/bin/startup.bat" 
+			newenvironment="true" 
+		>
+			<env key="CATALINA_HOME" value="c:/reliable/tomcat" />
+			<env key="CATALINA_BASE" value="c:/reliable/tomcat" />
+			<env key="OS" value="Windows_NT" />
+		</exec>
+	</target>
+</project>

@@ -1,0 +1,94 @@
+<html>
+<head>
+<title>Rest Test</title>
+<script src="http://www.json.org/json2.js"></script>
+<script>
+
+function setInformation (user, infoName, infoValue) {
+	var information = user.information;
+	for (var i = 0; i < information.length; i++) {
+		var inner = information[i];
+		if (inner[0] == infoName) {
+			return inner[1]=infoValue;
+		}
+	}
+}
+
+function saveUser (user) {
+	//alert (user.uuid+": "+JSON.stringify(user).replace(/\"/g, "\\\""));
+	var form="<form action=\"/notification/rest/users/0000001?accept=text/json\" method=POST name=\"userForm_"+user.uuid+"\">\n"+
+			 "<input type=\"text\" size=4096 value=\"\" id=\"userJSON_"+user.uuid+"\" name=\"json\"/>\n"+
+			 "<br/><br/>\n"+
+			 "<input type=\"hidden\" name=\"returnURL\" value=\""+window.location+"\" />\n"+
+			 "<input type=\"submit\" value=\"Submit\">\n"+
+			 "</form>";
+	//alert (form);
+	document.body.innerHTML = document.body.innerHTML+form;
+	document.getElementById("userJSON_"+user.uuid).value = JSON.stringify(user);
+	//document.forms["userForm_"+user.uuid].submit();
+}
+
+function changeUser(textfield) {
+	usersToChange[textfield.id].information["firstName"]=textfield.value; 
+	
+	saveUser(usersToChange[textfield.id]);
+}
+
+var usersToChange = Array();
+function addUser(jsonObj) {
+	var user = jsonObj.user;
+	usersToChange.push(user);
+	var userDiv = document.getElementById("userDiv"); 
+	userDiv.innerHTML = "<p><b>User #"+user.uuid+"</b></p>\n";
+	for (var key in user.information) {
+		userDiv.innerHTML = userDiv.innerHTML +
+		"<p>"+key+":<input type=\"text\" name=\""+user.uuid+"_"+key+"\" value=\""+user.information[key]+"\"></p>";
+	}
+}
+
+function showUser(uuid) {
+    var script=document.createElement('script'); 
+    script.src="/notification/rest/users/"+uuid+"?accept=text/javascript&rand="+Math.random();
+    script.type="text/javascript";
+   
+    document.getElementsByTagName('head')[0].appendChild(script); // appends the tag to the head
+    
+   // alert ("We got "+users.length+" users");	
+}
+
+var users = Array();
+
+// This function is actually called by the REST script.  Once for each user in the list
+function addUserToMenu(jsonObj) {
+	var user = jsonObj.user;
+	users[user.uuid]=user;
+	var link = "<a href=\"javascript:showUser('"+user.uuid+"');\">"+
+		user.information["firstName"]+" "+
+		user.information["lastName"]+"</a><br>";
+	document.getElementById("userList").innerHTML += link;
+}
+
+// This function calls the REST javascript file, using a "script" element so it works across domains
+// The script will populate all the users in the left-hand side
+function loadUsers() {
+    var script=document.createElement('script'); 
+    script.src="/notification/rest/users?callback=addUserToMenu&accept=text/javascript&rand="+Math.random();
+    script.type="text/javascript";
+   
+    document.getElementsByTagName('head')[0].appendChild(script); // appends the tag to the head
+}
+
+</script>
+</head>
+<body onload="loadUsers();">
+<table><tr>
+<td>
+<div id="userList" width="30%">
+</div>
+</td>
+<td>
+<div id="userDiv"></div>
+</td>
+</tr></table>
+</body>
+</html>

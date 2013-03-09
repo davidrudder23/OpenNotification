@@ -1,0 +1,59 @@
+RELIABLE-SMI DEFINITIONS ::= BEGIN
+
+IMPORTS
+	MODULE-IDENTITY,
+	OBJECT-IDENTITY,
+	enterprises
+		FROM SNMPv2-SMI;
+
+reliable MODULE-IDENTITY
+	LAST-UPDATED "200412070000Z"
+	ORGANIZATION "Reliable Response, LLC"
+	CONTACT-INFO
+		"	Reliable Response, LLC
+			Customer Service
+
+		Postal: 1600 Broadway, Suite 2400
+			Denver, CO  80202
+			USA
+
+		   Tel: +1 303 542 1990
+
+		E-mail: support@reliableresponse.net"
+	DESCRIPTION
+		"The Structure of Management Information for the
+		Reliable Response enterprise."
+	REVISION      "200412070000Z"
+	DESCRIPTION
+                "First version"
+	::= { enterprises 23 }	-- private enterprise
+
+
+reliable   OBJECT IDENTIFIER ::= { enterprises 23 }
+
+reliableMgmt OBJECT-IDENTITY
+	STATUS	current
+	DESCRIPTION
+		"reliableMgmt is the main subtree for new mib development."
+	::= { reliable 9 }
+
+freeMemory OBJECT-IDENTITY
+	STATUS  current
+	DESCRIPTION
+		"GET parameter to get the free memory in the system."
+	::= { reliableMgmt 1 }
+
+numUsers OBJECT-IDENTITY
+        STATUS  current
+        DESCRIPTION
+                "GET parameter to get the number of users in the system."
+	::= { reliableMgmt 2 }
+
+numPendingNotifs OBJECT-IDENTITY
+        STATUS  current
+        DESCRIPTION
+                "GET parameter to get the number of pending notifications in the system."
+        ::= { reliableMgmt 3 }
+
+
+END
