@@ -1,0 +1,31 @@
+<%@ page import="net.reliableresponse.notification.sender.*" %><%@ page import="net.reliableresponse.notification.actions.*" %><%@ page import="net.reliableresponse.notification.*" %><%@ page import="net.reliableresponse.notification.usermgmt.*" %><%@ page import="net.reliableresponse.notification.broker.*" %><%
+response.setContentType("text/vnd.wap.wml");
+%><?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="dosend" title="Send a New Notification">
+<p>
+<%
+	String subject = request.getParameter("subject");
+	String message = request.getParameter("message");
+	String recipientID = request.getParameter("recipient");
+	User user = BrokerFactory.getUserMgmtBroker().getUserByUuid((String)session.getAttribute("user"));
+	
+	Member member = Notification.findRecipient (recipientID);
+	if (member  == null) {
+%>
+	I'm sorry, we couldn't find that user.
+	<prev>back</prev>
+<%
+	} else {
+		EmailSender sender = new EmailSender (user.getEmailAddress());
+		Notification notification = new Notification(null, member, sender, subject, message);
+		SendNotification.getInstance().doSend(notification);
+		%>Message Sent<br/>
+		<a href="index.wml">Continue</a>
+		<%
+	}
+%>
+</p>
+</card>
+</wml>

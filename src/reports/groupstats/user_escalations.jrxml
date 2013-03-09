@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="UserEscalations"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="0"
+		 rightMargin="30"
+		 topMargin="0"
+		 bottomMargin="0"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="2" />
+	<parameter name="member" isForPrompting="false" class="java.lang.String">
+		<defaultValueExpression ><![CDATA["1511149811765925"]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT p.time, p.sender, p.subject FROM page p, escalationlog e WHERE NOT e.passed AND e.memberfrom=$P{member} AND p.uuid=e.page]]></queryString>
+	<field name="time" class="java.util.Date"/>
+	<field name="sender" class="java.lang.String"/>
+	<field name="subject" class="java.lang.String"/>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</title>
+		<pageHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="21"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" >					<reportElement
+						mode="Opaque"
+						x="0"
+						y="1"
+						width="552"
+						height="20"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Missed page from "+$F{sender}+" at "+$F{time}+"\n"+"Subject: "+$F{subject}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

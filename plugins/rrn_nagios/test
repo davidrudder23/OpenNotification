@@ -1,0 +1,22 @@
+#!/bin/sh
+
+NAGIOSPATH="/etc/nagios/"
+# Read nagios.cmd to find some key variables
+input_file=$NAGIOSPATH/nagios.cfg
+linenum=0
+file_length=`wc -l $input_file |awk '{print $1}'`
+while [ $linenum -lt $file_length ]
+do
+        linenum=`expr $linenum + 1`
+        line=`head -$linenum $input_file|tail -1`
+       
+	command_file_check=`echo $line |grep ^command_file`
+
+	echo $command_file_check
+        if [ X$command_file_check != X ]
+	then
+		command_file=`echo $line|awk -F= '{print $2}' `
+	fi
+done
+
+echo "command_file=$command_file"

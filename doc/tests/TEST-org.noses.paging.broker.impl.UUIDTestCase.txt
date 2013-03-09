@@ -1,0 +1,12 @@
+Testsuite: org.noses.paging.broker.impl.UUIDTestCase
+Tests run: 1, Failures: 1, Errors: 0, Time elapsed: 0.291 sec
+
+Testcase: testUniqueness took 0.235 sec
+	FAILED
+Two uuid's, which should have been unique, were not
+junit.framework.AssertionFailedError: Two uuid's, which should have been unique, were not
+	at org.noses.paging.broker.impl.UUIDTestCase.testUniqueness(UUIDTestCase.java:40)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+

@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="summarybygroup"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="2" />
+	<import value="java.util.*" />
+	<import value="net.sf.jasperreports.engine.*" />
+	<import value="net.sf.jasperreports.engine.data.*" />
+	<parameter name="groupname" isForPrompting="true" class="java.lang.String">
+		<parameterDescription><![CDATA[The name of the group]]></parameterDescription>
+		<defaultValueExpression ><![CDATA["Test Group"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="to" isForPrompting="true" class="java.sql.Timestamp">
+		<parameterDescription><![CDATA[The end of the timespan to display]]></parameterDescription>
+		<defaultValueExpression ><![CDATA[new java.sql.Timestamp(System.currentTimeMillis())]]></defaultValueExpression>
+	</parameter>
+	<parameter name="from" isForPrompting="true" class="java.sql.Timestamp">
+		<parameterDescription><![CDATA[The beginning of the timespan to display]]></parameterDescription>
+		<defaultValueExpression ><![CDATA[new java.sql.Timestamp(0L)]]></defaultValueExpression>
+	</parameter>
+	<queryString><![CDATA[SELECT ms.child as uuid 
+FROM membership ms, member m 
+WHERE m.firstname=$P{groupname} AND m.uuid=ms.parent]]></queryString>
+	<field name="uuid" class="java.lang.String"/>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="50"  isSplitAllowed="true" >
+				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Left" isUsingCache="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="306"
+						y="0"
+						width="246"
+						height="50"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
+					<imageExpression class="java.io.InputStream"><![CDATA[this.getClass().getClassLoader().getResourceAsStream("reports/images/RRlogo.gif")]]></imageExpression>				</image>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="143"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="0"
+						width="552"
+						height="30"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="24" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Summary of All Members Of "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="32"
+						width="552"
+						height="30"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-2"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica-Bold" size="24" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{groupname}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="75"
+						width="552"
+						height="29"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-3"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Courier-Bold" size="24" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["From "+new java.text.SimpleDateFormat("EEE, MMM d, yyyy").format($P{from})]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="104"
+						width="552"
+						height="29"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-4"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Courier-Bold" size="24" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["To "+new java.text.SimpleDateFormat("EEE, MMM d, yyyy").format($P{to})]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="30"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="33"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="0"
+						width="551"
+						height="27"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="subreport-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<subreportParameter  name="uuid">
+						<subreportParameterExpression><![CDATA[$F{uuid}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="to">
+						<subreportParameterExpression><![CDATA[$P{to}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="from">
+						<subreportParameterExpression><![CDATA[$P{from}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.io.InputStream"><![CDATA[this.getClass().getClassLoader().getResourceAsStream("reports/individualsummary.jasper")]]></subreportExpression>
+				</subreport>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="30"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="72"  isSplitAllowed="true" >
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="50"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						mode="Opaque"
+						x="2"
+						y="1"
+						width="550"
+						height="48"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="subreport-2"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<subreportParameter  name="groupname">
+						<subreportParameterExpression><![CDATA[$P{groupname}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="to">
+						<subreportParameterExpression><![CDATA[$P{to}]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter  name="from">
+						<subreportParameterExpression><![CDATA[$P{from}]]></subreportParameterExpression>
+					</subreportParameter>
+					<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+					<subreportExpression  class="java.io.InputStream"><![CDATA[this.getClass().getClassLoader().getResourceAsStream("reports/group_summary_chart.jasper")]]></subreportExpression>
+				</subreport>
+			</band>
+		</summary>
+</jasperReport>

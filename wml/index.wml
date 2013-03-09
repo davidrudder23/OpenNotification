@@ -1,0 +1,13 @@
+<%
+response.setContentType("text/vnd.wap.wml");
+%><?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="index" title="Reliable Response Notification">
+<p>
+<img src="images/RRlogo.wbmp" alt="Reliable Response Notification" /><br/>
+<a href="send.wml">Send</a><br/>
+<a href="manage.wml">Manage</a><br/>
+</p>
+</card>
+</wml>

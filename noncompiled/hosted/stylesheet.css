@@ -1,0 +1,142 @@
+body { background-color: white; }
+
+td {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 12px;
+	color: #000000;
+	list-style-position: outside;
+	list-style-image: url(images/bullet.gif);
+	line-height: 15px;
+}
+a {
+	color: #0F8ACB;
+; text-decoration: none
+}
+a:hover {
+	text-decoration: underline;
+}
+.titles {
+	font-size: 13px;
+	color: #000000;
+; font-weight: bold
+}
+.mainarea {
+	padding: 4px 1px 8px 8px;
+	background-color: #FFFFFF;
+	background-image: url(images/bg_signal.gif);
+	background-repeat: no-repeat;
+}
+.identity {
+	font-size: 10px;
+	line-height: 13px;
+	font-weight: normal;
+}
+.dayview {
+        font-size: 10px;
+        line-height: 13px;
+        font-weight: normal;
+        text-align: right;
+}
+
+.copyright {
+	font-weight: bold;
+	color: #999999;
+	font-size: 10px;
+}
+.maintable {
+	border: 1px solid #666666;
+}
+.abovecell {
+	border-top-width: 1px;
+	border-right-width: 0px;
+	border-bottom-width: 0px;
+	border-left-width: 0px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-bottom-color: #333333;
+	padding: 3px;
+}
+.headercell {
+	background-color: #EDEDED;
+	padding: 3px 6px;
+	font-weight: bolder;
+	color: #19A1E6;
+	border: 0px solid;
+}
+.anchorlinks {
+	margin: 0px;
+	line-height: 20px;
+}
+.systemalert {
+	font-weight: bold;
+	color: #990000;
+}
+strong {
+	font-style: normal;
+	font-weight: bold;
+}
+.greytype {
+	color: #666666;
+}
+input {
+	vertical-align: top;
+}
+textarea {
+	vertical-align: top;
+	margin: 0px 3px;
+}
+.subexpand {
+	color: #666666;
+	background-color: #FFFFFF;
+	font-weight: bold;
+	left: -3px;
+}
+.cellrule {
+	background-image: url(images/bg_rule.gif);
+	background-repeat: repeat-x;
+	background-position: center;
+}
+select {
+	vertical-align: top;
+	margin: 0px 3px;
+}
+a.subexpand {
+	color: #0F8ACB;
+}
+a.headercell {
+	color: #19A1E6;
+	text-decoration: none;
+}
+.buttons {
+	margin-top: 15px;
+	margin-right: 3px;
+	margin-bottom: 3px;
+	margin-left: 3px;
+}
+.searchtable {
+	background-color: #EDEDED;
+	border: 1px solid #999999;
+}
+.splash {
+	background-color: #FFFFFF;
+	background-image: url(images/splash.jpg);
+	background-repeat: no-repeat;
+}
+.belowcell {
+	border-top-width: 0px;
+	border-right-width: 0px;
+	border-bottom-width: 1px;
+	border-left-width: 0px;
+	border-top-style: solid;
+	border-right-style: solid;
+	border-bottom-style: solid;
+	border-left-style: solid;
+	border-bottom-color: #333333;
+	padding: 2px;
+}
+
+.nomembers {
+	color: #990000;
+}

@@ -1,0 +1,18 @@
+package net.reliableresponse.notification.broker.impl.mysql;
+
+import java.sql.Connection;
+
+import net.reliableresponse.notification.broker.BrokerFactory;
+import net.reliableresponse.notification.broker.impl.sql.GenericSQLCouponBroker;
+
+public class MySQLCouponBroker extends GenericSQLCouponBroker {
+
+
+	/* (non-Javadoc)
+	 * @see net.reliableresponse.notification.broker.impl.sql.GenericSQLAuthenticationBroker#getConnection()
+	 */
+	public Connection getConnection() {
+		return BrokerFactory.getDatabaseBroker().getConnection();
+	}
+
+}

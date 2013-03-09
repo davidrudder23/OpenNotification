@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"  ?>
+<!-- Created with iReport - A designer for JasperReports -->
+<!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+<jasperReport
+		 name="devicestatus"
+		 columnCount="1"
+		 printOrder="Vertical"
+		 orientation="Portrait"
+		 pageWidth="612"
+		 pageHeight="792"
+		 columnWidth="535"
+		 columnSpacing="0"
+		 leftMargin="30"
+		 rightMargin="30"
+		 topMargin="20"
+		 bottomMargin="20"
+		 whenNoDataType="NoPages"
+		 isTitleNewPage="false"
+		 isSummaryNewPage="false">
+	<property name="ireport.scriptlethandling" value="2" />
+	<queryString><![CDATA[SELECT n.subject, n.time, p.status, p.classname, m.firstname, m.lastname
+FROM notification n, notificationprovider p, member m
+WHERE n.uuid=p.notification AND n.recipient=m.uuid]]></queryString>
+	<field name="subject" class="java.lang.String"/>
+	<field name="time" class="java.sql.Timestamp"/>
+	<field name="status" class="java.lang.String"/>
+	<field name="classname" class="java.lang.String"/>
+	<field name="firstname" class="java.lang.String"/>
+	<field name="lastname" class="java.lang.String"/>
+		<background>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</background>
+		<title>
+			<band height="50"  isSplitAllowed="true" >
+				<image  scaleImage="FillFrame" vAlign="Top" hAlign="Left" isUsingCache="false" evaluationTime="Now" hyperlinkType="None">					<reportElement
+						mode="Opaque"
+						x="306"
+						y="0"
+						width="246"
+						height="50"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="image-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
+					<imageExpression class="java.io.InputStream"><![CDATA[this.getClass().getClassLoader().getResourceAsStream("reports/images/RRlogo.gif")]]></imageExpression>				</image>
+			</band>
+		</title>
+		<pageHeader>
+			<band height="50"  isSplitAllowed="true" >
+				<staticText>
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="1"
+						width="550"
+						height="47"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="staticText-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" rotation="None" lineSpacing="Single">
+						<font fontName="Bitstream Charter" pdfFontName="Helvetica-Bold" size="24" isBold="true" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<text><![CDATA[Device Send Status]]></text>
+				</staticText>
+			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="30"  isSplitAllowed="true" >
+			</band>
+		</columnHeader>
+		<detail>
+			<band height="100"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" >					<reportElement
+						mode="Opaque"
+						x="0"
+						y="31"
+						width="545"
+						height="20"
+						forecolor="#FF3333"
+						backcolor="#FFFFFF"
+						key="textField-2"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false">
+							<printWhenExpression><![CDATA[new Boolean(!($F{status}.equalsIgnoreCase("succeeded")))]]></printWhenExpression>
+						</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[Class.forName($F{classname}).newInstance().toString()+" "+$F{status}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" >					<reportElement
+						mode="Opaque"
+						x="1"
+						y="0"
+						width="551"
+						height="15"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-3"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Notification sent at "+$F{time}+" with subject "+$F{subject}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" >					<reportElement
+						mode="Opaque"
+						x="1"
+						y="16"
+						width="551"
+						height="15"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-4"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Sent to "+$F{firstname}+" "+$F{lastname}]]></textFieldExpression>
+				</textField>
+				<line direction="TopDown">
+					<reportElement
+						mode="Opaque"
+						x="1"
+						y="56"
+						width="548"
+						height="0"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="line-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<graphicElement stretchType="NoStretch" pen="Thin" fill="Solid" />
+				</line>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" >					<reportElement
+						mode="Opaque"
+						x="1"
+						y="32"
+						width="545"
+						height="20"
+						forecolor="#00CC00"
+						backcolor="#FFFFFF"
+						key="textField-5"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false">
+							<printWhenExpression><![CDATA[new Boolean($F{status}.equalsIgnoreCase("succeeded"))]]></printWhenExpression>
+						</reportElement>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[Class.forName($F{classname}).newInstance().toString()+" "+$F{status}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="30"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="50"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None" >					<reportElement
+						mode="Opaque"
+						x="450"
+						y="29"
+						width="102"
+						height="21"
+						forecolor="#000000"
+						backcolor="#FFFFFF"
+						key="textField-1"
+						stretchType="NoStretch"
+						positionType="FixRelativeToTop"
+						isPrintRepeatedValues="true"
+						isRemoveLineWhenBlank="false"
+						isPrintInFirstWholeBand="false"
+						isPrintWhenDetailOverflows="false"/>
+					<textElement textAlignment="Left" verticalAlignment="Top" rotation="None" lineSpacing="Single">
+						<font fontName="Arial" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded ="false" pdfEncoding ="Cp1252" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+				</textField>
+			</band>
+		</pageFooter>
+		<summary>
+			<band height="81"  isSplitAllowed="true" >
+			</band>
+		</summary>
+</jasperReport>

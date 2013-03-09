@@ -1,0 +1,2 @@
+for x in `ps ax|grep tomcat|grep -v grep|awk '{print $1}'`;do kill -9 $x;done;./tools/compile
+

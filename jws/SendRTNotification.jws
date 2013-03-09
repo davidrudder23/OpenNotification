@@ -1,0 +1,62 @@
+import java.util.Vector;
+
+import net.reliableresponse.notification.Notification;
+import net.reliableresponse.notification.NotificationException;
+import net.reliableresponse.notification.actions.*;
+import net.reliableresponse.notification.broker.BrokerFactory;
+import net.reliableresponse.notification.sender.RTSender;
+import net.reliableresponse.notification.usermgmt.Member;
+
+public class SendRTNotification {
+	
+	private Member findMember (String identifier) {
+		Member member = BrokerFactory.getUserMgmtBroker().getUserByEmailAddress(identifier);
+		if (member == null) {
+			member = BrokerFactory.getUserMgmtBroker().getUserByUuid(identifier);
+		}
+		if (member == null) {
+			member = BrokerFactory.getGroupMgmtBroker().getGroupByName(identifier);
+		}
+		if (member == null) {
+			member = BrokerFactory.getGroupMgmtBroker().getGroupByUuid(identifier);
+		}
+		
+		return member;
+	}
+	
+	public String[] sendRTNotification (String memberName, String summary, String message, int transactionID,
+			String dbType, String dbName, String dbHost, String dbUser, String dbPassword) {
+		String[] result = new String[0];
+		
+		Member member = findMember(memberName);
+		if (member != null) {
+			try {
+BrokerFactory.getLoggingBroker().logDebug("New RT message - "+summary+":"+message);
+
+				Notification notification = new Notification (null, member, null, summary, message);
+				
+				RTSender sender = new RTSender();
+				sender.addVariable (RTSender.DBTYPE, dbType);
+				sender.addVariable (RTSender.DBNAME, dbName);
+				sender.addVariable (RTSender.DBHOST, dbHost);
+				sender.addVariable (RTSender.DBUSER, dbUser);
+				sender.addVariable (RTSender.DBPASSWORD, dbPassword);
+				sender.addVariable (RTSender.TRANSACTIONID, transactionID+"");
+				notification.setSender (sender);
+				SendNotification.getInstance().doSend(notification);
+				BrokerFactory.getLoggingBroker().logDebug("Sent notification via RT sender");
+				result = new String[1];
+				result[0] = "Notification sent to "+member;
+			} catch (NotificationException e) {
+				result = new String[1];
+				result[0] ="Notification to "+memberName+" not sent due to error: "+e.getMessage();
+			}
+		} else {
+			result = new String[1];
+			result[0] = "Could not find user "+memberName;
+		}
+		
+		BrokerFactory.getLoggingBroker().logDebug("SOAP returning "+result.length+" results");
+		return result;		
+	}
+}

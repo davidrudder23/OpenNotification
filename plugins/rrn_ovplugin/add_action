@@ -1,0 +1,4 @@
+ACTION 60 "Send To Reliable Response" sendToReliableResponse
+SDESC
+Sends the alert to Reliable Response Notification
+EDESC

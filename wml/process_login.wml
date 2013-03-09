@@ -1,0 +1,18 @@
+<%@ page import="net.reliableresponse.notification.usermgmt.*" %><%@ page import="net.reliableresponse.notification.broker.*" %><%
+response.setContentType("text/vnd.wap.wml");
+response.setHeader("Cache-Control", "must-revalidate, no-store");
+
+String login = request.getParameter("login");
+String password = request.getParameter("password");
+
+BrokerFactory.getLoggingBroker().logDebug ("login="+login);
+BrokerFactory.getLoggingBroker().logDebug ("password="+password);
+
+User user =BrokerFactory.getAuthenticationBroker().authenticate(login, password);
+if (user == null ) {
+	response.sendRedirect("login.wml");
+} else {
+	session.setAttribute ("user", user.getUuid());
+	response.sendRedirect("index.wml");
+}
+%>

@@ -1,0 +1,26 @@
+Application "Reliable Response Notification"
+{
+        Description {
+                "Reliable Response",
+                "Notification",
+                "This application sends alerts to the Reliable Response Notification alert management console"
+        }
+ 
+        DisplayString "Reliable Response Notification Recipient";
+ 
+        Version "1.1";
+ 
+        Copyright {
+            "(c) Copyright 2004-2005 Reliable Response, LLC",
+            "All rights reserved"
+        }
+ 
+        Enroll Describe {
+                If (isNode) {
+                        Field "Recipient" {
+                                Label "Recipient: " ;
+                                EditPolicy Edit ;
+                        }
+                }
+        }
+}

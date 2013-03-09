@@ -1,0 +1,8 @@
+#!/bin/sh
+
+DIR=/home/drig/workspace/Notification
+
+. $DIR/tools/setclasspath
+cd /opt/tomcat/webapps
+../bin/shutdown.sh && rm -rf ../logs/* notification* ; cd /home/drig/workspace/Notification; ant clean_jsp war && cd /opt/tomcat/webapps/ && cp ~/workspace/Notification/notification.war  . && ../bin/startup.sh && tail -f ../logs/catalina.out
+

@@ -1,0 +1,20 @@
+<%
+response.setContentType("text/vnd.wap.wml");
+%><?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="send" title="Send a New Notification">
+<p>
+Subject: <input name="subject" /><br/>
+Message: <input name="message" /><br/>
+Recipient ID: <input name="recipient" /><br/>
+<anchor>
+	<go method="post" href="doSend.wml">
+		<postfield name="subject" value="$subject"/>
+		<postfield name="message" value="$message"/>
+		<postfield name="recipient" value="$recipient"/>
+	</go>
+Send</anchor>
+</p>
+</card>
+</wml>

@@ -1,0 +1,64 @@
+<%@ page import="net.reliableresponse.notification.usermgmt.*" %>
+<%@ page import="net.reliableresponse.notification.*" %>
+<%@ page import="net.reliableresponse.notification.util.*" %>
+<%@ page import="java.util.*" %>
+<%@ page import="net.reliableresponse.notification.broker.*" %>
+<%
+response.setContentType("text/vnd.wap.wml");
+response.setHeader("Cache-Control", "must-revalidate, no-store");
+%><?xml version="1.0"?>
+<!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN"
+"http://www.wapforum.org/DTD/wml_1.1.xml">
+<wml>
+<card id="notification" title="Reliable Response Notification">
+<p>
+<img src="images/RRlogo.wbmp" alt="Reliable Response Notification" /><br/>
+<%
+	User user = BrokerFactory.getUserMgmtBroker().getUserByUuid((String)session.getAttribute("user"));
+	NotificationBroker broker = BrokerFactory.getNotificationBroker();
+	Notification notification = broker.getNotificationByUuid(request.getParameter("uuid"));
+%>
+<%= notification.getSubject() %><br/>
+From: <%= notification.getSender().toString() %><br/>
+To: <%= notification.getRecipient().toString() %><br/>
+Date: <%= notification.getTime() %><br/>
+<br/>
+<%
+	NotificationMessage[] messages = notification.getMessages();
+	%><%= messages[0].getMessage() %><br/><br/><%
+	for (int i = 0; i < messages.length; i++) {
+		Member by = BrokerFactory.getUserMgmtBroker().getUserByUuid(messages[i].getAddedby());
+		
+		if (by != null) {
+		%>From: <%= by %><br/> <%
+		}
+		%>
+		Date: <%= messages[i].getAddedon()%><br/>
+		<%= messages[i].getMessage() %><br/><br/>
+		<%
+	}
+	%>
+		<input name="comment" />
+	<%
+	String[] responses = notification.getSender().getAvailableResponses(notification);
+	for (int i = 0; i < responses.length; i++) {
+		%><anchor>
+			<go method="post" href="respond.wml">
+				<postfield name="uuid" value="<%= notification.getUuid() %>"/>
+				<postfield name="response" value="<%= responses[i] %>"/>
+				<postfield name="comment" value="$comment"/>
+			</go>
+		<%= responses[i]%></anchor>
+		<%
+	}
+%>
+<anchor>
+	<go method="post" href="respond.wml">
+		<postfield name="uuid" value="<%= notification.getUuid() %>"/>
+		<postfield name="response" value="comment"/>
+		<postfield name="comment" value="$comment"/>
+	</go>
+	Comment</anchor>
+</p>
+</card>
+</wml>

@@ -1,0 +1,165 @@
+<html>
+<head>
+<title>Rest Test</title>
+<script src="http://www.json.org/json2.js"></script>
+<script>
+
+function setInformation (user, infoName, infoValue) {
+	var information = user.information;
+	for (var i = 0; i < information.length; i++) {
+		var inner = information[i];
+		if (inner[0] == infoName) {
+			return inner[1]=infoValue;
+		}
+	}
+}
+
+function saveUser (user) {
+	//alert (user.uuid+": "+JSON.stringify(user).replace(/\"/g, "\\\""));
+	var form="<form action=\"/notification/rest/users/0000001?accept=text/json\" method=POST name=\"userForm_"+user.uuid+"\">\n"+
+			 "<input type=\"text\" size=4096 value=\"\" id=\"userJSON_"+user.uuid+"\" name=\"json\"/>\n"+
+			 "<br/><br/>\n"+
+			 "<input type=\"hidden\" name=\"returnURL\" value=\""+window.location+"\" />\n"+
+			 "<input type=\"submit\" value=\"Submit\">\n"+
+			 "</form>";
+	//alert (form);
+	document.body.innerHTML = document.body.innerHTML+form;
+	document.getElementById("userJSON_"+user.uuid).value = JSON.stringify(user);
+	//document.forms["userForm_"+user.uuid].submit();
+}
+
+var usersToChange = Array();
+function addUser(jsonObj) {
+	var user = jsonObj.user;
+	usersToChange.push(user);
+	var usersDiv = document.getElementById("usersDiv"); 
+	usersDiv.innerHTML = usersDiv.innerHTML +
+	"<p><b>User #"+user.uuid+"</b></p>\n";
+	for (var key in user.information) {
+		usersDiv.innerHTML = usersDiv.innerHTML +
+		"<p>"+key+":"+user.information[key]+"</p>";
+	}
+	usersDiv.innerHTML += "<p>Change user's name to <input type=text name=user_"+(usersToChange.length-1)+" id="+(usersToChange.length-1)+" value=\""+user.information['firstName']+"\" onchange=changeUser(this)></p>"; 
+}
+
+function showUsers() {
+    var script=document.createElement('script'); 
+    script.src="/notification/rest/users/0000001?accept=text/javascript&rand="+Math.random();
+    script.type="text/javascript";
+   
+    document.getElementsByTagName('head')[0].appendChild(script); // appends the tag to the head
+    
+   // alert ("We got "+users.length+" users");	
+}
+
+function changeUser(textfield) {
+	usersToChange[textfield.id].information["firstName"]=textfield.value; 
+	
+	saveUser(usersToChange[textfield.id]);
+}
+
+function addNotification(jsonObj) {
+	var notification = jsonObj.notification;
+	var notificationsDiv = document.getElementById("notificationsDiv"); 
+	notificationsDiv.innerHTML = notificationsDiv.innerHTML +
+	"<p><b>notification #"+notification.uuid+"</b></p>\n"+
+	"<p><b>Subject: "+notification.summary+"</b></p>\n"+
+	"<p><b>Recipient: "+notification.recipient.uuid+"</b></p>\n";
+
+	for (var msgNum = 0; msgNum < notification.messages.length; msgNum++) { 
+		var msg = notification.messages[msgNum].message;
+		notificationsDiv.innerHTML = notificationsDiv.innerHTML +
+		"<p><b>Message: "+msg+"</b></p>\n";
+	}
+}
+
+function showNotifications() {
+    var script=document.createElement('script'); 
+    script.src="/notification/rest/notifications?accept=text/javascript";
+    script.type="text/javascript";
+   
+    document.getElementsByTagName('head')[0].appendChild(script); // appends the tag to the head
+    
+   // alert ("We got "+users.length+" users");	
+}
+
+function addGroup(jsonObj) {
+	var notification = jsonObj.notification;
+	var notificationsDiv = document.getElementById("notificationsDiv"); 
+	notificationsDiv.innerHTML = notificationsDiv.innerHTML +
+	"<p><b>notification #"+notification.uuid+"</b></p>\n"+
+	"<p><b>Subject: "+notification.summary+"</b></p>\n"+
+	"<p><b>Recipient: "+notification.recipient.uuid+"</b></p>\n";
+
+	for (var msgNum = 0; msgNum < notification.messages.length; msgNum++) { 
+		var msg = notification.messages[msgNum].message;
+		notificationsDiv.innerHTML = notificationsDiv.innerHTML +
+		"<p><b>Message: "+msg+"</b></p>\n";
+	}
+}
+
+function showGroups() {
+    var script=document.createElement('script'); 
+    script.src="/notification/rest/groups?accept=text/javascript";
+    script.type="text/javascript";
+   
+    document.getElementsByTagName('head')[0].appendChild(script); // appends the tag to the head
+    
+   // alert ("We got "+users.length+" users");	
+}
+
+function addDevice(jsonObj) {
+	var device = jsonObj.device;
+	var devicesDiv = document.getElementById("devicesDiv"); 
+	devicesDiv.innerHTML = devicesDiv.innerHTML +
+	"<p><b>device #"+device.uuid+"</b></p>\n"+
+	"<p><b>Subject: "+device.summary+"</b></p>\n"+
+	"<p><b>Recipient: "+device.recipient.uuid+"</b></p>\n";
+
+	for (var msgNum = 0; msgNum < device.messages.length; msgNum++) { 
+		var msg = device.messages[msgNum].message;
+		devicesDiv.innerHTML = devicesDiv.innerHTML +
+		"<p><b>Message: "+msg+"</b></p>\n";
+	}
+}
+
+function showDevices() {
+    var script=document.createElement('script'); 
+    script.src="/notification/rest/users/0000002/devices?accept=text/javascript";
+    script.type="text/javascript";
+   
+    document.getElementsByTagName('head')[0].appendChild(script); // appends the tag to the head
+    
+   // alert ("We got "+users.length+" users");	
+}
+</script>
+</head>
+<body>
+<div onclick="showUsers();">Show Users</div>
+<br />
+<div id="usersDiv"></div>
+<br />
+<hr/>
+<br />
+
+<div onclick="showGroups();">Show Groups</div>
+<br />
+<div id="groupsDiv"></div>
+<br />
+<hr/>
+<br />
+
+<div onclick="showDevices();">Show Devices</div>
+<br />
+<div id="devicesDiv"></div>
+<br />
+<hr/>
+<br />
+
+<div onclick="showNotifications();">Show Notifications</div>
+<br />
+<div id="notificationsDiv"></div>
+
+
+</body>
+</html>

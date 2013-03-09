@@ -1,0 +1,89 @@
+#===============================================================================
+#==   Data Dictionary File for Database : MySQL db (Build 29)
+#==
+#== Format: table, field
+#===============================================================================
+
+#== member =====================================================================
+
+'member',      'uuid'         
+'member',      'type'         
+'member',      'firstname'    
+'member',      'lastname'     
+'member',      'email'        
+
+#== membergroup ================================================================
+
+'membergroup', 'uuid'         
+'membergroup', 'membertype'   
+
+#== authentication =============================================================
+
+'authentication', 'passphrase'   
+'authentication', 'member'       
+'authentication', 'userinfo'     
+
+#== authorizationinfo ==========================================================
+
+'authorizationinfo', 'member'       
+'authorizationinfo', 'role'         
+
+#== device =====================================================================
+
+'device',      'type'         
+'device',      'member'       
+
+#== devicetype =================================================================
+
+'devicetype',  'uuid'         
+'devicetype',  'name'         
+
+#== userinformation ============================================================
+
+'userinformation', 'member'       
+'userinformation', 'name'         
+'userinformation', 'value'        
+
+#== membership =================================================================
+
+'membership',  'child'        
+'membership',  'parent'       
+'membership',  'uuid'         
+
+#== escalationgroup ============================================================
+
+'escalationgroup', 'membership'   
+'escalationgroup', 'escalationtime'
+'escalationgroup', 'escorder'     
+'escalationgroup', 'numattempts'  
+
+#== page =======================================================================
+
+'page',        'uuid'         
+'page',        'sender'       
+'page',        'recipient'    
+'page',        'time'         
+'page',        'confirmedby'  
+'page',        'subject'      
+'page',        'message'      
+
+#== errorlog ===================================================================
+
+'errorlog',    'uuid'         
+'errorlog',    'level'        
+'errorlog',    'message'      
+'errorlog',    'time'         
+
+#== loginlog ===================================================================
+
+'loginlog',    'uuid'         
+'loginlog',    'time'         
+'loginlog',    'succeeded'    
+'loginlog',    'username'     
+
+#== pageoptions ================================================================
+
+'pageoptions', 'uuid'         
+'pageoptions', 'optionname'   
+
+#===============================================================================
