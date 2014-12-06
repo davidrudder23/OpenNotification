@@ -1,5 +1,6 @@
 import java.io.FileInputStream;
 import java.util.Date;
+import java.util.List;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationMessage;
@@ -26,32 +27,32 @@ public class GenerateNotificationLog {
 				new FileInputStream("conf/reliable.properties"));
 
 		NotificationBroker notifBroker = BrokerFactory.getNotificationBroker();
-		Notification[] notifications = notifBroker.getNotificationsSince(new Date((long)0));
+		List<Notification> notifications = notifBroker.getNotificationsSince(new Date((long)0));
 		
 		StringBuffer output = new StringBuffer();
-		for (int n = 0; n < notifications.length; n++) {
+		for (Notification notification: notifications) {
 			output.append ("From: ");
-			output.append (notifications[n].getSender());
+			output.append (notification.getSender());
 			output.append ("\n");
 			output.append ("To: ");
-			output.append (notifications[n].getRecipient());
+			output.append (notification.getRecipient());
 			output.append ("\n");
 			output.append ("Subject: ");
-			output.append (notifications[n].getSubject());
+			output.append (notification.getSubject());
 			output.append ("\n");
 			output.append ("Sent On: ");
-			output.append (notifications[n].getTime());
+			output.append (notification.getTime());
 			output.append ("\n");
-			NotificationProvider[] providers = notifications[n].getNotificationProviders();
+			NotificationProvider[] providers = notification.getNotificationProviders();
 			for (int p = 0; p < providers.length; p++) {
 				output.append ("Device ");
 				output.append (providers[p].getName());
 				output.append (" ");
-				output.append (providers[p].getStatusOfSend(notifications[n]));
+				output.append (providers[p].getStatusOfSend(notification));
 				output.append ("\n");
 			}
 			
-			NotificationMessage[] messages = notifications[n].getMessages();
+			NotificationMessage[] messages = notification.getMessages();
 			for (int m = 0; m < messages.length; m++) {
 				output.append ("Message add by ");
 				String addedBy = messages[m].getAddedby();

@@ -1,4 +1,5 @@
 
+<jsp:directive.page import="java.util.*"/>
 <jsp:directive.page import="net.reliableresponse.notification.util.StringUtils"/>
 <jsp:directive.page import="net.reliableresponse.notification.broker.BrokerFactory"/>
 <jsp:directive.page import="net.reliableresponse.notification.Notification"/>
@@ -64,16 +65,16 @@ String sentDate = user.getFormattedDate(notification.getTime(), "MM/dd/yyyy - HH
 // Figure out the previous and next notifs
 
 // First, grab all applicable notifs and sort
-Notification[] notifs = BrokerFactory.getNotificationBroker().getNotificationsSentTo(user);
+List<Notification> notifs = BrokerFactory.getNotificationBroker().getNotificationsSentTo(user);
 SortedVector prevNextList = new SortedVector();
-for (int n = 0; n < notifs.length; n++) {
+for (Notification notif: notifs) {
 	if (browseType.equals("active")) {
-		if ((notifs[n].getStatus() == Notification.PENDING) ||
-			(notifs[n].getStatus() == Notification.NORMAL)) {
-			prevNextList.addElement(notifs[n], false);
+		if ((notif.getStatus() == Notification.PENDING) ||
+			(notif.getStatus() == Notification.NORMAL)) {
+			prevNextList.addElement(notif, false);
 		}
 	} else {
-		prevNextList.addElement(notifs[n], false);
+		prevNextList.addElement(notif, false);
 	}
 }
 prevNextList.sort();

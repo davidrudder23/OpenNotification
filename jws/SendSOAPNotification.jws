@@ -360,6 +360,10 @@ public class SendSOAPNotification {
 			String message, String url, String username, String password,
 			boolean isService, String hostName, String objectName,
 			String priority) {
+		Member member = findMember(memberName);
+		
+		Notification[] notifications = BrokerFactor.getNotificationBroker().getNotificationsSentTo(member);
+		
 	}
 	
 	

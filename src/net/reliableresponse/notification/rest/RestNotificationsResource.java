@@ -1,5 +1,7 @@
 package net.reliableresponse.notification.rest;
 
+import java.util.List;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,15 +20,14 @@ public class RestNotificationsResource extends AbstractRestResource {
 	
 	public String getRepresentation(String contentType, String method, HttpServletRequest req) throws NotificationException {
 		
-		Notification[] notifications = BrokerFactory.getNotificationBroker().getNotificationsSince(48*60*60*1000);
+		List<Notification> notifications = BrokerFactory.getNotificationBroker().getNotificationsSince(48*60*60*1000);
 
 		if (contentType.equalsIgnoreCase("text/xml")) {
 			XStream xstream = new XStream();
 			xstream.alias("notification", Notification.class);
 			StringBuffer xml = new StringBuffer();
 			xml.append ("<notifications>\n");
-			for (int notifNum = 0 ; notifNum < notifications.length; notifNum++) {
-				Notification notification = notifications[notifNum];
+			for (Notification notification: notifications) {
 				if (notification.getParentUuid() == null) {
 					xml.append(xstream.toXML(notification));
 				}
@@ -36,8 +37,7 @@ public class RestNotificationsResource extends AbstractRestResource {
 		} else if (contentType.equalsIgnoreCase("text/json")) {
 			XStream xstream = new XStream(new JettisonMappedXmlDriver());
 			StringBuffer xml = new StringBuffer();
-			for (int notifNum = 0 ; notifNum < notifications.length; notifNum++) {
-				Notification notification = notifications[notifNum];
+			for (Notification notification: notifications) {
 				xstream.alias("notification", Notification.class);
 				xstream.registerConverter(new NotificationMessageConverter());
 				if (notification.getParentUuid() == null) {
@@ -48,8 +48,7 @@ public class RestNotificationsResource extends AbstractRestResource {
 		} else if (contentType.equalsIgnoreCase("text/javascript")) {
 			XStream xstream = new XStream(new JettisonMappedXmlDriver());
 			StringBuffer xml = new StringBuffer();
-			for (int notifNum = 0 ; notifNum < notifications.length; notifNum++) {
-				Notification notification = notifications[notifNum];
+			for (Notification notification: notifications) {
 				xstream.alias("notification", Notification.class);
 				xstream.registerConverter(new NotificationMessageConverter());
 				if (notification.getParentUuid() == null) {
@@ -60,8 +59,7 @@ public class RestNotificationsResource extends AbstractRestResource {
 			return xml.toString();
 		} else if (contentType.equalsIgnoreCase("text/plain")) {
 			StringBuffer text = new StringBuffer();
-			for (int notifNum = 0 ; notifNum < notifications.length; notifNum++) {
-				Notification notification = notifications[notifNum];
+			for (Notification notification: notifications) {
 				if (notification.getParentUuid() == null) {
 					text.append (notification.getDisplayText());
 				}

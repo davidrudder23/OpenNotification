@@ -8,6 +8,7 @@ package net.reliableresponse.notification.broker;
 
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationMessage;
@@ -32,7 +33,7 @@ public interface NotificationBroker {
 
 	public Notification getNotificationByUuid(String uuid);
 	
-	public Notification[] getChildren(Notification parent);
+	public List<Notification> getChildren(Notification parent);
 	
 	/**
 	 * Gets all the notifications that were sent directly to the supplied member
@@ -41,7 +42,7 @@ public interface NotificationBroker {
 	 * @param member The user or group who's notifications to look for
 	 * @return All the notifications sent to the supplied member
 	 */
-	public Notification[] getNotificationsSentTo (Member member);
+	public List<Notification> getNotificationsSentTo (Member member);
 	
 	/**
 	 * Gets all the notifications that were sent by supplied member
@@ -49,7 +50,7 @@ public interface NotificationBroker {
 	 * @param member The user who sent the notifications 
 	 * @return All the notifications sent by the supplied member
 	 */
-	public Notification[] getNotificationsSentBy (User user);
+	public List<Notification> getNotificationsSentBy (User user);
 
 	/**
 	 * Retrieves all the notifications sent since the specified date
@@ -57,7 +58,7 @@ public interface NotificationBroker {
 	 * @param since Date from whence to look
 	 * @return All the notifications sent since
 	 */
-	public Notification[] getNotificationsSince (Date since);
+	public List<Notification> getNotificationsSince (Date since);
 	
 	/**
 	 * Returns the UUID of the top-level parent
@@ -74,7 +75,7 @@ public interface NotificationBroker {
 	 * @param since
 	 * @return
 	 */
-	public Notification[] getUpdatedNotificationsTo (Member member, Date since);
+	public List<Notification> getUpdatedNotificationsTo (Member member, Date since);
 	
 	/**
 	 * Gets all the notification UUIDs which have been updated since 
@@ -92,7 +93,7 @@ public interface NotificationBroker {
 	 * @param since How many milliseconds to loo kback
 	 * @return All the notifications sent since
 	 */
-	public Notification[] getNotificationsSince (long since);
+	public List<Notification> getNotificationsSince (long since);
 
 	/**
 	 * Gets the notification messages out of bulk storage
@@ -108,7 +109,7 @@ public interface NotificationBroker {
 	 * @param before
 	 * @return
 	 */
-	public Notification[] getNotificationsBefore (Date before);
+	public List<Notification> getNotificationsBefore (Date before);
 
 	/**
 	 * Gets all the uuids before a specified date
@@ -130,7 +131,7 @@ public interface NotificationBroker {
 	 * 
 	 * @return All the notifications that were not confirmed, including those that were expired
 	 */
-	public Notification[] getAllUnconfirmedNotifications();
+	public List<Notification> getAllUnconfirmedNotifications();
 	
 	public int getNumPendingNotifications();
 
@@ -139,20 +140,20 @@ public interface NotificationBroker {
 	 * 
 	 * @return All the notifications that are not confirmed, but are not yet expired.  
 	 */
-	public Notification[] getAllPendingNotifications();
+	public List<Notification> getAllPendingNotifications();
 	
 	/**
 	 * 
 	 * @return All the unconfirmed notifications for a particular user
 	 */
 	
-	public Notification[] getMembersUnconfirmedNotifications(Member member);
+	public List<Notification> getMembersUnconfirmedNotifications(Member member);
 	
 	/**
 	 * 
 	 * @return All the notifications that are still pending for a particular member
 	 */
-	public Notification[] getMembersPendingNotifications();
+	public List<Notification> getMembersPendingNotifications();
 
 	public String[] getChildrenUuids(Notification parent);
 	

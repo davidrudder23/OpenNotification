@@ -6,6 +6,7 @@
 package net.reliableresponse.notification.web.actions;
 
 import java.text.SimpleDateFormat;
+import java.util.List;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -94,17 +95,14 @@ public class RespondAction implements Action {
 			BrokerFactory.getLoggingBroker().logError(e);
 		}
 		long sinceMillis = sinceHours*3600000;
-		Notification[] pendingNotifications = 
-			BrokerFactory.getNotificationBroker().getNotificationsSince(sinceMillis);
-		for (int p = 0; p < pendingNotifications.length; p++) {
-			String[] responses = 
-				pendingNotifications[p].getSender().getAvailableResponses(pendingNotifications[p]);
+		List<Notification> pendingNotifications =BrokerFactory.getNotificationBroker().getNotificationsSince(sinceMillis);
+		for (Notification pendingNotification: pendingNotifications) {
+			String[] responses = pendingNotification.getSender().getAvailableResponses(pendingNotification);
 			for (int r = 0; r < responses.length; r++) {
-				if (request.getParameter
-							("action_"+responses[r].toLowerCase()+"_"+pendingNotifications[p].getUuid()+".x") != null) {
-					String respondText = request.getParameter("action_respond_text_"+pendingNotifications[p].getUuid());
+				if (request.getParameter ("action_"+responses[r].toLowerCase()+"_"+pendingNotification.getUuid()+".x") != null) {
+					String respondText = request.getParameter("action_respond_text_"+pendingNotification.getUuid());
 					BrokerFactory.getLoggingBroker().logDebug("respondText="+respondText);
-					pendingNotifications[p].getSender().handleResponse(pendingNotifications[p], user, responses[r], respondText);
+					pendingNotification.getSender().handleResponse(pendingNotification, user, responses[r], respondText);
 				}
 			}
 		}

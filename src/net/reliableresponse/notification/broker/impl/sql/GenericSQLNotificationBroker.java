@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 import java.sql.Types;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import net.reliableresponse.notification.Notification;
@@ -346,11 +347,11 @@ public abstract class GenericSQLNotificationBroker implements
 
 	public Notification getNotificationByUuid(String uuid) {
 		String sql = getSQLBeginning() + "uuid=?";
-		Notification[] notifications = getNotificationsGeneric(uuid, sql);
-		if ((notifications == null) || (notifications.length == 0)) {
+		List<Notification> notifications = getNotificationsGeneric(uuid, sql);
+		if ((notifications == null) || (notifications.size() == 0)) {
 			return null;
 		}
-		return notifications[0];
+		return notifications.get(0);
 	}
 	
 	public NotificationMessage[] getNotificationMessages(Notification notification) {
@@ -431,7 +432,7 @@ public abstract class GenericSQLNotificationBroker implements
 	 * @param sql
 	 * @return
 	 */
-	private Notification[] getNotificationsGeneric(Object parameter, String sql) {
+	private List<Notification> getNotificationsGeneric(Object parameter, String sql) {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		Connection connection = getConnection();
@@ -650,10 +651,10 @@ public abstract class GenericSQLNotificationBroker implements
 			}
 
 		}
-		return (Notification[]) notifications.toArray(new Notification[0]);
+		return notifications;
 	}
 
-	public Notification[] getChildren(Notification parent) {
+	public List<Notification> getChildren(Notification parent) {
 		String sql = getSQLBeginning() + "parent=?";
 		BrokerFactory.getLoggingBroker().logDebug(
 				"Looking for children of " + parent.getUuid());
@@ -736,7 +737,7 @@ public abstract class GenericSQLNotificationBroker implements
 		}
 	}
 
-	public Notification[] getNotificationsSince(long since) {
+	public List<Notification> getNotificationsSince(long since) {
 		BrokerFactory.getLoggingBroker().logDebug(
 				"Getting notifs since " + since + ", current millis = "
 						+ System.currentTimeMillis());
@@ -747,14 +748,14 @@ public abstract class GenericSQLNotificationBroker implements
 				- since));
 	}
 
-	public Notification[] getNotificationsSince(java.util.Date since) {
+	public List<Notification> getNotificationsSince(java.util.Date since) {
 		BrokerFactory.getLoggingBroker().logDebug(
 				"Getting notifs since " + since);
 		String sql = getSQLBeginning() + "time>?";
 		return getNotificationsGeneric(new Timestamp(since.getTime()), sql);
 	}
 
-	public Notification[] getUpdatedNotificationsTo(Member member,
+	public List<Notification> getUpdatedNotificationsTo(Member member,
 			java.util.Date since) {
 		String[] uuids = getUpdatedUuidsTo(member, since);
 		Vector notifs = new Vector();
@@ -765,7 +766,7 @@ public abstract class GenericSQLNotificationBroker implements
 				notifs.addElement(notif);
 			}
 		}
-		return (Notification[]) notifs.toArray(new Notification[0]);
+		return notifs;
 	}
 
 	public String[] getUpdatedUuidsTo(Member member, java.util.Date since) {
@@ -831,7 +832,7 @@ public abstract class GenericSQLNotificationBroker implements
 		return -1;
 	}
 
-	public Notification[] getNotificationsBefore(java.util.Date before) {
+	public List<Notification> getNotificationsBefore(java.util.Date before) {
 		BrokerFactory.getLoggingBroker().logDebug(
 				"Getting notifs before " + before);
 		String sql = getSQLBeginning() + "time<?";
@@ -843,7 +844,7 @@ public abstract class GenericSQLNotificationBroker implements
 	 * 
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getPagesSentTo(net.reliableresponse.notification.usermgmt.Member)
 	 */
-	public Notification[] getNotificationsSentBy(User user) {
+	public List<Notification> getNotificationsSentBy(User user) {
 		String sql = getSQLBeginning()
 				+ "senderclass='net.reliableresponse.notification.sender.UserSender' AND senderinfo1=?";
 		return getNotificationsGeneric(user.getUuid(), sql);
@@ -854,7 +855,7 @@ public abstract class GenericSQLNotificationBroker implements
 	 * 
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getPagesSentTo(net.reliableresponse.notification.usermgmt.Member)
 	 */
-	public Notification[] getNotificationsSentTo(Member member) {
+	public List<Notification> getNotificationsSentTo(Member member) {
 		String sql = getSQLBeginning() + "recipient=?";
 		return getNotificationsGeneric(member.getUuid(), sql);
 	}
@@ -864,7 +865,7 @@ public abstract class GenericSQLNotificationBroker implements
 	 * 
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getAllUnconfirmedPages()
 	 */
-	public Notification[] getAllUnconfirmedNotifications() {
+	public List<Notification> getAllUnconfirmedNotifications() {
 		String sql = getSQLBeginning() + "status<>'confirmed' AND status<>?";
 		return getNotificationsGeneric("expired", sql);
 	}
@@ -1012,7 +1013,7 @@ public abstract class GenericSQLNotificationBroker implements
 		return 0;
 	}
 
-	public Notification[] getAllPendingNotifications() {
+	public List<Notification> getAllPendingNotifications() {
 		String sql = getSQLBeginning()
 				+ "recipient like ? AND status<>'confirmed' AND status<>'expired'";
 		return getNotificationsGeneric("%", sql);
@@ -1023,7 +1024,7 @@ public abstract class GenericSQLNotificationBroker implements
 	 * 
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getMembersUnconfirmedPages()
 	 */
-	public Notification[] getMembersUnconfirmedNotifications(Member member) {
+	public List<Notification> getMembersUnconfirmedNotifications(Member member) {
 		String sql = getSQLBeginning()
 				+ "recipient=? AND status<>'confirmed' AND status<>'expired'";
 		return getNotificationsGeneric(member.getUuid(), sql);
@@ -1034,7 +1035,7 @@ public abstract class GenericSQLNotificationBroker implements
 	 * 
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getMembersPendingPages()
 	 */
-	public Notification[] getMembersPendingNotifications() {
+	public List<Notification> getMembersPendingNotifications() {
 		// TODO Auto-generated method stub
 		return null;
 	}

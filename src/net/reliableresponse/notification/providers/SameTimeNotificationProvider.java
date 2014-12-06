@@ -7,6 +7,7 @@ package net.reliableresponse.notification.providers;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -335,11 +336,11 @@ public class SameTimeNotificationProvider extends AbstractNotificationProvider
 				return;
 			}			
 		}
-		Notification[] pendingNotifications = BrokerFactory.getNotificationBroker().getNotificationsSince(8640000L);
+		List<Notification> pendingNotifications = BrokerFactory.getNotificationBroker().getNotificationsSince(8640000L);
 		Vector responses = new Vector();
-		for (int i = 0; i < pendingNotifications.length; i++) {
-			NotificationSender sender = pendingNotifications[i].getSender();
-			String[] respArray = sender.getAvailableResponses(pendingNotifications[i]);
+		for (Notification pendingNotification: pendingNotifications) {
+			NotificationSender sender = pendingNotification.getSender();
+			String[] respArray = sender.getAvailableResponses(pendingNotification);
 			for (int r = 0; r < respArray.length; r++) {
 				if (!responses.contains(respArray[r])) {
 					responses.addElement(respArray[r]);
@@ -351,15 +352,15 @@ public class SameTimeNotificationProvider extends AbstractNotificationProvider
 			String response = (String)responses.elementAt(i);
 			Pattern pattern = Pattern.compile("\\b(?i)"+response+"\\b"); 
 			if (pattern.matcher(text).find()) {
-				for (int p = 0; p < pendingNotifications.length; p++) {
-					if (text.indexOf(pendingNotifications[p].getID()) >= 0) {
-						NotificationSender sender = pendingNotifications[p].getSender();
+				for (Notification pendingNotification: pendingNotifications) {
+					if (text.indexOf(pendingNotification.getID()) >= 0) {
+						NotificationSender sender = pendingNotification.getSender();
 						if (sender != null) {
 							BrokerFactory.getLoggingBroker().logDebug("Responding to "+
-									pendingNotifications[p]+" with \""+response+"\"via SameTime message from "+from);
-							sender.handleResponse(pendingNotifications[p], user, response, "Notification confirmed by Sametime message: "+text);
+									pendingNotification+" with \""+response+"\"via SameTime message from "+from);
+							sender.handleResponse(pendingNotification, user, response, "Notification confirmed by Sametime message: "+text);
 							try {
-								sendMessage(null, from, "Responded to notification "+pendingNotifications[p].getID()+" with "+response);
+								sendMessage(null, from, "Responded to notification "+pendingNotification.getID()+" with "+response);
 							} catch (SendMessageFailedException e) {
 								BrokerFactory.getLoggingBroker().logError(e);
 							}
