@@ -75,23 +75,23 @@
 	bigint = bigint.multiply(new BigInteger("3600"));
 	bigint = bigint.multiply(new BigInteger("1000"));
 	
-	Notification[] recentNotifications = broker.getNotificationsSince(bigint.longValue());
+	List<Notification> recentNotifications = broker.getNotificationsSince(bigint.longValue());
 	SortedVector sorted = new SortedVector();
-	for (int i = 0; i < recentNotifications.length; i++) {
+	for (Notification recentNotification: recentNotifications) {
 		try {
-			if (recentNotifications[i].getParentUuid() == null) {
+			if (recentNotification.getParentUuid() == null) {
 				if (isAdmin) {
-						sorted.addElement(recentNotifications[i]);
+						sorted.addElement(recentNotification);
 				} else {
-					Member recipient = recentNotifications[i].getRecipient();
+					Member recipient = recentNotification.getRecipient();
 					if (recipient.getType() == Member.USER) {
 						if (recipient.equals(user)) {
-							sorted.addElement(recentNotifications[i]);
+							sorted.addElement(recentNotification);
 						}
 					} else {
 						Group group= (Group)recipient;
 						if (group.isMember(user)) {
-							sorted.addElement(recentNotifications[i]);
+							sorted.addElement(recentNotification);
 						}
 					}
 				}
@@ -103,21 +103,21 @@
 	
 			// Add all the pending notifications
 		recentNotifications = broker.getAllPendingNotifications();
-		for (int i = 0; i < recentNotifications.length; i++) {
-			if (recentNotifications[i].getParentUuid() == null) {
-				if (!sorted.contains(recentNotifications[i])) {
+		for (Notification recentNotification: recentNotifications) {
+			if (recentNotification.getParentUuid() == null) {
+				if (!sorted.contains(recentNotification)) {
 					if (isAdmin) {
-						sorted.addElement(recentNotifications[i]);
+						sorted.addElement(recentNotification);
 					} else {
-						Member recipient = recentNotifications[i].getRecipient();
+						Member recipient = recentNotification.getRecipient();
 						if (recipient.getType() == Member.USER) {
 							if (recipient.equals(user)) {
-								sorted.addElement(recentNotifications[i]);
+								sorted.addElement(recentNotification);
 							}
 						} else {
 							Group group= (Group)recipient;
 							if (group.isMember(user)) {
-								sorted.addElement(recentNotifications[i]);
+								sorted.addElement(recentNotification);
 							}
 						}
 					}

@@ -50,12 +50,11 @@
 	<%
 		
 	NotificationBroker broker = BrokerFactory.getNotificationBroker();
-	Notification[] recentNotifications = broker.getNotificationsSentBy(user);
+	List<Notification> recentNotifications = broker.getNotificationsSentBy(user);
 	SortedVector removal = new SortedVector();
 
 	// sort out turned-off types
-	for (int i = 0; i < recentNotifications.length; i++) {
-		Notification notification = recentNotifications[i];
+	for (Notification notification: recentNotifications) {
 		if (notification.getTime().getTime() > (System.currentTimeMillis() - (numHours*60*60*1000))) {
 			int status = notification.getStatus();
 			if ((status == Notification.PENDING) && (viewActive)) {

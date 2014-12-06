@@ -1,4 +1,4 @@
-<%@ page import="net.reliableresponse.notification.broker.*" %><%@ page import="net.reliableresponse.notification.usermgmt.*" %><%@ page import="net.reliableresponse.notification.*" %><%@ page import="net.reliableresponse.notification.providers.*" %><%@ page import="java.util.*" %><%@ taglib uri="/reliable.tld" prefix="reliable" %><%
+<%@ page import="net.reliableresponse.notification.broker.*" %><%@ page import="java.util.*" %><%@ page import="net.reliableresponse.notification.usermgmt.*" %><%@ page import="net.reliableresponse.notification.*" %><%@ page import="net.reliableresponse.notification.providers.*" %><%@ page import="java.util.*" %><%@ taglib uri="/reliable.tld" prefix="reliable" %><%
 %><jsp:include page="header.jsp" />
 
 <tr><td colspan="4" class="mainarea">
@@ -9,18 +9,18 @@
 
 <%
 		NotificationBroker notifBroker = BrokerFactory.getNotificationBroker();
-		Notification[] notifications = notifBroker.getNotificationsSince(new Date((long)0));
+		List<Notification> notifications = notifBroker.getNotificationsSince(new Date((long)0));
 		
 		StringBuffer output = new StringBuffer();
-		for (int n = 0; n < notifications.length; n++) {
-			%><tr><td>From: <%= notifications[n].getSender()%></td>
-			<td>To: <%=notifications[n].getRecipient()%></td></tr>
-			<tr><td>Subject: <%=notifications[n].getSubject()%></td>
-			<td>Sent On: <%=notifications[n].getTime()%></td></tr>
+		for (Notification notification: notifications) {
+			%><tr><td>From: <%= notification.getSender()%></td>
+			<td>To: <%=notification.getRecipient()%></td></tr>
+			<tr><td>Subject: <%=notification.getSubject()%></td>
+			<td>Sent On: <%=notification.getTime()%></td></tr>
 			<%
-			NotificationProvider[] providers = notifications[n].getNotificationProviders();
+			NotificationProvider[] providers = notification.getNotificationProviders();
 			for (int p = 0; p < providers.length; p++) {
-				String statusOfSend = providers[p].getStatusOfSend(notifications[n]);
+				String statusOfSend = providers[p].getStatusOfSend(notification);
 				if (statusOfSend == null) statusOfSend = "unknown";
 				String color = "#FF0000";
 				if (statusOfSend.toLowerCase().startsWith("succeed")) {
@@ -30,7 +30,7 @@
 				<%
 			}
 			
-			NotificationMessage[] messages = notifications[n].getMessages();
+			NotificationMessage[] messages = notification.getMessages();
 			for (int m = 0; m < messages.length; m++) {
 				String addedBy = messages[m].getAddedby();
 				if (addedBy == null) addedBy = "unknown";

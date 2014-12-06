@@ -126,16 +126,6 @@ description, distributable, and context-param elements.
     </servlet>
 
     <servlet>
-        <servlet-name>org.apache.jsp.noauth.voxeo_jsp</servlet-name>
-        <servlet-class>org.apache.jsp.noauth.voxeo_jsp</servlet-class>
-    </servlet>
-
-    <servlet>
-        <servlet-name>org.apache.jsp.noauth.voxeo_005fresponse_jsp</servlet-name>
-        <servlet-class>org.apache.jsp.noauth.voxeo_005fresponse_jsp</servlet-class>
-    </servlet>
-
-    <servlet>
         <servlet-name>org.apache.jsp.noauth.sendLongJumpNotif_jsp</servlet-name>
         <servlet-class>org.apache.jsp.noauth.sendLongJumpNotif_jsp</servlet-class>
     </servlet>
@@ -633,16 +623,6 @@ description, distributable, and context-param elements.
     <servlet-mapping>
         <servlet-name>org.apache.jsp.pendingNotifications.adminlog_jsp</servlet-name>
         <url-pattern>/pendingNotifications/adminlog.jsp</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>org.apache.jsp.noauth.voxeo_jsp</servlet-name>
-        <url-pattern>/noauth/voxeo.jsp</url-pattern>
-    </servlet-mapping>
-
-    <servlet-mapping>
-        <servlet-name>org.apache.jsp.noauth.voxeo_005fresponse_jsp</servlet-name>
-        <url-pattern>/noauth/voxeo_response.jsp</url-pattern>
     </servlet-mapping>
 
     <servlet-mapping>
