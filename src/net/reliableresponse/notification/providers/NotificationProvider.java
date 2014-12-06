@@ -21,7 +21,7 @@ import net.reliableresponse.notification.device.Device;
  */
 public interface NotificationProvider {
 
-	public void init (Hashtable params) throws NotificationException;
+	public void init (Hashtable<String, String> params) throws NotificationException;
 	/**
 	 * 
 	 * @param notification The notification to send
@@ -30,7 +30,7 @@ public interface NotificationProvider {
 	 * @throws NotificationException
 	 */
 	
-	public Hashtable sendNotification(Notification notification, Device device) throws NotificationException;
+	public Hashtable<String, String> sendNotification(Notification notification, Device device) throws NotificationException;
 	
 	/**
 	 * If sendNotification throws an exception, use this function to get the params
@@ -39,7 +39,7 @@ public interface NotificationProvider {
 	 * @param device
 	 * @return
 	 */
-	public Hashtable getParameters (Notification notification, Device device);
+	public Hashtable<String, String> getParameters (Notification notification, Device device);
 	
 	/**
 	 * 

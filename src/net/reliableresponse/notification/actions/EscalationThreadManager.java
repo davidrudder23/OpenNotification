@@ -26,10 +26,10 @@ public class EscalationThreadManager {
 
 	private static EscalationThreadManager manager = null;
 
-	private Hashtable threads;
+	private Hashtable<String, EscalationThread> threads;
 
 	private EscalationThreadManager() {
-		threads = new Hashtable();
+		threads = new Hashtable<String, EscalationThread>();
 	}
 
 	public static EscalationThreadManager getInstance() {
@@ -80,8 +80,8 @@ public class EscalationThreadManager {
 	}
 
 	public String[] getEscalationThreadIDsForMember(Member member) {
-		Vector memberThreads = new Vector();
-		Enumeration keys = threads.keys();
+		Vector<String> memberThreads = new Vector<String>();
+		Enumeration<String> keys = threads.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			if (key != null) {
@@ -98,7 +98,7 @@ public class EscalationThreadManager {
 	}
 	
 	public String getEscalationThreadIDForThread(EscalationThread thread) {
-		Enumeration keys = threads.keys();
+		Enumeration<String> keys = threads.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			EscalationThread testThread = (EscalationThread)threads.get(key);
@@ -110,8 +110,8 @@ public class EscalationThreadManager {
 	}
 
 	public String[] getEscalationThreadIDs() {
-		Vector returnThreads = new Vector();
-		Enumeration keys = threads.keys();
+		Vector<String> returnThreads = new Vector<String>();
+		Enumeration<String> keys = threads.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			if (key != null) {
