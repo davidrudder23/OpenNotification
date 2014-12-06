@@ -167,7 +167,7 @@ public class QuartzJobsBroker implements JobsBroker {
 	
 	public void stopJob (String jobName) {
 		try {
-			ArrayList jobs = new ArrayList((List)sched.getCurrentlyExecutingJobs());
+			ArrayList<JobExecutionContext> jobs = new ArrayList<JobExecutionContext>((List<JobExecutionContext>)sched.getCurrentlyExecutingJobs());
 			for (int i = 0; i < jobs.size(); i++) {
 				JobDetail detail = ((JobExecutionContext)jobs.get(i)).getJobDetail();
 				BrokerFactory.getLoggingBroker().logDebug("Quartz Broker checking "+detail.getName());
@@ -184,11 +184,11 @@ public class QuartzJobsBroker implements JobsBroker {
 		}
 	}	
 	public String[] getHistory(String jobName) {
-		Vector history = new Vector();
+		Vector<String> history = new Vector<String>();
 		try {
 			JobDataMap map = sched.getJobDetail(jobName,
 					Scheduler.DEFAULT_GROUP).getJobDataMap();
-			Vector startTimes = (Vector) map.get("starttimes");
+			Vector<Date> startTimes = (Vector<Date>) map.get("starttimes");
 			Hashtable runTimes = (Hashtable) map.get("runtimes");
 			if (runTimes == null) runTimes = new Hashtable();
 			BrokerFactory.getLoggingBroker().logDebug("startTimes = "+startTimes);

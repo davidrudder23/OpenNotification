@@ -34,9 +34,7 @@ public class CellPhoneEmailDevice extends EmailDevice {
 				normalizedNumber += ""+charAt;
 			}
 		}
-		if (normalizedNumber == null) {
-			normalizedNumber = "";
-		}
+		
 		if ((normalizedNumber.length()>0) && (normalizedNumber.substring(0, 1).equals("1"))) {
 			normalizedNumber = normalizedNumber.substring(1, normalizedNumber.length());
 		}
