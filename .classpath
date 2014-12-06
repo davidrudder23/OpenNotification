@@ -75,8 +75,6 @@
 	<classpathentry kind="lib" path="lib/ldap.jar"/>
 	<classpathentry kind="lib" path="lib/ldapbp.jar"/>
 	<classpathentry kind="lib" path="lib/ldapsec.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.6.jar"/>
-	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
 	<classpathentry kind="lib" path="lib/mailapi.jar"/>
 	<classpathentry kind="lib" path="lib/mckoidb.jar"/>
 	<classpathentry kind="lib" path="lib/msbase.jar"/>
@@ -139,8 +137,9 @@
 	<classpathentry kind="lib" path="tools/lib/xercesImpl-2.0.2.jar"/>
 	<classpathentry kind="lib" path="tools/lib/xmlParserAPIs-2.0.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="/usr/local/apache-tomcat-7.0.11/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/opt/tomcat/common/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/twilio-client-3.3.8-jar-with-dependencies.jar"/>
-	<classpathentry kind="lib" path="/usr/local/apache-tomcat-7.0.11/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="/opt/tomcat/common/lib/jsp-api.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
 	<classpathentry kind="output" path="plugins/rrn_opennms/bin"/>
 </classpath>
