@@ -70,8 +70,6 @@ public class NagiosSender extends AbstractNotificationSender {
 		}
 
 		try {
-			// Find the time in Unix format.  Java stores it in milliseconds, where Unix uses seconds
-			long time = System.currentTimeMillis()/1000;
 			String cgiData = "";
 
 			// If we don't have any comment text, make it read "Acknowledge by" 

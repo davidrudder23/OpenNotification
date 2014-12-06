@@ -355,6 +355,14 @@ public class SendSOAPNotification {
 		return result;
 	}
 
+
+	public String[] sendNagiosRecovery(String memberName, String summary,
+			String message, String url, String username, String password,
+			boolean isService, String hostName, String objectName,
+			String priority) {
+	}
+	
+	
 	public String[] sendNagiosSiteMinderNotification(String memberName,
 			String summary, String message, String url, String username,
 			String password, boolean isService, String hostName,
