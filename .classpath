@@ -142,5 +142,5 @@
 	<classpathentry kind="lib" path="/usr/local/apache-tomcat-7.0.11/lib/servlet-api.jar"/>
 	<classpathentry kind="lib" path="lib/twilio-client-3.3.8-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="/usr/local/apache-tomcat-7.0.11/lib/jsp-api.jar"/>
-	<classpathentry kind="output" path="plugins/rrn_opennms/bin"/>
+	<classpathentry kind="output" path="eclipse_bin"/>
 </classpath>

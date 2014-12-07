@@ -14,6 +14,10 @@ public class SquelchList {
 	private static HashMap<String, List<Squelch>> squelchesByMember;
 	
 	public static boolean isSquelched (Member member, Notification notification) {
+		if (notification == null) return false;
+		
+		if (notification.getParentUuid() != null) return false;
+		
 		if (squelchesByMember == null) {
 			squelchesByMember = new HashMap<String, List<Squelch>>();
 		}

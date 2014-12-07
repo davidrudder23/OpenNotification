@@ -42,6 +42,7 @@ public class SendNotification {
 
 	private void doSend(Notification notification, Member member)
 			throws NotificationException {
+		
 		if (notification.isPersistent()) {
 			try {
 				BrokerFactory.getNotificationBroker().addNotification(
@@ -57,7 +58,13 @@ public class SendNotification {
 			}
 			
 			BrokerFactory.getLoggingBroker().logDebug("isSquelched="+SquelchList.isSquelched(member, notification));
+
+			if (SquelchList.isSquelched(member, notification)) {
+				notification.setStatus(Notification.ONHOLD);
+				notification.addMessage("Notification squelched", null);
+			}	
 		}
+		
 		if (member.getType() == Member.USER) {
 			User user = (User) member;
 			
