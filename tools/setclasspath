@@ -2,7 +2,11 @@
 
 DIR=/home/drig/workspace/OpenNotification
 echo DIR=$DIR
+<<<<<<< HEAD
+for x in eclipse_bin $DIR/bin $DIR/lib/* $DIR/tools/lib/jaxen-core-1.0-fcs.jar $DIR/tools/lib/pmd-2.0.jar $DIR/tools/lib/saxpath-1.0-fcs.jar $DIR/tools/lib/xercesImpl-2.0.2.jar $DIR/tools/lib/xmlParserAPIs-2.0.2.jar /opt/tomcat/common/lib/jsp-api.jar /opt/tomcat/common/lib/servlet-api.jar
+=======
 for x in eclipse_bin $DIR/bin $DIR/lib/* $DIR/tools/lib/jaxen-core-1.0-fcs.jar $DIR/tools/lib/pmd-2.0.jar $DIR/tools/lib/saxpath-1.0-fcs.jar $DIR/tools/lib/xercesImpl-2.0.2.jar $DIR/tools/lib/xmlParserAPIs-2.0.2.jar /opt/tomcat/common/lib/servlet-api.jar /opt/tomcat/common/lib/jsp-api.jar
+>>>>>>> refs/remotes/origin/master
 do
 	echo Adding $x to classpath
 	export CLASSPATH=$CLASSPATH:$x

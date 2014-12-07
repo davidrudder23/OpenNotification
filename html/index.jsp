@@ -1,5 +1,9 @@
 <%@ page import="net.reliableresponse.notification.broker.*" %><%@ page import="net.reliableresponse.notification.usermgmt.*" %><%@ page import="net.reliableresponse.notification.util.*" %><%@ page import="net.reliableresponse.notification.*" %><%@ taglib uri="/reliable.tld" prefix="reliable" %><%
 	User user = BrokerFactory.getUserMgmtBroker().getUserByUuid((String)session.getAttribute("user"));
+if (BrokerFactory.getAuthorizationBroker().isUserInRole(user, Roles.MANAGED)) {
+	response.sendRedirect("hosted/index.jsp");
+}
+
 	String notifsTitle = request.getParameter("notifsTitle");
 	if (notifsTitle == null) {
 		response.sendRedirect("ActionServlet?page=/index.jsp");
@@ -7,11 +11,7 @@
 	} 
 	String sentNotifsTitle = request.getParameter("sentNotifsTitle");
 	
-	if (BrokerFactory.getAuthorizationBroker().isUserInRole(user, Roles.MANAGED)) {
-		response.sendRedirect("hosted/index.jsp");
-	} else if (BrokerFactory.getAuthorizationBroker().isUserInRole(user, Roles.TXTIT)) {
-		response.sendRedirect("txtit/index.jsp");
-	}
+	String squelchedNotifsTitle = request.getParameter("squelchedNotifsTitle");
 
 %><jsp:include page="header.jsp" />
 <input type="hidden" name="page" value="/index.jsp" />
@@ -82,6 +82,13 @@ contentURL="/pendingNotifications/index.jsp" opened="false">
 
 <reliable:collapseable tag="sent Notifications" title="<%= sentNotifsTitle %>"
 contentURL="/pendingNotifications/sentNotifications.jsp" opened="false">
+</reliable:collapseable>
+
+
+<tr><td colspan="25">&nbsp;</td></tr>
+
+<reliable:collapseable tag="Squelched Notifications" title="<%= squelchedNotifsTitle %>"
+contentURL="/pendingNotifications/squelchedNotifications.jsp" opened="false">
 </reliable:collapseable>
 
 <tr><td colspan="25">&nbsp;</td></tr><%

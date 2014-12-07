@@ -7,6 +7,7 @@
 package net.reliableresponse.notification.broker;
 
 import java.io.InputStream;
+import java.util.List;
 
 /**
  * @author drig
@@ -45,6 +46,13 @@ public interface ConfigurationBroker {
 	 * @return
 	 */
 	public String[] getStringValues(String key, String[] defaultValue);
+
+	/**
+	 * Gets a list of comma-separated values
+	 * @param key
+	 * @return
+	 */
+	public List<String> getStringValues(String key, List<String> defaultValue);
 
 	/**
 	 * Gets an integer from the configuration

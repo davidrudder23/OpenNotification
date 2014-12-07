@@ -15,7 +15,6 @@ function respond(response) {
         document.mainform.submit();
 }
 </script>
-<input type="hidden" name="response_placeholder" value="">
 <tr>
 <td width="11"><img src="images/spacer.gif" width="1" height="1"></td>
 <td valign="middle">

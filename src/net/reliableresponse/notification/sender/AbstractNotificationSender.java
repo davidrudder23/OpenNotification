@@ -5,13 +5,17 @@
  */
 package net.reliableresponse.notification.sender;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationException;
 import net.reliableresponse.notification.actions.EscalationThread;
 import net.reliableresponse.notification.actions.EscalationThreadManager;
 import net.reliableresponse.notification.actions.SendNotification;
+import net.reliableresponse.notification.aggregation.Squelcher;
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.device.Device;
 import net.reliableresponse.notification.usermgmt.EscalationGroup;
@@ -29,10 +33,10 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 	public static final int CONFIRM=1;
 	public static final int PASS=2;
 	
-	private String[] individualOptions = {"Confirm", "Ack", "ConfirmAll"};
-	private String[] escalationOptions = {"Confirm", "Ack", "ConfirmAll", "Pass"};
-	private String[] expiredOptions = {};
-	private String[] onHoldOptions = {"Confirm", "Ack", "ConfirmAll", "Release"};
+	private List<String> individualOptions = new ArrayList<String>(Arrays.asList("Confirm", "Ack", "ConfirmAll"));
+	private List<String> escalationOptions = new ArrayList<String>(Arrays.asList("Confirm", "Ack", "ConfirmAll", "Pass"));
+	private List<String> expiredOptions = new ArrayList<String>(Arrays.asList());
+	private List<String> onHoldOptions = new ArrayList<String>(Arrays.asList("Confirm", "Ack", "ConfirmAll", "Release"));
 	
 	private String bridgeNumber;
 	
@@ -40,11 +44,12 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 	 * @see net.reliableresponse.notification.sender.NotificationSender#getAvailableResponses(net.reliableresponse.notification.Notification)
 	 */
 	public String[] getAvailableResponses(Notification notification) {
+		List<String> options;
 		BrokerFactory.getLoggingBroker().logDebug("Getting available responses for "+notification.getRecipient());
 		if (notification.getStatus() == Notification.ONHOLD) {
-			return BrokerFactory.getConfigurationBroker().getStringValues("responses.onhold", onHoldOptions);
+			options = new ArrayList(BrokerFactory.getConfigurationBroker().getStringValues("responses.onhold", onHoldOptions));
 		} else if (notification.getStatus() == Notification.EXPIRED) {
-			return BrokerFactory.getConfigurationBroker().getStringValues("responses.expired", expiredOptions);
+			options = new ArrayList(BrokerFactory.getConfigurationBroker().getStringValues("responses.expired", expiredOptions));
 		}
 		
 		Member recipient = notification.getRecipient();
@@ -55,10 +60,23 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 			}
 		}
 		if (notification.getUltimateParent().getRecipient() instanceof EscalationGroup) {
-			return BrokerFactory.getConfigurationBroker().getStringValues("responses.escalation", escalationOptions);
+			options = new ArrayList(BrokerFactory.getConfigurationBroker().getStringValues("responses.escalation", escalationOptions));
 		} else {
-			return BrokerFactory.getConfigurationBroker().getStringValues("responses.individual", individualOptions);
+			options = new ArrayList(BrokerFactory.getConfigurationBroker().getStringValues("responses.individual", individualOptions));
 		}
+		
+		BrokerFactory.getLoggingBroker().logDebug("Options has "+options.size()+" elems");
+
+		if (recipient.getType() == Member.USER) {
+			if (Squelcher.isSquelched(notification)) {
+				options.add("Unsquelch");
+			} else {
+				options.add("Squelch");
+			}
+		}
+		
+		BrokerFactory.getLoggingBroker().logDebug("Options has "+options.size()+" elems - "+options.stream().reduce("", (a,b)->a+" "+b));
+		return options.toArray(new String[0]);
 	}
 
 	public String getNotificationType() {
@@ -75,6 +93,17 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 	 */
 	public void handleResponse(Notification notification, Member responder, String response, String text) {
 		BrokerFactory.getLoggingBroker().logDebug("Handling response "+response);
+		
+		if ("squelch".equalsIgnoreCase(response)) {
+			Squelcher.squelch(notification);
+			return;
+		}
+		
+		if ("unsquelch".equalsIgnoreCase(response)) {
+			Squelcher.unsquelch(notification);
+			return;
+		}
+		
 		if ((notification.getStatus() == Notification.ONHOLD) && (response.equalsIgnoreCase("release"))) {
 			notification.setStatus(Notification.PENDING, responder);
 			notification.addMessage("Message release from event storm hold", responder);

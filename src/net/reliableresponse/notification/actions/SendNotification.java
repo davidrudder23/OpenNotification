@@ -13,6 +13,7 @@ import java.util.Vector;
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationException;
 import net.reliableresponse.notification.NotificationMessage;
+import net.reliableresponse.notification.aggregation.Squelcher;
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.device.Device;
 import net.reliableresponse.notification.providers.NotificationProvider;
@@ -41,6 +42,7 @@ public class SendNotification {
 
 	private void doSend(Notification notification, Member member)
 			throws NotificationException {
+		
 		if (notification.isPersistent()) {
 			try {
 				BrokerFactory.getNotificationBroker().addNotification(
@@ -54,7 +56,15 @@ public class SendNotification {
 			} catch (Exception anyExc) {
 				BrokerFactory.getLoggingBroker().logWarn(anyExc);
 			}
+			
+			if (Squelcher.isSquelched(notification)) {
+				BrokerFactory.getLoggingBroker().logDebug(notification.getUuid()+" is squelched");
+
+				notification.setStatus(Notification.ONHOLD);
+				notification.addMessage("Notification squelched", null);
+			}	
 		}
+		
 		if (member.getType() == Member.USER) {
 			User user = (User) member;
 			

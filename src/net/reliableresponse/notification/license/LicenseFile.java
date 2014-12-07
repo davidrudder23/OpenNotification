@@ -48,9 +48,8 @@ public class LicenseFile {
 	private Date validFrom;
 	private Date validTo;
 	private String installClass;
-	private boolean hasValidFile;
 	
-	private int maxUsers;
+	private int maxUsers = 0;
 	
 	private static LicenseFile instance = null;
 	private SimpleDateFormat dateFormat;
@@ -65,12 +64,7 @@ public class LicenseFile {
 	}
 	
 	public LicenseFile () {
-		hasValidFile = false;
-		
-		dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-		
 		maxUsers = -1;
-
 	}
 	
 	public boolean read (String filename, String password) {
@@ -87,86 +81,7 @@ public class LicenseFile {
 	}
 	
 	public boolean read(InputStream in , String password) {
-		if (in == null) {
-			return false;
-		}
-		try {
-			if (in.available() <= 0 ) return false;
-		} catch (IOException e1) {
-			BrokerFactory.getLoggingBroker().logError(e1);
-			return false;
-		}
-		
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			factory.setValidating(false);
-			Document document = builder.parse(new InputSource(in));
-			
-			Element licenseElement = (Element)document.getElementsByTagName("reliableresponse-License").item(0);
-			Element licenseBody = (Element)licenseElement.getElementsByTagName("reliableresponse-LicenseBody").item(0);
-			Element validityDates = (Element)licenseBody.getElementsByTagName("validityDates").item(0);
-			validFrom = new Date(Long.parseLong(validityDates.getAttribute("from")));
-			BrokerFactory.getLoggingBroker().logDebug("validfrom="+validFrom);
-			validTo = new Date(Long.parseLong(validityDates.getAttribute("to")));
-			BrokerFactory.getLoggingBroker().logDebug("validto="+validTo);
-			
-			Element productInfo = (Element)licenseBody.getElementsByTagName("productInfo").item(0);
-			installClass = productInfo.getAttribute("installClass");
-			
-			// Read the digest
-			Element digestElement = (Element)licenseElement.getElementsByTagName("reliableresponse-LicenseDigest").item(0);
-			String algorithm = digestElement.getAttribute("digest-algorithm");
-			BrokerFactory.getLoggingBroker().logDebug("algorithm="+algorithm);
-			String digestValue = digestElement.getAttribute("digest-value");
-			
-			String maxUsersString = productInfo.getAttribute("maxUsers");
-			if (maxUsersString != null) {
-				try {
-					maxUsers = Integer.parseInt (maxUsersString);
-				} catch (NumberFormatException e) {
-					BrokerFactory.getLoggingBroker().logWarn("Could not parse max users in license: "+maxUsersString);
-				}
-			}
-			// Check the signature
-			OutputFormat format = new OutputFormat(document); //Serialize DOM
-			format.setOmitXMLDeclaration(false);
-			//format.setDoctype(null, "http://www.reliableresponse.net/license.dtd");
-			StringWriter bodyBuffer = new StringWriter();
-			XMLSerializer serial = new XMLSerializer(bodyBuffer, format);
-			serial.asDOMSerializer(); // As a DOM Serializer
-			serial.serialize(licenseBody);
-			String bodyString = bodyBuffer.toString();
-			BrokerFactory.getLoggingBroker().logDebug("Inner XML = "+bodyString);
-			
-			MessageDigest digest = MessageDigest.getInstance(algorithm);
-			digest.update (bodyString.getBytes());
-			digest.update (password.getBytes());
-			String confirmValue = net.reliableresponse.notification.util.Base64.byteArrayToBase64(digest.digest());
-			
-			if (!confirmValue.equals(digestValue)) {
-				BrokerFactory.getLoggingBroker().logDebug("License file digest value mismatch");
-				BrokerFactory.getLoggingBroker().logDebug("License file digest in xml   : "+digestValue);
-				BrokerFactory.getLoggingBroker().logDebug("License file digest generated: "+confirmValue);
-				return false;
-			}
-			hasValidFile = true;
-			return isValid();
-		} catch (FileNotFoundException e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		} catch (FactoryConfigurationError e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		} catch (ParserConfigurationException e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		} catch (SAXException e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		} catch (NoSuchAlgorithmException e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		} catch (IOException e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		}
-		
-		return false;
+		return true;
 	}
 	
 	/**
@@ -174,26 +89,7 @@ public class LicenseFile {
 	 */
 	
 	public void save (String licenseFile) throws Exception {
-		if (!read(new StringBufferInputStream(licenseFile), "Reliable Response License kcjnsdk")) {
-			throw new Exception ("Invalid license file");
-		}
-		
-		URL resourceURL = new String().getClass().getResource("/conf/license.xml");
-		if (resourceURL == null) {
-			// Find it by hacking the Tomcat path 
-			BrokerFactory.getLoggingBroker().logDebug("No resource URL for license file, using Tomcat hack");
-			String outputDir = BrokerFactory.getConfigurationBroker().getStringValue("tomcat.location", "/opt/tomcat5");
-			outputDir += "/webapps/notification/conf/license.xml";
 
-			FileOutputStream out = new FileOutputStream(outputDir);
-			out.write (licenseFile.getBytes());
-			out.close();
-		} else {
-			// We have a resourceURL, so use that
-			BrokerFactory.getLoggingBroker().logDebug("Resource URL="+resourceURL);
-			BrokerFactory.getLoggingBroker().logDebug("Resource File="+resourceURL.getFile());
-			// TODO
-		}
 	}
 	
 	/**
@@ -201,68 +97,7 @@ public class LicenseFile {
 	 *
 	 */
 	public String write (String password) {
-		try {
-			MessageDigest digest = MessageDigest.getInstance("SHA-1");
-			Document doc =DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-			Element root = doc.createElement("reliableresponse-License");
-			// Create Root Element
-			root.setAttribute("licenseVersion", "1.0");
-			Element body = doc.createElement("reliableresponse-LicenseBody");
-			Element validityDates = doc.createElement("validityDates");
-			validityDates.setAttribute("from", getValidFrom().getTime()+"");
-			validityDates.setAttribute("to", getValidTo().getTime()+"");
-			body.appendChild(validityDates);
-
-			Element productInfo = doc.createElement("productInfo");
-			productInfo.setAttribute("version", "1.0");
-			productInfo.setAttribute("installClass", installClass);
-			productInfo.setAttribute("maxUsers", maxUsers+"");
-			body.appendChild(productInfo);
-
-			root.appendChild(body);
-			
-			// Get the body as text
-			OutputFormat format = new OutputFormat(doc); //Serialize DOM
-			format.setOmitXMLDeclaration(false);
-			//format.setDoctype(null, "http://www.reliableresponse.net/license.dtd");
-			StringWriter bodyBuffer = new StringWriter();
-			XMLSerializer serial = new XMLSerializer(bodyBuffer, format);
-			serial.asDOMSerializer(); // As a DOM Serializer
-			serial.serialize(body);
-			String bodyString = bodyBuffer.toString();
-			BrokerFactory.getLoggingBroker().logDebug("Inner XML = "+bodyString);
-			
-			// Get the digest
-			digest.update (bodyString.getBytes());
-			digest.update (password.getBytes());
-			
-			Element signatureElement = doc.createElement("reliableresponse-LicenseDigest");
-
-			signatureElement.setAttribute("digest-algorithm", digest.getAlgorithm());
-			signatureElement.setAttribute("digest-value", new sun.misc.BASE64Encoder().encode(digest.digest()));
-			root.appendChild(signatureElement);
-			doc.appendChild(root);
-			
-			format = new OutputFormat(doc); //Serialize DOM
-			format.setOmitXMLDeclaration(true);
-			//format.setDoctype(null, "http://www.reliableresponse.net/license.dtd");
-			StringWriter docBuffer = new StringWriter();
-			serial = new XMLSerializer(docBuffer, format);
-			serial.asDOMSerializer(); // As a DOM Serializer
-			serial.serialize(doc.getDocumentElement());
-			String docString = docBuffer.toString();
-			
-			BrokerFactory.getLoggingBroker().logDebug("XML = "+docString);
-			
-			return docString;
-		} catch (NoSuchAlgorithmException e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		} catch (DOMException e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		} catch (Exception e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		}
-		return null;
+		return "";
 	}
 	
 	
@@ -280,6 +115,7 @@ public class LicenseFile {
 	}
 	
 	public String getFormattedDate (Date date) {
+		dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 		return dateFormat.format(date);
 		
 	}
@@ -297,23 +133,16 @@ public class LicenseFile {
 	}
 
 	public String getInstallClass() {
-		if (installClass == null) installClass ="Unspecified";
-		return installClass;
+		return "Enterprise";
+		//if (installClass == null) installClass ="Unspecified";
+		//return installClass;
 	}
 	public void setInstallClass(String installClass) {
 		this.installClass = installClass;
 	}
 	
 	public boolean isValid() {
-		if (!hasValidFile) return false;
-		if (installClass.equalsIgnoreCase("enterprise")) {
-			return true;
-		}
-		
-		long now = System.currentTimeMillis();
-		long to = validTo.getTime();
-		long from = validFrom.getTime();
-		return ((now >= from) && (now <= to));
+		return true;
 	}
 	
 	public static void main (String[] args) throws Exception {

@@ -10,6 +10,7 @@
 
 <body leftmargin="0" topmargin="0" marginwidth="0" marginheight="0">
 <form name="mainform" action="ActionServlet" method="POST">
+<input type="hidden" name="response_placeholder" value="">
 
 <input type="image" src="images/hidden.gif" name="action_mispress">
 <input type="hidden" name="action" value="unset">
