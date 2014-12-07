@@ -1,4 +1,4 @@
-<%@ page import="net.reliableresponse.notification.sender.*" %><%@ page import="net.reliableresponse.notification.actions.*" %><%@ page import="net.reliableresponse.notification.*" %><%@ page import="net.reliableresponse.notification.usermgmt.*" %><%@ page import="net.reliableresponse.notification.broker.*" %><%@ page import="java.text.SimpleDateFormat" %><%@ page import="java.math.BigInteger" %><%@ page import="java.util.Vector" %><%@ page import="net.reliableresponse.notification.util.SortedVector" %>
+<%@ page import="java.util.*" %><%@ page import="net.reliableresponse.notification.sender.*" %><%@ page import="net.reliableresponse.notification.actions.*" %><%@ page import="net.reliableresponse.notification.*" %><%@ page import="net.reliableresponse.notification.usermgmt.*" %><%@ page import="net.reliableresponse.notification.broker.*" %><%@ page import="java.text.SimpleDateFormat" %><%@ page import="java.math.BigInteger" %><%@ page import="java.util.Vector" %><%@ page import="net.reliableresponse.notification.util.SortedVector" %>
 <jsp:directive.page import="java.util.Date"/><%
 response.setContentType("text/xml");
 %><?xml version="1.0" encoding="iso-8859-1"?>
@@ -17,22 +17,22 @@ response.setContentType("text/xml");
 	bigint = bigint.multiply(new BigInteger("3600"));
 	bigint = bigint.multiply(new BigInteger("1000"));
 	
-	Notification[] recentNotifications = broker.getNotificationsSince(bigint.longValue());
+	List<Notification> recentNotifications = broker.getNotificationsSince(bigint.longValue());
 	Vector sorted = new SortedVector();
-	for (int i = 0; i < recentNotifications.length; i++) {
-		if (recentNotifications[i].getParentUuid() == null) {
+	for (Notification recentNotification: recentNotifications) {
+		if (recentNotification.getParentUuid() == null) {
 			if (isAdmin) {
-					sorted.addElement(recentNotifications[i]);
+					sorted.addElement(recentNotification);
 			} else {
-				Member recipient = recentNotifications[i].getRecipient();
+				Member recipient = recentNotification.getRecipient();
 				if (recipient.getType() == Member.USER) {
 					if (recipient.equals(user)) {
-						sorted.addElement(recentNotifications[i]);
+						sorted.addElement(recentNotification);
 					}
 				} else {
 					Group group= (Group)recipient;
 					if (group.isMember(user)) {
-						sorted.addElement(recentNotifications[i]);
+						sorted.addElement(recentNotification);
 					}
 				}
 			}

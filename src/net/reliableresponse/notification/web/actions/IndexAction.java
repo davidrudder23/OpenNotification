@@ -7,6 +7,7 @@
 package net.reliableresponse.notification.web.actions;
 
 import java.math.BigInteger;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletRequest;
@@ -108,22 +109,22 @@ public class IndexAction implements Action {
 		BigInteger bigint = new BigInteger(""+numHours);
 		bigint = bigint.multiply(new BigInteger("3600"));
 		bigint = bigint.multiply(new BigInteger("1000"));
-		Notification[] recentNotifications = broker.getNotificationsSince(bigint.longValue());
+		List<Notification> recentNotifications = broker.getNotificationsSince(bigint.longValue());
 		Vector sorted = new SortedVector();
-		for (int i = 0; i < recentNotifications.length; i++) {
-			if (recentNotifications[i].getParentUuid() == null) {
+		for (Notification recentNotification: recentNotifications) {
+			if (recentNotification.getParentUuid() == null) {
 				if (isAdmin) {
-						sorted.addElement(recentNotifications[i]);
+						sorted.addElement(recentNotification);
 				} else {
-					Member recipient = recentNotifications[i].getRecipient();
+					Member recipient = recentNotification.getRecipient();
 					if (recipient.getType() == Member.USER) {
 						if (recipient.equals(user)) {
-							sorted.addElement(recentNotifications[i]);
+							sorted.addElement(recentNotification);
 						}
 					} else {
 						Group group= (Group)recipient;
 						if (group.isMember(user)) {
-							sorted.addElement(recentNotifications[i]);
+							sorted.addElement(recentNotification);
 						}
 					}
 				}
@@ -132,22 +133,22 @@ public class IndexAction implements Action {
 		
 		// Add all the pending notifications
 		recentNotifications = broker.getAllPendingNotifications();
-		BrokerFactory.getLoggingBroker().logDebug(recentNotifications.length+" pending notifs");
-		for (int i = 0; i < recentNotifications.length; i++) {
-			if (recentNotifications[i].getParentUuid() == null) {
-				if (!sorted.contains(recentNotifications[i])) {
+		BrokerFactory.getLoggingBroker().logDebug(recentNotifications.size()+" pending notifs");
+		for (Notification recentNotification: recentNotifications) {
+			if (recentNotification.getParentUuid() == null) {
+				if (!sorted.contains(recentNotification)) {
 					if (isAdmin) {
-						sorted.addElement(recentNotifications[i]);
+						sorted.addElement(recentNotification);
 					} else {
-						Member recipient = recentNotifications[i].getRecipient();
+						Member recipient = recentNotification.getRecipient();
 						if (recipient.getType() == Member.USER) {
 							if (recipient.equals(user)) {
-								sorted.addElement(recentNotifications[i]);
+								sorted.addElement(recentNotification);
 							}
 						} else {
 							Group group= (Group)recipient;
 							if (group.isMember(user)) {
-								sorted.addElement(recentNotifications[i]);
+								sorted.addElement(recentNotification);
 							}
 						}
 					}
@@ -272,18 +273,18 @@ public class IndexAction implements Action {
 			actionRequest.setParameter("view_byme_onhold", ""+viewOnhold);
 		}
 
-		Notification[] myNotifications = broker.getNotificationsSentBy (user);
-		BrokerFactory.getLoggingBroker().logDebug("We have "+myNotifications.length+" my notifs");
+		List<Notification> myNotifications = broker.getNotificationsSentBy (user);
+		BrokerFactory.getLoggingBroker().logDebug("We have "+myNotifications.size()+" my notifs");
 
 		pending = 0;
 		confirmed = 0;
 		expired = 0;
 		onhold = 0;
 
-		for (int i = 0; i < myNotifications.length; i++) {
-			if (myNotifications[i].getTime().getTime() > (System
+		for (Notification myNotification: myNotifications) {
+			if (myNotification.getTime().getTime() > (System
 					.currentTimeMillis() - (numHours * 60 * 60 * 1000))) {
-				int status = myNotifications[i].getStatus();
+				int status = myNotification.getStatus();
 				switch (status) {
 				case Notification.NORMAL:
 				case Notification.PENDING:

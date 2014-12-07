@@ -6,8 +6,10 @@
  */
 package net.reliableresponse.notification.broker.impl.caching;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import net.reliableresponse.notification.Notification;
@@ -83,11 +85,11 @@ public class CachingNotificationBroker implements NotificationBroker {
 	/* (non-Javadoc)
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getChildren(net.reliableresponse.notification.Notification)
 	 */
-	public Notification[] getChildren(Notification parent) {
+	public List<Notification> getChildren(Notification parent) {
 		String[] childrenUuids = getChildrenUuids(parent);
-		Notification[] children = new Notification[childrenUuids.length];
-		for (int i = 0; i < children.length; i++) {
-			children[i] = getNotificationByUuid(childrenUuids[i]);
+		List<Notification> children = new ArrayList<Notification>();
+		for (int i = 0; i < childrenUuids.length; i++) {
+			children.add(getNotificationByUuid(childrenUuids[i]));
 		}
 		return children;
 	}
@@ -106,20 +108,20 @@ public class CachingNotificationBroker implements NotificationBroker {
 	/* (non-Javadoc)
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getNotificationsSentTo(net.reliableresponse.notification.usermgmt.Member)
 	 */
-	public Notification[] getNotificationsSentTo(Member member) {
+	public List<Notification> getNotificationsSentTo(Member member) {
 		String[] uuids = getUuidsSentTo(member);
-		Notification[] notifications = new Notification[uuids.length];
-		for (int i = 0; i < notifications.length; i++) {
-			notifications[i] = getNotificationByUuid(uuids[i]);
+		List<Notification> notifications = new ArrayList<Notification>();
+		for (int i = 0; i < uuids.length; i++) {
+			notifications.add(getNotificationByUuid(uuids[i]));
 		}
 		return notifications;
 	}
 	
-	public Notification[] getNotificationsSentBy(User user) {
+	public List<Notification> getNotificationsSentBy(User user) {
 		String[] uuids = getUuidsSentBy(user);
-		Notification[] notifications = new Notification[uuids.length];
-		for (int i = 0; i < notifications.length; i++) {
-			notifications[i] = getNotificationByUuid(uuids[i]);
+		List<Notification> notifications = new ArrayList<Notification>();
+		for (int i = 0; i < uuids.length; i++) {
+			notifications.add(getNotificationByUuid(uuids[i]));
 		}
 		return notifications;	
 	}
@@ -127,11 +129,11 @@ public class CachingNotificationBroker implements NotificationBroker {
 	/* (non-Javadoc)
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getNotificationsSince(java.util.Date)
 	 */
-	public Notification[] getNotificationsSince(Date since) {
+	public List<Notification> getNotificationsSince(Date since) {
 		String[] uuids = getUuidsSince(since);
-		Notification[] notifications = new Notification[uuids.length];
-		for (int i = 0; i < notifications.length; i++) {
-			notifications[i] = getNotificationByUuid(uuids[i]);
+		List<Notification> notifications = new ArrayList<Notification>();
+		for (int i = 0; i < uuids.length; i++) {
+			notifications.add(getNotificationByUuid(uuids[i]));
 		}
 		return notifications;	
 	}
@@ -139,11 +141,11 @@ public class CachingNotificationBroker implements NotificationBroker {
 	/* (non-Javadoc)
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getNotificationsSince(long)
 	 */
-	public Notification[] getNotificationsSince(long since) {
+	public List<Notification> getNotificationsSince(long since) {
 		String[] uuids = getUuidsSince(since);
-		Notification[] notifications = new Notification[uuids.length];
-		for (int i = 0; i < notifications.length; i++) {
-			notifications[i] = getNotificationByUuid(uuids[i]);
+		List<Notification> notifications = new ArrayList<Notification>();
+		for (int i = 0; i < uuids.length; i++) {
+			notifications.add(getNotificationByUuid(uuids[i]));
 		}
 		return notifications;	
 	}
@@ -164,28 +166,28 @@ public class CachingNotificationBroker implements NotificationBroker {
 		}
 		return numDeleted;
 	}
-	public Notification[] getNotificationsBefore(Date before) {
+	public List<Notification> getNotificationsBefore(Date before) {
 		String[] uuids = getUuidsBefore(before);
-		Notification[] notifications = new Notification[uuids.length];
-		for (int i = 0; i < notifications.length; i++) {
-			notifications[i] = getNotificationByUuid(uuids[i]);
+		List<Notification> notifications = new ArrayList<Notification>();
+		for (int i = 0; i < uuids.length; i++) {
+			notifications.add(getNotificationByUuid(uuids[i]));
 		}
 		return notifications;	
 	}
 	/* (non-Javadoc)
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getAllUnconfirmedNotifications()
 	 */
-	public Notification[] getAllUnconfirmedNotifications() {
+	public List<Notification> getAllUnconfirmedNotifications() {
 		return realBroker.getAllUnconfirmedNotifications();
 	}
 
 	/* (non-Javadoc)
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getAllPendingNotifications()
 	 */
-	public Notification[] getAllPendingNotifications() {
+	public List<Notification> getAllPendingNotifications() {
         String[] uuids = getAllPendingUuids();
         if (uuids == null) {
-                return new Notification[0];
+                return new ArrayList<Notification>();
         }
         Vector notifications = new Vector();
         for (int i = 0; i < uuids.length; i++) {
@@ -194,7 +196,7 @@ public class CachingNotificationBroker implements NotificationBroker {
                         notifications.addElement(notification);
                 }
         }
-        return (Notification[])notifications.toArray(new Notification[0]);
+        return notifications;
 	}
 
 	public int getNumNotifications() {
@@ -206,7 +208,7 @@ public class CachingNotificationBroker implements NotificationBroker {
 	/* (non-Javadoc)
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getMembersUnconfirmedNotifications(net.reliableresponse.notification.usermgmt.Member)
 	 */
-	public Notification[] getMembersUnconfirmedNotifications(Member member) {
+	public List<Notification> getMembersUnconfirmedNotifications(Member member) {
 		String[] uuids = getMembersUnconfirmedUuids(member);
 		if (uuids == null) {
 			uuids = new String[0];
@@ -219,12 +221,12 @@ public class CachingNotificationBroker implements NotificationBroker {
 			}
 		}
 		
-		return (Notification[])notifications.toArray(new Notification[0]);
+		return notifications;
 	}
 	
 	
 
-	public Notification[] getUpdatedNotificationsTo(Member member, Date since) {
+	public List<Notification> getUpdatedNotificationsTo(Member member, Date since) {
 		return realBroker.getUpdatedNotificationsTo(member, since);
 	}
 
@@ -234,7 +236,7 @@ public class CachingNotificationBroker implements NotificationBroker {
 	/* (non-Javadoc)
 	 * @see net.reliableresponse.notification.broker.NotificationBroker#getMembersPendingNotifications()
 	 */
-	public Notification[] getMembersPendingNotifications() {
+	public List<Notification> getMembersPendingNotifications() {
 		return realBroker.getMembersPendingNotifications();
 	}
 

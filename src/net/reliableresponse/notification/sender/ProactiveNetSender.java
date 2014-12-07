@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import net.reliableresponse.notification.Notification;
@@ -160,19 +161,17 @@ public class ProactiveNetSender extends AbstractNotificationSender {
 			if ((recipient == null) || (recipient instanceof UnknownUser)) {
 				recipient = notification.getUltimateParent().getRecipient();
 			}
-			Notification[] unconfirmedNotifs = BrokerFactory
-					.getNotificationBroker()
-					.getMembersUnconfirmedNotifications(recipient);
+			List<Notification> unconfirmedNotifs = BrokerFactory.getNotificationBroker().getMembersUnconfirmedNotifications(recipient);
 			BrokerFactory.getLoggingBroker().logDebug(
-					"CloseAll found " + unconfirmedNotifs.length
+					"CloseAll found " + unconfirmedNotifs.size()
 							+ " unconfirmed notifs");
-			for (int i = 0; i < unconfirmedNotifs.length; i++) {
-				if (unconfirmedNotifs[i].getSender().getClass().equals(
+			for (Notification unconfirmedNotif:unconfirmedNotifs) {
+				if (unconfirmedNotif.getSender().getClass().equals(
 						getClass())) {
 					BrokerFactory.getLoggingBroker().logDebug(
-							"CloseAll closing " + unconfirmedNotifs[i]);
-					unconfirmedNotifs[i].getSender().handleResponse(
-							unconfirmedNotifs[i], responder, "Close", text);
+							"CloseAll closing " + unconfirmedNotif);
+					unconfirmedNotif.getSender().handleResponse(
+							unconfirmedNotif, responder, "Close", text);
 				}
 			}
 			if ((notification.getStatus() == Notification.PENDING)

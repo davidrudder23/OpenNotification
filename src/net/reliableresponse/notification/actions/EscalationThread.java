@@ -59,7 +59,7 @@ public class EscalationThread extends Thread {
 		Member[] members = group.getMembers();
 		recipientMap = new int[members.length];
 
-		Vector orderedMembers = new Vector();
+		Vector<Member> orderedMembers = new Vector<Member>();
 		// 1st, add the members who are not on vacation
 		for (int i = 0; i < members.length; i++) {
 			member = members[i];

@@ -9,6 +9,7 @@ package net.reliableresponse.notification.web.servlets;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -218,23 +219,21 @@ public class InitializationServlet extends HttpServlet {
 
 		// Setup the ProviderStatusLoop
 		ProviderStatusLoop loop = ProviderStatusLoop.getInstance();
-		Notification[] activeNotifs = BrokerFactory.getNotificationBroker()
-				.getNotificationsSince(60 * 60 * 1000);
+		List<Notification> activeNotifs = BrokerFactory.getNotificationBroker().getNotificationsSince(60 * 60 * 1000);
 		BrokerFactory.getLoggingBroker().logDebug(
-				"We got " + activeNotifs.length + " active notifs");
+				"We got " + activeNotifs.size() + " active notifs");
 		String clusterName = BrokerFactory.getConfigurationBroker()
 				.getStringValue("cluster.name");
 		if (clusterName == null)
 			clusterName = "single";
-		for (int i = 0; i < activeNotifs.length; i++) {
-			BrokerFactory.getLoggingBroker().logDebug(
-					"Checking to see if " + activeNotifs[i].getUuid()
+		for (Notification activeNotif: activeNotifs) {
+			BrokerFactory.getLoggingBroker().logDebug("Checking to see if " + activeNotif.getUuid()
 							+ " needs activating");
-			String activeNotifOwner = activeNotifs[i].getOwner();
-			if (activeNotifs[i].getOwner().equals(clusterName)) {
+			String activeNotifOwner = activeNotif.getOwner();
+			if (activeNotif.getOwner().equals(clusterName)) {
 				BrokerFactory.getLoggingBroker().logDebug(
-						"Activating notification " + activeNotifs[i]);
-				loop.addNotification(activeNotifs[i]);
+						"Activating notification " + activeNotif);
+				loop.addNotification(activeNotif);
 			} else if ((!(clusterName.equals("single")))
 					&& (isClusterMember(activeNotifOwner))) {
 				if (!ClusteredBrokerTransmitter.ping(activeNotifOwner)) {
@@ -243,14 +242,12 @@ public class InitializationServlet extends HttpServlet {
 							.logDebug(
 									activeNotifOwner
 											+ " not responding to ping.  Taking notification "
-											+ activeNotifs[i].getUuid());
-					activeNotifs[i].setOwner(clusterName);
-					loop.addNotification(activeNotifs[i]);
+											+ activeNotif.getUuid());
+					activeNotif.setOwner(clusterName);
+					loop.addNotification(activeNotif);
 				}
 			} else {
-				BrokerFactory.getLoggingBroker().logWarn(
-						"Notification " + activeNotifs[i] + " owner "
-								+ activeNotifs[i].getOwner() + " is unknown");
+				BrokerFactory.getLoggingBroker().logWarn("Notification " + activeNotif + " owner " + activeNotif.getOwner() + " is unknown");
 			}
 		}
 

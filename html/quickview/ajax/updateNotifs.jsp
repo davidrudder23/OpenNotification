@@ -5,9 +5,8 @@
 <jsp:directive.page import="net.reliableresponse.notification.Notification"/>
 <jsp:directive.page import="net.reliableresponse.notification.NotificationMessage"/>
 <jsp:directive.page import="net.reliableresponse.notification.util.StringUtils"/>
-<jsp:directive.page import="java.util.Vector"/>
 <jsp:directive.page import="net.reliableresponse.notification.util.SortedVector"/>
-<jsp:directive.page import="java.util.Date"/><%
+<jsp:directive.page import="java.util.*"/><%
 	// Load the user object
 	String userUuid = (String) session.getAttribute("user");
 	User user = null;
@@ -39,23 +38,23 @@
 <notifications>
 <lastUpdate><%= lastUpdate.toString() %></lastUpdate>
 <%
-	Notification[] notifs = BrokerFactory.getNotificationBroker()
+	List<Notification> notifs = BrokerFactory.getNotificationBroker()
 			.getUpdatedNotificationsTo(user, lastUpdate);
 	SortedVector sortedNotifs = new SortedVector();
-	for (int i = 0; i < notifs.length; i++) {
-		notifs[i].sortByTime();
-		sortedNotifs.addElement(notifs[i]);
+	for (Notification notif: notifs) {
+		notif.sortByTime();
+		sortedNotifs.addElement(notif);
 	}
-	notifs = (Notification[])sortedNotifs.toArray(new Notification[0]);
+	notifs = new ArrayList(sortedNotifs);
 	
-	for (int i = 0; i < notifs.length; i++) {
+	for (Notification notif: notifs) {
 %>
-	<notification uuid="<%= notifs[i].getUuid() %>" 
-	status="<%= notifs[i].getStatusAsString() %>"
-	date="<%= user.getFormattedDate(notifs[i].getTime(), "dd/MM/yyyy HH:mm z") %>"
+	<notification uuid="<%= notif.getUuid() %>" 
+	status="<%= notif.getStatusAsString() %>"
+	date="<%= user.getFormattedDate(notif.getTime(), "dd/MM/yyyy HH:mm z") %>"
 	>
-		<subject><%= StringUtils.escapeForXML(StringUtils.htmlEscape(notifs[i].getSubject())) %></subject>
-		<message><%= StringUtils.escapeForXML(StringUtils.htmlEscape(notifs[i].getDisplayText())) %></message>
+		<subject><%= StringUtils.escapeForXML(StringUtils.htmlEscape(notif.getSubject())) %></subject>
+		<message><%= StringUtils.escapeForXML(StringUtils.htmlEscape(notif.getDisplayText())) %></message>
 	</notification>
 
 <% } %>

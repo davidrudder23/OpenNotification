@@ -5,6 +5,8 @@
  */
 package net.reliableresponse.notification.sender;
 
+import java.util.List;
+
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationException;
 import net.reliableresponse.notification.actions.EscalationThread;
@@ -63,8 +65,6 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 		return "notification";
 	}
 	
-	
-	
 	public String getResponseMessage(String response) {
 		// TODO Auto-generated method stub
 		return "Thank you for responding with "+response;
@@ -100,11 +100,11 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 			if ((recipient == null ) || (recipient instanceof UnknownUser)) {
 				recipient = notification.getUltimateParent().getRecipient();
 			}
-			Notification[] unconfirmedNotifs = BrokerFactory.getNotificationBroker().getMembersUnconfirmedNotifications (recipient);
-			BrokerFactory.getLoggingBroker().logDebug ("ConfirmAll found "+unconfirmedNotifs.length+" unconfirmed notifs");
-			for (int i = 0; i < unconfirmedNotifs.length; i++) {
-				BrokerFactory.getLoggingBroker().logDebug ("ConfirmAll confirming "+unconfirmedNotifs[i]);
-				unconfirmedNotifs[i].getSender().handleResponse (unconfirmedNotifs[i], responder, "Confirm", text);
+			List<Notification> unconfirmedNotifs = BrokerFactory.getNotificationBroker().getMembersUnconfirmedNotifications (recipient);
+			BrokerFactory.getLoggingBroker().logDebug ("ConfirmAll found "+unconfirmedNotifs.size()+" unconfirmed notifs");
+			for (Notification unconfirmedNotif: unconfirmedNotifs) {
+				BrokerFactory.getLoggingBroker().logDebug ("ConfirmAll confirming "+unconfirmedNotif);
+				unconfirmedNotif.getSender().handleResponse (unconfirmedNotif, responder, "Confirm", text);
 			}
 			if ((notification.getStatus()==Notification.PENDING) | (notification.getStatus() == Notification.NORMAL)) {
 				notification.getSender().handleResponse (notification, responder, "Confirm", text);
@@ -135,6 +135,11 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 	public String getPassEquivalent(Notification notification) {
 		return "Pass";
 	}
+	
+	public String getVariable(String variableName) {
+		return null; 
+	}
+	
 	
 	public void setBridgeNumber (String bridgeNumber) {
 		this.bridgeNumber = bridgeNumber;

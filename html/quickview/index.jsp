@@ -4,6 +4,7 @@
 <jsp:directive.page import="java.security.MessageDigest"/>
 <jsp:directive.page import="net.reliableresponse.notification.util.StringUtils"/>
 <jsp:directive.page import="java.net.URLEncoder"/>
+<jsp:directive.page import="java.util.*"/>
 <jsp:directive.page import="net.reliableresponse.notification.usermgmt.EscalationGroup"/>
 <jsp:directive.page import="net.reliableresponse.notification.Notification"/>
 <jsp:directive.page import="net.reliableresponse.notification.usermgmt.Group"/>
@@ -31,15 +32,15 @@
 	if (user != null)
 		name = user.getFirstName() + " " + user.getLastName();
 
-	Notification[] notifs = BrokerFactory.getNotificationBroker()
+	List<Notification> notifs = BrokerFactory.getNotificationBroker()
 			.getNotificationsSentTo(user);
 	int numActive = 0;
 	int numConfirmed = 0;
 	int numExpired = 0;
 	int numOnhold = 0;
 
-	for (int i = 0; i < notifs.length; i++) {
-		int status = notifs[i].getStatus();
+	for (Notification notif: notifs) {
+		int status = notif.getStatus();
 		switch (status) {
 		case Notification.PENDING:
 		case Notification.NORMAL:

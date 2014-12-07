@@ -8,6 +8,7 @@ package net.reliableresponse.notification.providers;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -185,11 +186,11 @@ public class AIMNotificationProvider extends AbstractNotificationProvider implem
 			return;
 		}
 
-		Notification[] pendingNotifications = BrokerFactory.getNotificationBroker().getNotificationsSince(8640000L);
+		List<Notification> pendingNotifications = BrokerFactory.getNotificationBroker().getNotificationsSince(8640000L);
 		Vector responses = new Vector();
-		for (int i = 0; i < pendingNotifications.length; i++) {
-			NotificationSender sender = pendingNotifications[i].getSender();
-			String[] respArray = sender.getAvailableResponses(pendingNotifications[i]);
+		for (Notification pendingNotification: pendingNotifications) {
+			NotificationSender sender = pendingNotification.getSender();
+			String[] respArray = sender.getAvailableResponses(pendingNotification);
 			for (int r = 0; r < respArray.length; r++) {
 				if (!responses.contains(respArray[r])) {
 					responses.addElement(respArray[r]);
@@ -202,15 +203,15 @@ public class AIMNotificationProvider extends AbstractNotificationProvider implem
 			String response = (String)responses.elementAt(i);
 			Pattern pattern = Pattern.compile("\\b(?i)"+response+"\\b"); 
 			if (pattern.matcher(message).find()) {
-				for (int p = 0; p < pendingNotifications.length; p++) {
-					if (message.indexOf(pendingNotifications[p].getID()) >= 0) {
+				for (Notification pendingNotification: pendingNotifications) {
+					if (message.indexOf(pendingNotification.getID()) >= 0) {
 						notifFound = true;
-						NotificationSender sender = pendingNotifications[p].getSender();
+						NotificationSender sender = pendingNotification.getSender();
 						if (sender != null) {
 							BrokerFactory.getLoggingBroker().logDebug("Responding to "+
-									pendingNotifications[p]+" with \""+response+"\"via AIM message from "+buddyName);
-							sender.handleResponse(pendingNotifications[p], user, response, "Notification confirmed by AIM message: "+message);
-							client.send(buddyName, "Responded to notification "+pendingNotifications[p].getID()+" with "+response);
+									pendingNotification+" with \""+response+"\"via AIM message from "+buddyName);
+							sender.handleResponse(pendingNotification, user, response, "Notification confirmed by AIM message: "+message);
+							client.send(buddyName, "Responded to notification "+pendingNotification.getID()+" with "+response);
 						}
 					}
 				}

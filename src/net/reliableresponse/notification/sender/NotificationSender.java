@@ -36,6 +36,8 @@ public interface NotificationSender {
 	public void addVariable (int index, String value);
 	
 	public String[] getVariables();
+	
+	public String getVariable(String variableName);
 
 	public String[] getAvailableResponses (Notification notification);
 	

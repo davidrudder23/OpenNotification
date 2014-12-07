@@ -6,6 +6,7 @@
 package net.reliableresponse.notification.providers;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import org.syntax.jedit.InputHandler.end;
@@ -125,19 +126,18 @@ public abstract class AbstractNotificationProvider implements
 			SortedVector usersNotifs = new SortedVector();
 
 			// Add the pending notifications
-			Notification[] pendingNotifs = BrokerFactory
+			List<Notification> pendingNotifs = BrokerFactory
 					.getNotificationBroker().getAllPendingNotifications();
-			for (int i = 0; i < pendingNotifs.length; i++) {
-				if (pendingNotifs[i].getParentUuid() == null) {
-					if (!usersNotifs.contains(pendingNotifs[i])) {
-						Member recipient = pendingNotifs[i].getRecipient();
+			for (Notification pendingNotif: pendingNotifs) {
+				if (pendingNotif.getParentUuid() == null) {
+					if (!usersNotifs.contains(pendingNotif)) {
+						Member recipient = pendingNotif.getRecipient();
 						if (recipient.equals(user)) {
-							usersNotifs.addElement(pendingNotifs[i], false);
+							usersNotifs.addElement(pendingNotif, false);
 						} else {
 							if (recipient instanceof Group) {
 								if (((Group) recipient).isMember(user)) {
-									usersNotifs.addElement(pendingNotifs[i],
-											false);
+									usersNotifs.addElement(pendingNotif, false);
 								}
 							}
 						}
@@ -145,19 +145,17 @@ public abstract class AbstractNotificationProvider implements
 				}
 			}
 
-			Notification[] recentNotifs = BrokerFactory.getNotificationBroker()
-					.getNotificationsSince(1000 * 60 * 60 * 2);
-			for (int i = 0; i < recentNotifs.length; i++) {
-				if (recentNotifs[i].getParentUuid() == null) {
-					if (!usersNotifs.contains(recentNotifs[i])) {
-						Member recipient = recentNotifs[i].getRecipient();
+			List<Notification> recentNotifs = BrokerFactory.getNotificationBroker().getNotificationsSince(1000 * 60 * 60 * 2);
+			for (Notification recentNotif: recentNotifs) {
+				if (recentNotif.getParentUuid() == null) {
+					if (!usersNotifs.contains(recentNotif)) {
+						Member recipient = recentNotif.getRecipient();
 						if (recipient.equals(user)) {
-							usersNotifs.addElement(recentNotifs[i], false);
+							usersNotifs.addElement(recentNotif, false);
 						} else {
 							if (recipient instanceof Group) {
 								if (((Group) recipient).isMember(user)) {
-									usersNotifs.addElement(recentNotifs[i],
-											false);
+									usersNotifs.addElement(recentNotif, false);
 								}
 							}
 						}

@@ -10,6 +10,7 @@ import java.io.FileInputStream;
 import java.net.UnknownHostException;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Vector;
 import java.util.regex.Pattern;
 
@@ -284,13 +285,12 @@ public class JabberNotificationProvider extends AbstractNotificationProvider
 				user.setFirstName(from);
 				user.setLastName("");
 			}
-			Notification[] pendingNotifications = BrokerFactory
-					.getNotificationBroker().getNotificationsSince(8640000L);
+			List<Notification> pendingNotifications = BrokerFactory.getNotificationBroker().getNotificationsSince(8640000L);
 			Vector responses = new Vector();
-			for (int i = 0; i < pendingNotifications.length; i++) {
-				NotificationSender sender = pendingNotifications[i].getSender();
+			for (Notification pendingNotification: pendingNotifications) {
+				NotificationSender sender = pendingNotification.getSender();
 				String[] respArray = sender
-						.getAvailableResponses(pendingNotifications[i]);
+						.getAvailableResponses(pendingNotification);
 				for (int r = 0; r < respArray.length; r++) {
 					if (!responses.contains(respArray[r])) {
 						responses.addElement(respArray[r]);
@@ -303,28 +303,23 @@ public class JabberNotificationProvider extends AbstractNotificationProvider
 				String response = (String) responses.elementAt(i);
 				Pattern pattern = Pattern.compile("\\b(?i)" + response + "\\b");
 				if (pattern.matcher(message).find()) {
-					for (int p = 0; p < pendingNotifications.length; p++) {
-						if (message.indexOf(pendingNotifications[p].getID()) >= 0) {
+					for (Notification pendingNotification: pendingNotifications) {
+						if (message.indexOf(pendingNotification.getID()) >= 0) {
 							notifFound = true;
-							NotificationSender sender = pendingNotifications[p]
-									.getSender();
+							NotificationSender sender = pendingNotification.getSender();
 							if (sender != null) {
-								BrokerFactory.getLoggingBroker().logDebug(
-										"Responding to "
-												+ pendingNotifications[p]
+								BrokerFactory.getLoggingBroker().logDebug("Responding to "
+												+ pendingNotification
 												+ " with \"" + response
 												+ "\"via Jabber message from "
 												+ from);
-								sender.handleResponse(pendingNotifications[p],
+								sender.handleResponse(pendingNotification,
 										user, response,
 										"Notification confirmed by Jabber message: "
 												+ message);
 								try {
 									sendMessage(from,
-											"Responded to notification "
-													+ pendingNotifications[p]
-															.getID() + " with "
-													+ response);
+											"Responded to notification " + pendingNotification.getID() + " with " + response);
 								} catch (NotificationException e) {
 									BrokerFactory.getLoggingBroker()
 											.logError(e);
@@ -337,14 +332,12 @@ public class JabberNotificationProvider extends AbstractNotificationProvider
 
 			if (!notifFound) {
 				if (message.equalsIgnoreCase("list")) {
-					Notification[] activeNotifs = BrokerFactory
-							.getNotificationBroker()
-							.getMembersUnconfirmedNotifications(user);
+					List<Notification> activeNotifs = BrokerFactory.getNotificationBroker().getMembersUnconfirmedNotifications(user);
 					StringBuffer response = new StringBuffer();
-					for (int i = 0; i < activeNotifs.length; i++) {
-						response.append(activeNotifs[i].getStatusAsString());
+					for (Notification activeNotif: activeNotifs) {
+						response.append(activeNotif.getStatusAsString());
 						response.append(": ");
-						response.append(activeNotifs[i].getSubject());
+						response.append(activeNotif.getSubject());
 						response.append("\n");
 					}
 					try {

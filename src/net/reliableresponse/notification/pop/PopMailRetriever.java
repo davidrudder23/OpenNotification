@@ -8,6 +8,7 @@ package net.reliableresponse.notification.pop;
 import java.io.*;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.regex.Pattern;
@@ -702,13 +703,12 @@ public class PopMailRetriever implements StatefulJob {
 
 		
 		// Now look for any notifications that have an actual response
-		Notification[] pendingNotifications = BrokerFactory
-				.getNotificationBroker().getNotificationsSince(8640000L);
+		List<Notification> pendingNotifications = BrokerFactory.getNotificationBroker().getNotificationsSince(8640000L);
 		Vector responses = new Vector();
-		for (int i = 0; i < pendingNotifications.length; i++) {
-			NotificationSender sender = pendingNotifications[i].getSender();
+		for (Notification pendingNotification: pendingNotifications) {
+			NotificationSender sender = pendingNotification.getSender();
 			String[] respArray = sender
-					.getAvailableResponses(pendingNotifications[i]);
+					.getAvailableResponses(pendingNotification);
 			for (int r = 0; r < respArray.length; r++) {
 				if (!responses.contains(respArray[r])) {
 					responses.addElement(respArray[r]);

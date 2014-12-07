@@ -76,7 +76,7 @@ public class SendNotification {
 				if (devices[i].willSend(user, notification.getUltimateParent().getPriority(), notification)) {
 					NotificationProvider provider = devices[i]
 							.getNotificationProvider();
-					Hashtable params = new Hashtable();
+					Hashtable<String, String> params = new Hashtable<String, String>();
 					try {
 						try {
 							BrokerFactory.getLoggingBroker().logInfo(
@@ -155,7 +155,7 @@ public class SendNotification {
 	 * @param anyExc
 	 */
 	public static void flagError(Notification notification, Device device, NotificationProvider provider, Exception anyExc, String status) {
-		Hashtable params;
+		Hashtable<String, String> params;
 		if (notification.isPersistent()) {
 			BrokerFactory.getNotificationLoggingBroker()
 					.logNotification(notification,
@@ -256,12 +256,12 @@ public class SendNotification {
 }
 
 class FailedNotificationThread extends Thread {
-	private Vector failedNotifications;
+	private Vector<FailedNotification> failedNotifications;
 	
 	private static FailedNotificationThread instance = null;
 	
 	private FailedNotificationThread() {
-		failedNotifications = new Vector();		
+		failedNotifications = new Vector<FailedNotification>();		
 	}
 	
 	public void addNotification (FailedNotification notification) {
@@ -279,7 +279,7 @@ class FailedNotificationThread extends Thread {
 	}
 	
 	public void run() {
-		while (1==1) {
+		while (true) {
 			// Run once a minute
 			try {
 				Thread.sleep(60*1000);
@@ -292,7 +292,7 @@ class FailedNotificationThread extends Thread {
 				FailedNotification failedNotification = (FailedNotification)failedNotifications.elementAt(n);
 				Device device = failedNotification.getDevice();
 				Notification oldNotification = failedNotification.getNotification();
-				Vector deviceToSendTo = new Vector();
+				Vector<Device> deviceToSendTo = new Vector<Device>();
 				deviceToSendTo.addElement(device);
 				Notification notification = new Notification(oldNotification.getUuid(), 
 											failedNotification.getUser(),
@@ -307,7 +307,7 @@ class FailedNotificationThread extends Thread {
 				User user = failedNotification.getUser();
 				
 				if (device.willSend(user, notification.getPriority(), notification)) {
-					Hashtable params = new Hashtable();
+					Hashtable<String, String> params = new Hashtable<String, String>();
 					try {
 						try {
 							BrokerFactory.getLoggingBroker().logInfo(

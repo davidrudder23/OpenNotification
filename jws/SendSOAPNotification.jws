@@ -4,19 +4,16 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-import java.util.Vector;
-import java.util.Hashtable;
-import java.util.Date;
+import java.util.*;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationMessage;
 import net.reliableresponse.notification.NotificationException;
+import net.reliableresponse.notification.sender.NotificationSender;
 import net.reliableresponse.notification.actions.*;
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.device.Device;
 import net.reliableresponse.notification.device.EmailDevice;
-import net.reliableresponse.notification.sender.EmailSender;
-import net.reliableresponse.notification.sender.HPOVNNMSender;
 import net.reliableresponse.notification.sender.*;
 import net.reliableresponse.notification.util.*;
 import net.reliableresponse.notification.usermgmt.Member;
@@ -355,6 +352,30 @@ public class SendSOAPNotification {
 		return result;
 	}
 
+
+	public String[] sendNagiosRecovery(String memberName, String url, String hostName, String objectName) {
+		Member member = findMember(memberName);
+		
+		List notifications = BrokerFactory.getNotificationBroker().getMembersUnconfirmedNotifications(member);
+		for (int i = 0; i < notifications.size(); i++) {
+			Notification notification = (Notification)notifications.get(i);
+
+			NotificationSender sender = notification.getSender();
+			if (sender == null) continue;
+			
+			if (!sender.getNotificationType().equalsIgnoreCase("Nagios Alert")) continue;
+			if (!url.equalsIgnoreCase(sender.getVariable("url"))) continue;
+			if (!hostName.equalsIgnoreCase(sender.getVariable("hostName"))) continue;
+			if (!objectName.equalsIgnoreCase(sender.getVariable("objectName"))) continue;
+			
+			notification.setStatus(Notification.CONFIRMED);
+		}
+		
+		return new String[0];
+		
+	}
+	
+	
 	public String[] sendNagiosSiteMinderNotification(String memberName,
 			String summary, String message, String url, String username,
 			String password, boolean isService, String hostName,

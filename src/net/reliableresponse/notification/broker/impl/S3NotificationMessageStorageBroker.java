@@ -7,6 +7,7 @@ package net.reliableresponse.notification.broker.impl;
 
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationMessage;
@@ -57,7 +58,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.deleteNotificationsBefore(before);
 	}
 
-	public Notification[] getAllPendingNotifications() {
+	public List<Notification> getAllPendingNotifications() {
 		return realBroker.getAllPendingNotifications();
 	}
 
@@ -65,7 +66,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getAllPendingUuids();
 	}
 
-	public Notification[] getAllUnconfirmedNotifications() {
+	public List<Notification> getAllUnconfirmedNotifications() {
 		return realBroker.getAllUnconfirmedNotifications();
 	}
 
@@ -73,7 +74,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getAllUnconfirmedUuids();
 	}
 
-	public Notification[] getChildren(Notification parent) {
+	public List<Notification> getChildren(Notification parent) {
 		return realBroker.getChildren(parent);
 	}
 
@@ -89,7 +90,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getEscalationStatus(notification);
 	}
 
-	public Notification[] getMembersPendingNotifications() {
+	public List<Notification> getMembersPendingNotifications() {
 		return realBroker.getMembersPendingNotifications();
 	}
 
@@ -97,7 +98,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getMembersPendingUuids();
 	}
 
-	public Notification[] getMembersUnconfirmedNotifications(Member member) {
+	public List<Notification> getMembersUnconfirmedNotifications(Member member) {
 		return realBroker.getMembersUnconfirmedNotifications(member);
 	}
 
@@ -109,23 +110,23 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getNotificationByUuid(uuid);
 	}
 
-	public Notification[] getNotificationsBefore(Date before) {
+	public List<Notification> getNotificationsBefore(Date before) {
 		return realBroker.getNotificationsBefore(before);
 	}
 
-	public Notification[] getNotificationsSentBy(User user) {
+	public List<Notification> getNotificationsSentBy(User user) {
 		return realBroker.getNotificationsSentBy(user);
 	}
 
-	public Notification[] getNotificationsSentTo(Member member) {
+	public List<Notification> getNotificationsSentTo(Member member) {
 		return realBroker.getNotificationsSentTo(member);
 	}
 
-	public Notification[] getNotificationsSince(Date since) {
+	public List<Notification> getNotificationsSince(Date since) {
 		return realBroker.getNotificationsSince(since);
 	}
 
-	public Notification[] getNotificationsSince(long since) {
+	public List<Notification> getNotificationsSince(long since) {
 		return realBroker.getNotificationsSince(since);
 	}
 
@@ -141,7 +142,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getUltimateParentUuid(child);
 	}
 
-	public Notification[] getUpdatedNotificationsTo(Member member, Date since) {
+	public List<Notification> getUpdatedNotificationsTo(Member member, Date since) {
 		return realBroker.getUpdatedNotificationsTo(member, since);
 	}
 

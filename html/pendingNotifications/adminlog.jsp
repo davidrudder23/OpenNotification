@@ -9,21 +9,21 @@
 		<td><table>
 <%
 		NotificationBroker notifBroker = BrokerFactory.getNotificationBroker();
-		Notification[] notifications = notifBroker.getNotificationsSince(new Date((long)0));
-		BrokerFactory.getLoggingBroker().logDebug("Got "+notifications.length+" notifs");
+		List<Notification> notifications = notifBroker.getNotificationsSince(new Date((long)0));
+		BrokerFactory.getLoggingBroker().logDebug("Got "+notifications.size()+" notifs");
 		
 		StringBuffer output = new StringBuffer();
-		for (int n = 0; n < notifications.length; n++) {
-			%><tr><td>From: <%= notifications[n].getSender()%></td>
+		for (Notification notification: notifications) {
+			%><tr><td>From: <%= notification.getSender()%></td>
 			<td><img src="images/spacer.gif" width="12"></td>
-			<td>To: <%=notifications[n].getRecipient()%></td></tr>
-			<tr><td>Subject: <%=notifications[n].getSubject()%></td>
+			<td>To: <%=notification.getRecipient()%></td></tr>
+			<tr><td>Subject: <%=notification.getSubject()%></td>
 			<td><img src="images/spacer.gif" width="12"></td>
-			<td>Sent On: <%=notifications[n].getTime()%></td></tr>
+			<td>Sent On: <%=notification.getTime()%></td></tr>
 			<%
-			NotificationProvider[] providers = notifications[n].getNotificationProviders();
+			NotificationProvider[] providers = notification.getNotificationProviders();
 			for (int p = 0; p < providers.length; p++) {
-				String statusOfSend = providers[p].getStatusOfSend(notifications[n]);
+				String statusOfSend = providers[p].getStatusOfSend(notification);
 				if (statusOfSend == null) statusOfSend = "unknown";
 				String color = "#FF0000";
 				if (statusOfSend.toLowerCase().startsWith("succeed")) {
@@ -33,7 +33,7 @@
 				<%
 			}
 			
-			NotificationMessage[] messages = notifications[n].getMessages();
+			NotificationMessage[] messages = notification.getMessages();
 			for (int m = 0; m < messages.length; m++) {
 				String addedBy = messages[m].getAddedby();
 				if (addedBy == null) addedBy = "unknown";

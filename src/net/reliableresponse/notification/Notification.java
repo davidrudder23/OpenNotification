@@ -13,6 +13,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import net.reliableresponse.notification.actions.EscalationThread;
@@ -446,14 +447,13 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 			return new User[] { (User) getRecipient() };
 		}
 		Vector users = new Vector();
-		Notification[] children = BrokerFactory.getNotificationBroker()
-				.getChildren(this);
-		for (int i = 0; i < children.length; i++) {
-			Member childRecipient = children[i].getRecipient();
+		List<Notification> children = BrokerFactory.getNotificationBroker().getChildren(this);
+		for (Notification child: children) {
+			Member childRecipient = child.getRecipient();
 			if (childRecipient.getType() == Member.USER) {
 				users.addElement(childRecipient);
 			} else {
-				User[] childUsers = children[i].getAllUserRecipients();
+				User[] childUsers = child.getAllUserRecipients();
 				for (int u = 0; u < childUsers.length; u++) {
 					users.addElement(childUsers[u]);
 				}
@@ -467,11 +467,9 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 			return new Notification[] { this };
 		}
 		Vector notifs = new Vector();
-		Notification[] children = BrokerFactory.getNotificationBroker()
-				.getChildren(this);
-		for (int i = 0; i < children.length; i++) {
-			Notification[] descendents = children[i]
-					.getAllChildrenSentToUsers();
+		List<Notification> children = BrokerFactory.getNotificationBroker().getChildren(this);
+		for (Notification child: children) {
+			Notification[] descendents = child.getAllChildrenSentToUsers();
 			for (int d = 0; d < descendents.length; d++) {
 				notifs.addElement(descendents[d]);
 			}
@@ -734,10 +732,9 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 		}
 
 		if (depth< 50) {
-			Notification[] children = BrokerFactory.getNotificationBroker()
-				.getChildren(this);
-			for (int i = 0; i < children.length; i++) {
-				children[i].setChildrenStatus(status, responder, depth+1);
+			List<Notification> children = BrokerFactory.getNotificationBroker().getChildren(this);
+			for (Notification child: children) {
+				child.setChildrenStatus(status, responder, depth+1);
 			}
 		}
 	}
@@ -802,9 +799,9 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 
 		if (recipient instanceof BroadcastGroup) {
 			BroadcastGroup group = (BroadcastGroup) recipient;
-			Notification[] children = BrokerFactory.getNotificationBroker().getChildren(this);
-			for (int i = 0; i < children.length; i++) {
-				children[i].notifyGroupMembers(children[i].getRecipient(), responder, count++);
+			List<Notification> children = BrokerFactory.getNotificationBroker().getChildren(this);
+			for (Notification child: children) {
+				child.notifyGroupMembers(child.getRecipient(), responder, count++);
 			}
 		} else if (recipient instanceof EscalationGroup) {
 			BrokerFactory.getLoggingBroker().logDebug(
@@ -812,15 +809,15 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 			EscalationGroup group = (EscalationGroup) recipient;
 			EscalationThread thread = EscalationThreadManager.getInstance()
 					.getEscalationThread(getUuid());
-			Notification[] children = BrokerFactory.getNotificationBroker().getChildren(this);
+			List<Notification> children = BrokerFactory.getNotificationBroker().getChildren(this);
 			if (thread != null) {
 				int memberNum = thread.getRecipientNumber();
 				BrokerFactory.getLoggingBroker().logDebug("Escalation number="+memberNum);
 
-				if (memberNum >= children.length)
-					memberNum = children.length - 1;
+				if (memberNum >= children.size())
+					memberNum = children.size() - 1;
 				for (int i = 0; i <= memberNum; i++) {
-					children[i].notifyGroupMembers(children[i].getRecipient(), responder, count++);
+					children.get(i).notifyGroupMembers(children.get(i).getRecipient(), responder, count++);
 				}
 			}
 		} else if (recipient instanceof OnCallGroup) {
