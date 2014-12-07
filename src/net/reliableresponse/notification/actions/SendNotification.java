@@ -57,9 +57,9 @@ public class SendNotification {
 				BrokerFactory.getLoggingBroker().logWarn(anyExc);
 			}
 			
-			BrokerFactory.getLoggingBroker().logDebug("isSquelched="+Squelcher.isSquelched(member, notification));
+			if (Squelcher.isSquelched(notification)) {
+				BrokerFactory.getLoggingBroker().logDebug(notification.getUuid()+" is squelched");
 
-			if (Squelcher.isSquelched(member, notification)) {
 				notification.setStatus(Notification.ONHOLD);
 				notification.addMessage("Notification squelched", null);
 			}	

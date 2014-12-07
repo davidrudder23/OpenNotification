@@ -12,6 +12,7 @@ import net.reliableresponse.notification.NotificationException;
 import net.reliableresponse.notification.actions.EscalationThread;
 import net.reliableresponse.notification.actions.EscalationThreadManager;
 import net.reliableresponse.notification.actions.SendNotification;
+import net.reliableresponse.notification.aggregation.Squelcher;
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.device.Device;
 import net.reliableresponse.notification.usermgmt.EscalationGroup;
@@ -29,10 +30,10 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 	public static final int CONFIRM=1;
 	public static final int PASS=2;
 	
-	private String[] individualOptions = {"Confirm", "Ack", "ConfirmAll"};
-	private String[] escalationOptions = {"Confirm", "Ack", "ConfirmAll", "Pass"};
+	private String[] individualOptions = {"Confirm", "Ack", "ConfirmAll", "Squelch"};
+	private String[] escalationOptions = {"Confirm", "Ack", "ConfirmAll", "Pass", "Squelch"};
 	private String[] expiredOptions = {};
-	private String[] onHoldOptions = {"Confirm", "Ack", "ConfirmAll", "Release"};
+	private String[] onHoldOptions = {"Confirm", "Ack", "ConfirmAll", "Release", "Squelch"};
 	
 	private String bridgeNumber;
 	
@@ -75,6 +76,12 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 	 */
 	public void handleResponse(Notification notification, Member responder, String response, String text) {
 		BrokerFactory.getLoggingBroker().logDebug("Handling response "+response);
+		
+		if ("squelch".equalsIgnoreCase(response)) {
+			Squelcher.squelch(notification);
+			return;
+		}
+		
 		if ((notification.getStatus() == Notification.ONHOLD) && (response.equalsIgnoreCase("release"))) {
 			notification.setStatus(Notification.PENDING, responder);
 			notification.addMessage("Message release from event storm hold", responder);

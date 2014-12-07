@@ -49,6 +49,7 @@ public class Squelch {
 	public boolean shouldSquelch(Notification notification) {
 		BrokerFactory.getLoggingBroker().logDebug("Running shouldSquelch for squelched notif "+notificationUuid);
 		
+		// Quickly see if we can discard this notification
 		if (notification == null) return false;
 		if (notification.getSubject() == null) return false;
 		if (notification.getSubject().length()<minCharacters) return false;
@@ -59,17 +60,16 @@ public class Squelch {
 		if (squelchedNotif.getSubject() == null) return false;
 		if (squelchedNotif.getSubject().length()<minCharacters) return false;
 		
+		// it passes sanity, now check if it should squelch
 		int distance = notification.getSubject().length() - StringUtils.distance(notification.getSubject(), squelchedNotif.getSubject());
+		int thisDistancePercent = (distance*100)/notification.getSubject().length();
+		boolean shouldSquelch = thisDistancePercent>=distancePercentage;
+		
 		BrokerFactory.getLoggingBroker().logDebug("Notification \""+notification.getSubject()+"\" has distance "+distance+
 		" from notification with subject \""+squelchedNotif.getSubject()+"\"");
-				
-		int thisDistancePercent = (distance*100)/notification.getSubject().length();
-		
 		BrokerFactory.getLoggingBroker().logDebug("Notification "+notification.getUuid()+
 				" has distance percentage "+thisDistancePercent+
 				" with subject "+notification.getSubject()+" count "+notification.getSubject().length());
-		boolean shouldSquelch = thisDistancePercent>=distancePercentage;
-		
 		BrokerFactory.getLoggingBroker().logDebug("Notification "+notification.getUuid()+" will "+(shouldSquelch?"":"not ")+" squelch");
 
 		return shouldSquelch;
