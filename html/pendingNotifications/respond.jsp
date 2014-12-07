@@ -56,7 +56,7 @@ function respond(response) {
 <!-- middle -->
 <tr><td style=" background-repeat: repeat-y; background-image: url('images/rsp_left.gif');"><img src="spacer.gif" height="5" width="1"></td>
 <td class="subexpand" align="center"><div style="line-height: 10pt; cursor: pointer;" onclick="respond('<%= responseName %>');"><%= responseString %></div></td>
-<td style=" background-repeat: repeat-y; background-image: url('images/rsp_right.gif');"><img src="spacer.gif" height="5" width="1"</td></tr>
+<td style=" background-repeat: repeat-y; background-image: url('images/rsp_right.gif');"><img src="spacer.gif" height="5" width="1"></td></tr>
 
 <!-- bottom -->
 <tr><td><img src="images/rsp_botleft.gif"></td><td style=" background-repeat: repeat-x; background-image: url('images/rsp_bottom.gif');" valign="bottom"><img src="spacer.gif" height="6"></td>
