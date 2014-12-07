@@ -16,6 +16,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
 import net.reliableresponse.notification.Notification;
+import net.reliableresponse.notification.aggregation.Squelcher;
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.broker.NotificationBroker;
 import net.reliableresponse.notification.usermgmt.Group;
@@ -23,6 +24,7 @@ import net.reliableresponse.notification.usermgmt.Member;
 import net.reliableresponse.notification.usermgmt.Roles;
 import net.reliableresponse.notification.usermgmt.User;
 import net.reliableresponse.notification.util.SortedVector;
+import net.reliableresponse.notification.util.StringUtils;
 
 /**
  * @author drig
@@ -57,8 +59,8 @@ public class IndexAction implements Action {
 		
 	}
 	
-	private String makeTitle(boolean viewActive, boolean viewConfirmed, boolean viewExpired, boolean viewOnhold, long pending, long confirmed, long expired, long onhold, int numHours) {
-		String title = "<font color=\"#17A1e2\">Notifications Sent To Me</font></td>";
+	private String makeTitle(String prefix, boolean viewActive, boolean viewConfirmed, boolean viewExpired, boolean viewOnhold, long pending, long confirmed, long expired, long onhold, int numHours) {
+		String title = "<font color=\"#17A1e2\">"+prefix+"</font></td>";
 		title += "<td align=\"right\" class=\"headercell\"><font color=\"#666666\"><input type=\"image\" src=\"images/led_";
 		title += viewActive?"green":"disabled";
 		title +=".gif\" width=\"11\" height=\"11\" name=\"toggle_active\">&nbsp;active: ";
@@ -99,7 +101,6 @@ public class IndexAction implements Action {
 		String displayPast = request.getParameter("display_past");
 		if ((displayPast != null) && (displayPast.length() > 0)) {
 			try {
-				int displayNum = Integer.parseInt (displayPast);
 				actionRequest.getSession().setAttribute("notification_hours", displayPast);
 			} catch (NumberFormatException e1) {
 				BrokerFactory.getLoggingBroker().logError(e1);
@@ -145,7 +146,7 @@ public class IndexAction implements Action {
 		long onhold = recentNotifications.stream().filter(n->n.getStatus()==Notification.ONHOLD).count();
 
 
-		String notifsTitle = makeTitle(viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);
+		String notifsTitle = makeTitle("Notifications Sent To Me", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);
 
 		String systemMessage = request
 				.getParameter("pending_notification_message");
@@ -197,27 +198,7 @@ public class IndexAction implements Action {
 		expired = myNotifications.stream().filter(n->n.getStatus()==Notification.EXPIRED).count();
 		onhold = myNotifications.stream().filter(n->n.getStatus()==Notification.ONHOLD).count();
 
-		String sentNotifsTitle = "<font color=\"#17A1e2\">Notifications Sent By Me</font></td>";
-		sentNotifsTitle += "<td align=\"right\" class=\"headercell\"><font color=\"#666666\"><input type=\"image\" src=\"images/led_";
-		sentNotifsTitle += viewActive?"green":"disabled";
-		sentNotifsTitle +=".gif\" width=\"11\" height=\"11\" name=\"toggle_byme_active\">&nbsp;active: ";
-		sentNotifsTitle += pending;
-		sentNotifsTitle += "&nbsp;&nbsp;&nbsp;<input type=\"image\" src=\"images/led_";
-		sentNotifsTitle += viewConfirmed?"yellow":"disabled";
-		sentNotifsTitle += ".gif\" width=\"11\" height=\"11\" name=\"toggle_byme_confirmed\">&nbsp;confirmed: ";
-		sentNotifsTitle += confirmed;
-		sentNotifsTitle += "&nbsp;&nbsp;&nbsp;<input type=\"image\" src=\"images/led_";
-		sentNotifsTitle += viewExpired?"red":"disabled";
-		sentNotifsTitle += ".gif\" width=\"11\" height=\"11\"  name=\"toggle_byme_expired\">&nbsp;expired: ";
-		sentNotifsTitle += expired;
-		sentNotifsTitle += "&nbsp;&nbsp;&nbsp;<input type=\"image\" src=\"images/led_";
-		sentNotifsTitle += viewOnhold?"blue":"disabled";
-		sentNotifsTitle += ".gif\" width=\"11\" height=\"11\"  name=\"toggle_byme_onhold\">&nbsp;on hold: ";
-		sentNotifsTitle += onhold;
-		sentNotifsTitle += "</font><img src=\"images/spacer.gif\" width=\"20\" height=\"10\"><font color=\"#000000\"> <span class=\"identity\">display past </span>";
-		sentNotifsTitle += "<input name=\"display_byme_past\" type=\"text\" class=\"identity\" value=\"";
-		sentNotifsTitle += numHours;
-		sentNotifsTitle += "\" size=\"3\" onchange=\"document.mainform.submit();\"><span class=\"identity\">hrs.</span></font>";
+		String sentNotifsTitle = makeTitle("Notifications Sent By Me", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);
 
 		systemMessage = request
 				.getParameter("sent_notification_message");
@@ -228,32 +209,33 @@ public class IndexAction implements Action {
 		}
 
 		actionRequest.addParameter("sentNotifsTitle", sentNotifsTitle);
-		
-		String squelchedNotifsTitle = "<font color=\"#17A1e2\">Notifications squelched By Me</font></td>";
-		squelchedNotifsTitle += "<td align=\"right\" class=\"headercell\"><font color=\"#666666\"><input type=\"image\" src=\"images/led_";
-		squelchedNotifsTitle += viewActive?"green":"disabled";
-		squelchedNotifsTitle +=".gif\" width=\"11\" height=\"11\" name=\"toggle_byme_active\">&nbsp;active: ";
-		squelchedNotifsTitle += pending;
-		squelchedNotifsTitle += "&nbsp;&nbsp;&nbsp;<input type=\"image\" src=\"images/led_";
-		squelchedNotifsTitle += viewConfirmed?"yellow":"disabled";
-		squelchedNotifsTitle += ".gif\" width=\"11\" height=\"11\" name=\"toggle_byme_confirmed\">&nbsp;confirmed: ";
-		squelchedNotifsTitle += confirmed;
-		squelchedNotifsTitle += "&nbsp;&nbsp;&nbsp;<input type=\"image\" src=\"images/led_";
-		squelchedNotifsTitle += viewExpired?"red":"disabled";
-		squelchedNotifsTitle += ".gif\" width=\"11\" height=\"11\"  name=\"toggle_byme_expired\">&nbsp;expired: ";
-		squelchedNotifsTitle += expired;
-		squelchedNotifsTitle += "&nbsp;&nbsp;&nbsp;<input type=\"image\" src=\"images/led_";
-		squelchedNotifsTitle += viewOnhold?"blue":"disabled";
-		squelchedNotifsTitle += ".gif\" width=\"11\" height=\"11\"  name=\"toggle_byme_onhold\">&nbsp;on hold: ";
-		squelchedNotifsTitle += onhold;
-		squelchedNotifsTitle += "</font><img src=\"images/spacer.gif\" width=\"20\" height=\"10\"><font color=\"#000000\"> <span class=\"identity\">display past </span>";
-		squelchedNotifsTitle += "<input name=\"display_byme_past\" type=\"text\" class=\"identity\" value=\"";
-		squelchedNotifsTitle += numHours;
-		squelchedNotifsTitle += "\" size=\"3\" onchange=\"document.mainform.submit();\"><span class=\"identity\">hrs.</span></font>";
 
-		systemMessage = request
-				.getParameter("squelched_notification_message");
-		if ((systemMessage != null) && (systemMessage.length() > 0)) {
+		viewActive = getView(actionRequest, "squelched_", "active");
+		viewConfirmed = getView(actionRequest, "squelched_", "confirmed");
+		viewExpired = getView(actionRequest, "squelched_", "expired");
+		viewOnhold = getView(actionRequest, "squelched_", "onhold");
+		
+		
+		// Squelched notifications
+		
+		List<Notification> squelchedNotifications = Squelcher.getSquelcherNotifications(user);
+		
+		BrokerFactory.getLoggingBroker().logDebug(pendingNotifications.size()+" pending notifs");
+		
+		viewActive = getView(actionRequest, "squelched_", "active");
+		viewConfirmed = getView(actionRequest, "squelched_", "confirmed");
+		viewExpired = getView(actionRequest, "squelched_", "expired");
+		viewOnhold = getView(actionRequest, "squelched_", "onhold");
+		
+		pending = squelchedNotifications.stream().filter(n->n.getStatus()==Notification.PENDING).count();
+		pending += squelchedNotifications.stream().filter(n->n.getStatus()==Notification.NORMAL).count();
+		confirmed = squelchedNotifications.stream().filter(n->n.getStatus()==Notification.CONFIRMED).count();
+		expired = squelchedNotifications.stream().filter(n->n.getStatus()==Notification.EXPIRED).count();
+		onhold = squelchedNotifications.stream().filter(n->n.getStatus()==Notification.ONHOLD).count();
+		
+		String squelchedNotifsTitle = makeTitle("Squelched Notifications", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);
+		systemMessage = request.getParameter("squelched_notification_message");
+		if (!StringUtils.isEmpty(systemMessage)) {
 			squelchedNotifsTitle += "</tr><tr><td colspan=\"2\" class=\"headercell\" width=\"100%\"><span class=\"systemalert\">";
 			squelchedNotifsTitle += systemMessage;
 			squelchedNotifsTitle += "</span></td>";

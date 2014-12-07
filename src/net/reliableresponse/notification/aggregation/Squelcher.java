@@ -36,6 +36,10 @@ public class Squelcher {
 		return squelched;
 	}
 	
+	public static List<Notification> getSquelcherNotifications(Member member) {
+		return getSquelches(member).stream().map(s->s.getNotification()).collect(Collectors.toList());
+	}
+	
 	public static List<Squelch> getSquelches(Member member) {
 		if (squelchesByMember == null) {
 			squelchesByMember = new HashMap<String, List<Squelch>>();

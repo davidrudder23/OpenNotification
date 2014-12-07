@@ -124,5 +124,15 @@ public class StringUtils {
         }
         return costs[b.length()];
     }
+    
+    public static int getInteger(String string, int defaultValue) {
+    	if (StringUtils.isEmpty(string)) return defaultValue;
+    	
+    	try {
+    		return Integer.parseInt(string);
+    	} catch (NumberFormatException nfExc) {
+    		return defaultValue;
+    	}
+    }
 	
 }
