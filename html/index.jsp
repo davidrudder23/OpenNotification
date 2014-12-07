@@ -84,6 +84,13 @@ contentURL="/pendingNotifications/index.jsp" opened="false">
 contentURL="/pendingNotifications/sentNotifications.jsp" opened="false">
 </reliable:collapseable>
 
+
+<tr><td colspan="25">&nbsp;</td></tr>
+
+<reliable:collapseable tag="Squelched Notifications" title="<%= sentNotifsTitle %>"
+contentURL="/pendingNotifications/squelchedNotifications.jsp" opened="false">
+</reliable:collapseable>
+
 <tr><td colspan="25">&nbsp;</td></tr><%
 	String sendTitle = request.getParameter ("sendTitle");
 	if (sendTitle == null) sendTitle = "<td colspan=\"2\">Send Notification</td>";
