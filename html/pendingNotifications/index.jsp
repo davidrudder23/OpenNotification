@@ -3,6 +3,7 @@
 <%@ page import="net.reliableresponse.notification.web.util.*" %>
 <%@ page import="net.reliableresponse.notification.util.*" %>
 <%@ page import="net.reliableresponse.notification.*" %>
+<%@ page import="net.reliableresponse.notification.aggregation.*" %>
 <%@ page import="net.reliableresponse.notification.actions.*" %>
 <%@ page import="java.util.*" %>
 <%@ page import="java.text.*" %>
@@ -176,6 +177,9 @@
 			imageName = "images/led_yellow.gif";
 		} else if ((notification.getStatus() == Notification.PENDING) || (notification.getStatus() == Notification.NORMAL)) {
 			imageName = "images/led_green.gif";
+			if (Squelcher.isSquelched(notification)) {
+				imageName = "images/led_squelched.gif";
+			}
 		} else if (notification.getStatus() == Notification.ONHOLD) {
 			imageName = "images/led_blue.gif";
 		} else {

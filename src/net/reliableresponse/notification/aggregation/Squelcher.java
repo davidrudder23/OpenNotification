@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.broker.BrokerFactory;
+import net.reliableresponse.notification.broker.LoggingBroker;
 import net.reliableresponse.notification.usermgmt.Member;
 import net.reliableresponse.notification.util.StringUtils;
 
@@ -28,7 +29,6 @@ public class Squelcher {
 		
 		// Expire old squelches
 		squelches = squelches.stream().filter(s->!s.isExpired()).collect(Collectors.toList());
-		//setSquelches(member, squelches);
 		
 		// should it squelch?
 		boolean squelched = squelches.stream().anyMatch(t->t.shouldSquelch(notification));
@@ -62,10 +62,34 @@ public class Squelcher {
 		}
 		List<Squelch> squelches = getSquelches(member);
 		squelches.add(new Squelch(notification, new Date(), 30));
-		
+			
 		if (!StringUtils.isEmpty(message)) {
 			notification.addMessage(message, notification.getRecipient());
 		}
+		logStats();
 	}
+	
+	public static void unsquelch(Notification notification) {
+		BrokerFactory.getLoggingBroker().logDebug("Unsquelch called");
+		Member member = notification.getRecipient();
+		if (member.getType() != Member.USER) {
+			BrokerFactory.getLoggingBroker().logWarn("Can not unsquelch "+notification.getUuid()+" because recipient is not an individual");
+			return;
+		}
+		
+		List<Squelch> squelches = getSquelches(member);
+
+		squelches = squelches.stream().filter(s->!s.shouldSquelch(notification)).collect(Collectors.toList());
+		squelchesByMember.put(member.getUuid(), squelches);
+
+		logStats();
+	}
+	
+	public static void logStats() {
+		LoggingBroker log = BrokerFactory.getLoggingBroker();
+		log.logDebug("Squelches");
+		squelchesByMember.keySet().stream().forEach(m->squelchesByMember.get(m).stream().forEach(s->log.logDebug("  "+m+": "+s.getNotification().getSubject())));
+	}
+
 
 }

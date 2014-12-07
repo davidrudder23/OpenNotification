@@ -12,7 +12,9 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -20,6 +22,7 @@ import java.util.Vector;
 
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.broker.ConfigurationBroker;
+import net.reliableresponse.notification.util.StringUtils;
 
 /**
  * @author drig
@@ -67,6 +70,26 @@ public class PropertiesConfigurationBroker implements ConfigurationBroker {
 			return defaultValue;
 		}
 		return values;
+	}
+	
+	public List<String> getStringValues(String key, List<String> defaultValue) {
+		if (StringUtils.isEmpty(key)) {
+			return defaultValue;
+		}
+        String allValues = props.getProperty(key);
+        if (StringUtils.isEmpty(allValues)) {
+        	return defaultValue;
+        }
+		
+        List<String> values = new ArrayList<String>();
+        BrokerFactory.getLoggingBroker().logDebug ("props="+allValues);
+        if (allValues != null) {
+        	StringTokenizer tok = new StringTokenizer(allValues, ",");
+        	while (tok.hasMoreElements()) {
+        		values.add((String)tok.nextElement());
+        	}
+        }
+        return values;
 	}
 
 	/* (non-Javadoc)
