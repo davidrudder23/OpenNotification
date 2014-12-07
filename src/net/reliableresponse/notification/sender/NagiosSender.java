@@ -58,6 +58,21 @@ public class NagiosSender extends AbstractNotificationSender {
 		return new String[] {url, service?"service":"host", objectName, hostName, userName, password};
 	}
 	
+	
+	public String getVariable(String variableName) {
+		if (variableName == null) return null;
+		
+		if (variableName.equalsIgnoreCase("url")) return url;
+		if (variableName.equalsIgnoreCase("service")) return service?"service":"host";
+		if (variableName.equalsIgnoreCase("objectName")) return objectName;
+		if (variableName.equalsIgnoreCase("hostName")) return hostName;
+		if (variableName.equalsIgnoreCase("userName")) return userName;
+		if (variableName.equalsIgnoreCase("password")) return password;
+
+		return null;
+	}
+	
+	
 	public void handleResponse(Notification notification, Member responder, String response, String text) {
 		super.handleResponse(notification, responder, response, text);
 		String responderString = "Unknown responder";
@@ -121,5 +136,9 @@ public class NagiosSender extends AbstractNotificationSender {
 	
 	public String toString() {
 		return "Nagios Network Monitor";
+	}
+	
+	public String getNotificationType() {
+		return "Nagios Alert";
 	}
 }

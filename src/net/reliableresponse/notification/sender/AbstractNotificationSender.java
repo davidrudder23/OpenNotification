@@ -65,8 +65,6 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 		return "notification";
 	}
 	
-	
-	
 	public String getResponseMessage(String response) {
 		// TODO Auto-generated method stub
 		return "Thank you for responding with "+response;
@@ -137,6 +135,11 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 	public String getPassEquivalent(Notification notification) {
 		return "Pass";
 	}
+	
+	public String getVariable(String variableName) {
+		return null; 
+	}
+	
 	
 	public void setBridgeNumber (String bridgeNumber) {
 		this.bridgeNumber = bridgeNumber;

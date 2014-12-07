@@ -31,7 +31,6 @@ import org.apache.commons.httpclient.NTCredentials;
 import org.apache.commons.httpclient.URIException;
 import org.apache.commons.httpclient.auth.AuthScope;
 import org.apache.commons.httpclient.methods.GetMethod;
-import org.apache.crimson.tree.ElementNode;
 import org.apache.xerces.dom.DeferredElementImpl;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Document;
