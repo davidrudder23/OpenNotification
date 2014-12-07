@@ -96,6 +96,7 @@ public class RespondAction implements Action {
 		}
 		long sinceMillis = sinceHours*3600000;
 		List<Notification> pendingNotifications =BrokerFactory.getNotificationBroker().getNotificationsSince(sinceMillis);
+		pendingNotifications.addAll(BrokerFactory.getNotificationBroker().getAllPendingNotifications());
 		for (Notification pendingNotification: pendingNotifications) {
 			String[] responses = pendingNotification.getSender().getAvailableResponses(pendingNotification);
 			for (int r = 0; r < responses.length; r++) {
