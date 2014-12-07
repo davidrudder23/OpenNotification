@@ -48,7 +48,6 @@ public class LicenseFile {
 	private Date validFrom;
 	private Date validTo;
 	private String installClass;
-	private boolean hasValidFile;
 	
 	private int maxUsers = 0;
 	
@@ -65,12 +64,7 @@ public class LicenseFile {
 	}
 	
 	public LicenseFile () {
-		hasValidFile = false;
-		
-		dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-		
 		maxUsers = -1;
-
 	}
 	
 	public boolean read (String filename, String password) {
@@ -121,6 +115,7 @@ public class LicenseFile {
 	}
 	
 	public String getFormattedDate (Date date) {
+		dateFormat = new SimpleDateFormat("MM/dd/yyyy");
 		return dateFormat.format(date);
 		
 	}
@@ -138,8 +133,9 @@ public class LicenseFile {
 	}
 
 	public String getInstallClass() {
-		if (installClass == null) installClass ="Unspecified";
-		return installClass;
+		return "Enterprise";
+		//if (installClass == null) installClass ="Unspecified";
+		//return installClass;
 	}
 	public void setInstallClass(String installClass) {
 		this.installClass = installClass;
