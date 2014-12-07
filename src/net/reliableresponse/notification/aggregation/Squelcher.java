@@ -9,7 +9,7 @@ import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.usermgmt.Member;
 
-public class SquelchList {
+public class Squelcher {
 	
 	private static HashMap<String, List<Squelch>> squelchesByMember;
 	
