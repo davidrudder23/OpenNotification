@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.broker.BrokerFactory;
@@ -25,11 +26,12 @@ public class Squelcher {
 		
 		List<Squelch> squelches = getSquelches(member);
 		
-		boolean squelched = squelches.stream().anyMatch(t->t.shouldSquelch(notification));
+		// Expire old squelches
+		squelches = squelches.stream().filter(s->!s.isExpired()).collect(Collectors.toList());
+		//setSquelches(member, squelches);
 		
-		if (squelches.size()<1) {
-			squelch(notification);
-		}
+		// should it squelch?
+		boolean squelched = squelches.stream().anyMatch(t->t.shouldSquelch(notification));
 		
 		return squelched;
 	}
@@ -42,13 +44,12 @@ public class Squelcher {
 		List<Squelch> squelches = squelchesByMember.get(member.getUuid());
 		if (squelches == null) {
 			squelches = new ArrayList<Squelch>();
+			squelchesByMember.put(member.getUuid(), squelches);
+
 		}
 		return squelches;
 	}
 	
-	public static void setSquelches(Member member, List<Squelch> squelches) {
-		squelchesByMember.put(member.getUuid(), squelches);
-	}
 	
 	public static void squelch(Notification notification) {
 		squelch (notification, null);
@@ -61,7 +62,6 @@ public class Squelcher {
 		}
 		List<Squelch> squelches = getSquelches(member);
 		squelches.add(new Squelch(notification, new Date(), 30));
-		setSquelches(member, squelches);
 		
 		if (!StringUtils.isEmpty(message)) {
 			notification.addMessage(message, notification.getRecipient());
