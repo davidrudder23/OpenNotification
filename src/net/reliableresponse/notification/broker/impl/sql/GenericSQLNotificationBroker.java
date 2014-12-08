@@ -1034,17 +1034,17 @@ public abstract class GenericSQLNotificationBroker implements
 		return null;
 	}
 
-	public String[] getAllPendingUuids() {
+	public List<String> getAllPendingUuids() {
 		String sql = getUuidsSQLBeginning()+ "recipient like ? AND status<>'confirmed' AND status<>'expired'";
 		return getUuidsGeneric("%", sql);
 	}
 
-	public String[] getAllUnconfirmedUuids() {
+	public List<String> getAllUnconfirmedUuids() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private String[] getUuidsGeneric(Object parameter, String sql) {
+	private List<String> getUuidsGeneric(Object parameter, String sql) {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		Connection connection = getConnection();
@@ -1077,31 +1077,31 @@ public abstract class GenericSQLNotificationBroker implements
 			}
 
 		}
-		return (String[]) uuids.toArray(new String[0]);
+		return uuids;
 	}
 
-	public String[] getChildrenUuids(Notification parent) {
+	public List<String> getChildrenUuids(Notification parent) {
 		String sql = getUuidsSQLBeginning() + "parent=?";
 		return getUuidsGeneric(parent.getUuid(), sql);
 	}
 
-	public String[] getMembersPendingUuids() {
+	public List<String> getMembersPendingUuids() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String[] getMembersUnconfirmedUuids(Member member) {
+	public List<String> getMembersUnconfirmedUuids(Member member) {
 		String sql = getUuidsSQLBeginning()
 				+ "recipient=? AND status<>'confirmed' AND status<>'expired'";
 		return getUuidsGeneric(member.getUuid(), sql);
 	}
 
-	public String[] getUuidsSentTo(Member member) {
+	public List<String> getUuidsSentTo(Member member) {
 		String sql = getUuidsSQLBeginning() + "recipient=?";
 		return getUuidsGeneric(member.getUuid(), sql);
 	}
 
-	public String[] getUuidsSentBy(User user) {
+	public List<String> getUuidsSentBy(User user) {
 		String sql = "SELECT n.uuid FROM notification n WHERE "
 				+ "n.senderclass='net.reliableresponse.notification.sender.UserSender' "
 				+ "AND n.senderinfo1=? AND ((n.status<>'expired' AND n.status<>'confirmed') OR n.time>?)";
@@ -1138,10 +1138,10 @@ public abstract class GenericSQLNotificationBroker implements
 			}
 
 		}
-		return (String[]) uuids.toArray(new String[0]);
+		return uuids;
 	}
 
-	public String[] getUuidsSince(java.util.Date since) {
+	public List<String> getUuidsSince(java.util.Date since) {
 		BrokerFactory.getLoggingBroker().logDebug(
 				"Getting notifs since " + new Timestamp(since.getTime()));
 		String sql = getUuidsSQLBeginning() + "time>?";
@@ -1149,7 +1149,7 @@ public abstract class GenericSQLNotificationBroker implements
 
 	}
 
-	public String[] getUuidsBefore(java.util.Date before) {
+	public List<String> getUuidsBefore(java.util.Date before) {
 		BrokerFactory.getLoggingBroker().logDebug(
 				"Getting notifs before " + new Timestamp(before.getTime()));
 		String sql = getUuidsSQLBeginning() + "time<?";
@@ -1157,7 +1157,7 @@ public abstract class GenericSQLNotificationBroker implements
 
 	}
 
-	public String[] getUuidsSince(long since) {
+	public List<String> getUuidsSince(long since) {
 		if (since > System.currentTimeMillis()) {
 			return getUuidsSince(new Date(0));
 		}

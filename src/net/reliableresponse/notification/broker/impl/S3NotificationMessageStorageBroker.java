@@ -62,7 +62,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getAllPendingNotifications();
 	}
 
-	public String[] getAllPendingUuids() {
+	public List<String> getAllPendingUuids() {
 		return realBroker.getAllPendingUuids();
 	}
 
@@ -70,7 +70,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getAllUnconfirmedNotifications();
 	}
 
-	public String[] getAllUnconfirmedUuids() {
+	public List<String> getAllUnconfirmedUuids() {
 		return realBroker.getAllUnconfirmedUuids();
 	}
 
@@ -78,7 +78,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getChildren(parent);
 	}
 
-	public String[] getChildrenUuids(Notification parent) {
+	public List<String> getChildrenUuids(Notification parent) {
 		return realBroker.getChildrenUuids(parent);
 	}
 
@@ -94,7 +94,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getMembersPendingNotifications();
 	}
 
-	public String[] getMembersPendingUuids() {
+	public List<String> getMembersPendingUuids() {
 		return realBroker.getMembersPendingUuids();
 	}
 
@@ -102,7 +102,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getMembersUnconfirmedNotifications(member);
 	}
 
-	public String[] getMembersUnconfirmedUuids(Member member) {
+	public List<String> getMembersUnconfirmedUuids(Member member) {
 		return realBroker.getMembersUnconfirmedUuids(member);
 	}
 
@@ -150,23 +150,23 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getUpdatedUuidsTo(member, since);
 	}
 
-	public String[] getUuidsBefore(Date before) {
+	public List<String> getUuidsBefore(Date before) {
 		return realBroker.getUuidsBefore(before);
 	}
 
-	public String[] getUuidsSentBy(User user) {
+	public List<String> getUuidsSentBy(User user) {
 		return realBroker.getUuidsSentBy(user);
 	}
 
-	public String[] getUuidsSentTo(Member member) {
+	public List<String> getUuidsSentTo(Member member) {
 		return realBroker.getUuidsSentTo(member);
 	}
 
-	public String[] getUuidsSince(Date since) {
+	public List<String> getUuidsSince(Date since) {
 		return realBroker.getUuidsSince(since);
 	}
 
-	public String[] getUuidsSince(long since) {
+	public List<String> getUuidsSince(long since) {
 		return realBroker.getUuidsSince(since);
 	}
 
