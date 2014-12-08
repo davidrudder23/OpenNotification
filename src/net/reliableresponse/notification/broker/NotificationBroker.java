@@ -85,7 +85,7 @@ public interface NotificationBroker {
 	 * @param since
 	 * @return
 	 */
-	public String[] getUpdatedUuidsTo (Member member, Date since);
+	public List<String> getUpdatedUuidsTo (Member member, Date since);
 		
 	/**
 	 * Retrieves all the notifications sent in the past number of milliseconds
@@ -101,7 +101,7 @@ public interface NotificationBroker {
 	 * @param notification The notification to get the messages for
 	 * @return All the notification messages
 	 */
-	public NotificationMessage[] getNotificationMessages(Notification notification);
+	public List<NotificationMessage> getNotificationMessages(Notification notification);
 	
 	/**
 	 * Gets all the notifications before a specified date
@@ -117,7 +117,7 @@ public interface NotificationBroker {
 	 * @param before
 	 * @return
 	 */
-	public String[] getUuidsBefore (Date before);
+	public List<String> getUuidsBefore (Date before);
 	
 	/**
 	 * Deleted all the notifications before a specified date
@@ -155,7 +155,7 @@ public interface NotificationBroker {
 	 */
 	public List<Notification> getMembersPendingNotifications();
 
-	public String[] getChildrenUuids(Notification parent);
+	public List<String> getChildrenUuids(Notification parent);
 	
 	/**
 	 * Gets all the notifications that were sent directly to the supplied member
@@ -164,7 +164,7 @@ public interface NotificationBroker {
 	 * @param member The user or group who's notifications to look for
 	 * @return All the notifications sent to the supplied member
 	 */
-	public String[] getUuidsSentTo (Member member);
+	public List<String> getUuidsSentTo (Member member);
 	
 	/**
 	 * Gets all the notifications that were sent by the supplied member
@@ -172,7 +172,7 @@ public interface NotificationBroker {
 	 * @param member The user or group who's notifications to look for
 	 * @return All the notifications sent by the supplied member
 	 */
-	public String[] getUuidsSentBy (User user);
+	public List<String> getUuidsSentBy (User user);
 	
 	/**
 	 * Retrieves all the notifications sent since the specified date
@@ -180,7 +180,7 @@ public interface NotificationBroker {
 	 * @param since Date from whence to look
 	 * @return All the notifications sent since
 	 */
-	public String[] getUuidsSince (Date since);
+	public List<String> getUuidsSince (Date since);
 	
 	/**
 	 * Retrieves all the notifications sent in the past number of milliseconds
@@ -188,32 +188,32 @@ public interface NotificationBroker {
 	 * @param since How many milliseconds to loo kback
 	 * @return All the notifications sent since
 	 */
-	public String[] getUuidsSince (long since);
+	public List<String> getUuidsSince (long since);
 
 	/**
 	 * 
 	 * @return All the notifications that were not confirmed, including those that were expired
 	 */
-	public String[] getAllUnconfirmedUuids();
+	public List<String> getAllUnconfirmedUuids();
 	
 	/**
 	 * 
 	 * @return All the notifications that are not confirmed, but are not yet expired.  
 	 */
-	public String[] getAllPendingUuids();
+	public List<String> getAllPendingUuids();
 	
 	/**
 	 * 
 	 * @return All the unconfirmed notifications for a particular user
 	 */
 	
-	public String[] getMembersUnconfirmedUuids(Member member);
+	public List<String> getMembersUnconfirmedUuids(Member member);
 	
 	/**
 	 * 
 	 * @return All the notifications that are still pending for a particular member
 	 */
-	public String[] getMembersPendingUuids();
+	public List<String> getMembersPendingUuids();
 	
 	/**
 	 * Returns the status of an individual notification, passed on the escalation log

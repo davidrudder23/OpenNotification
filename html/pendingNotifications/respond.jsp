@@ -19,8 +19,9 @@ function respond(response) {
 <td width="11"><img src="images/spacer.gif" width="1" height="1"></td>
 <td valign="middle">
 <%
+	User user = (BrokerFactory.getUserMgmtBroker().getUserByUuid((String)session.getAttribute("user")));
 	String uuid = (String)request.getAttribute ("notification_uuid");
-	Notification notification = BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid);
+	Notification notification = BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid).getChildSentToThisUser(user);
 	String respondTextName = "action_respond_text_"+uuid;
 	String respondText = request.getParameter(respondTextName);
 	
@@ -56,7 +57,7 @@ function respond(response) {
 <!-- middle -->
 <tr><td style=" background-repeat: repeat-y; background-image: url('images/rsp_left.gif');"><img src="spacer.gif" height="5" width="1"></td>
 <td class="subexpand" align="center"><div style="line-height: 10pt; cursor: pointer;" onclick="respond('<%= responseName %>');"><%= responseString %></div></td>
-<td style=" background-repeat: repeat-y; background-image: url('images/rsp_right.gif');"><img src="spacer.gif" height="5" width="1"</td></tr>
+<td style=" background-repeat: repeat-y; background-image: url('images/rsp_right.gif');"><img src="spacer.gif" height="5" width="1"></td></tr>
 
 <!-- bottom -->
 <tr><td><img src="images/rsp_botleft.gif"></td><td style=" background-repeat: repeat-x; background-image: url('images/rsp_bottom.gif');" valign="bottom"><img src="spacer.gif" height="6"></td>

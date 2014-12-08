@@ -21,10 +21,6 @@ public class Squelcher {
 		
 		Member member = notification.getRecipient();
 		
-		if (member.getType() != Member.USER) {
-			BrokerFactory.getLoggingBroker().logDebug(notification.getUuid()+" will not be squelched because recipient is not an individual");
-		}
-		
 		List<Squelch> squelches = getSquelches(member);
 		
 		// Expire old squelches
@@ -32,6 +28,8 @@ public class Squelcher {
 		
 		// should it squelch?
 		boolean squelched = squelches.stream().anyMatch(t->t.shouldSquelch(notification));
+		
+		logStats();
 		
 		return squelched;
 	}

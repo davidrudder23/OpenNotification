@@ -11,10 +11,13 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import net.reliableresponse.notification.actions.EscalationThread;
 import net.reliableresponse.notification.actions.EscalationThreadManager;
@@ -475,6 +478,36 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 			}
 		}
 		return (Notification[]) notifs.toArray(new Notification[0]);
+	}
+	
+	public List<Notification> getAllChildrenSentToMember(Member member) {
+		if (getRecipient().getType() == Member.USER) {
+			return new ArrayList<Notification>(Arrays.asList(this));
+		}
+		List<Notification> notifs = new ArrayList<Notification>();
+		List<Notification> children = BrokerFactory.getNotificationBroker().getChildren(this);
+		for (Notification child: children) {
+			notifs = child.getAllChildrenSentToMember(member);
+			notifs = notifs.stream().filter(n->(n.getRecipient().getType()!=Member.USER) || (n.getRecipient().equals(member))).collect(Collectors.toList());
+
+		}
+		
+		BrokerFactory.getLoggingBroker().logDebug("Children: ");
+		notifs.stream().map(n->n.getUuid()+"  "+n.getSubject()).forEach(BrokerFactory.getLoggingBroker()::logDebug);
+		
+		return notifs;
+	}
+	
+	public Notification getChildSentToThisUser(Member user) {
+		if ((getRecipient().getType()== Member.USER) && (getRecipient().getUuid().equals(user.getUuid()))) {
+			return this;
+		}
+		List<Notification> notifications = getAllChildrenSentToMember(user);
+		
+		if ((notifications == null) || (notifications.size()<1)) {
+			return null;
+		}
+		return notifications.get(0);
 	}
 
 	/**

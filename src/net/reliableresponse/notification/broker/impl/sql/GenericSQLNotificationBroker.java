@@ -17,10 +17,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationException;
@@ -354,7 +356,7 @@ public abstract class GenericSQLNotificationBroker implements
 		return notifications.get(0);
 	}
 	
-	public NotificationMessage[] getNotificationMessages(Notification notification) {
+	public List<NotificationMessage> getNotificationMessages(Notification notification) {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		Connection connection = getConnection();
@@ -422,7 +424,7 @@ public abstract class GenericSQLNotificationBroker implements
 				BrokerFactory.getLoggingBroker().logError(e);
 			}
 		}
-		return (NotificationMessage[])messages.toArray(new NotificationMessage[0]);
+		return messages;
 	}
 
 	/**
@@ -549,9 +551,9 @@ public abstract class GenericSQLNotificationBroker implements
 					}
 
 					// Load the messages
-					NotificationMessage[] messages = getNotificationMessages(notification);
-					for (int msgNum = 0; msgNum < messages.length; msgNum++) {
-						notification.addMessage(messages[msgNum], false);
+					List<NotificationMessage> messages = getNotificationMessages(notification);
+					for (NotificationMessage message: messages) {
+						notification.addMessage(message, false);
 					}
 					// Load the providers
 					sql2 = "SELECT uuid,classname,status FROM notificationprovider WHERE notification=?";
@@ -757,20 +759,12 @@ public abstract class GenericSQLNotificationBroker implements
 
 	public List<Notification> getUpdatedNotificationsTo(Member member,
 			java.util.Date since) {
-		String[] uuids = getUpdatedUuidsTo(member, since);
-		Vector notifs = new Vector();
-		for (int i = 0; i < uuids.length; i++) {
-			Notification notif = BrokerFactory.getNotificationBroker()
-					.getNotificationByUuid(uuids[i]);
-			if (notif != null) {
-				notifs.addElement(notif);
-			}
-		}
-		return notifs;
+		List<String> uuids = getUpdatedUuidsTo(member, since);
+		return uuids.stream().map(uuid->BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid)).collect(Collectors.toList());
 	}
 
-	public String[] getUpdatedUuidsTo(Member member, java.util.Date since) {
-		Vector uuids = new Vector();
+	public List<String> getUpdatedUuidsTo(Member member, java.util.Date since) {
+		List<String> uuids = new ArrayList<String>();
 		String sql = "SELECT m.notification FROM notificationmessages m, notification n "
 				+ "WHERE m.addedon>=? AND m.notification=n.uuid AND n.parent IS NULL AND n.recipient=? "
 				+ "GROUP BY m.notification";
@@ -784,7 +778,7 @@ public abstract class GenericSQLNotificationBroker implements
 			BrokerFactory.getLoggingBroker().logDebug("sql=" + (sql));
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				uuids.addElement(rs.getString(1));
+				uuids.add(rs.getString(1));
 			}
 		} catch (SQLException e) {
 			BrokerFactory.getLoggingBroker().logError(e);
@@ -801,7 +795,7 @@ public abstract class GenericSQLNotificationBroker implements
 			}
 		}
 
-		return (String[]) uuids.toArray(new String[0]);
+		return uuids;
 	}
 
 	public int deleteNotificationsBefore(java.util.Date before) {
@@ -1040,17 +1034,17 @@ public abstract class GenericSQLNotificationBroker implements
 		return null;
 	}
 
-	public String[] getAllPendingUuids() {
+	public List<String> getAllPendingUuids() {
 		String sql = getUuidsSQLBeginning()+ "recipient like ? AND status<>'confirmed' AND status<>'expired'";
 		return getUuidsGeneric("%", sql);
 	}
 
-	public String[] getAllUnconfirmedUuids() {
+	public List<String> getAllUnconfirmedUuids() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	private String[] getUuidsGeneric(Object parameter, String sql) {
+	private List<String> getUuidsGeneric(Object parameter, String sql) {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		Connection connection = getConnection();
@@ -1083,31 +1077,31 @@ public abstract class GenericSQLNotificationBroker implements
 			}
 
 		}
-		return (String[]) uuids.toArray(new String[0]);
+		return uuids;
 	}
 
-	public String[] getChildrenUuids(Notification parent) {
+	public List<String> getChildrenUuids(Notification parent) {
 		String sql = getUuidsSQLBeginning() + "parent=?";
 		return getUuidsGeneric(parent.getUuid(), sql);
 	}
 
-	public String[] getMembersPendingUuids() {
+	public List<String> getMembersPendingUuids() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public String[] getMembersUnconfirmedUuids(Member member) {
+	public List<String> getMembersUnconfirmedUuids(Member member) {
 		String sql = getUuidsSQLBeginning()
 				+ "recipient=? AND status<>'confirmed' AND status<>'expired'";
 		return getUuidsGeneric(member.getUuid(), sql);
 	}
 
-	public String[] getUuidsSentTo(Member member) {
+	public List<String> getUuidsSentTo(Member member) {
 		String sql = getUuidsSQLBeginning() + "recipient=?";
 		return getUuidsGeneric(member.getUuid(), sql);
 	}
 
-	public String[] getUuidsSentBy(User user) {
+	public List<String> getUuidsSentBy(User user) {
 		String sql = "SELECT n.uuid FROM notification n WHERE "
 				+ "n.senderclass='net.reliableresponse.notification.sender.UserSender' "
 				+ "AND n.senderinfo1=? AND ((n.status<>'expired' AND n.status<>'confirmed') OR n.time>?)";
@@ -1144,10 +1138,10 @@ public abstract class GenericSQLNotificationBroker implements
 			}
 
 		}
-		return (String[]) uuids.toArray(new String[0]);
+		return uuids;
 	}
 
-	public String[] getUuidsSince(java.util.Date since) {
+	public List<String> getUuidsSince(java.util.Date since) {
 		BrokerFactory.getLoggingBroker().logDebug(
 				"Getting notifs since " + new Timestamp(since.getTime()));
 		String sql = getUuidsSQLBeginning() + "time>?";
@@ -1155,7 +1149,7 @@ public abstract class GenericSQLNotificationBroker implements
 
 	}
 
-	public String[] getUuidsBefore(java.util.Date before) {
+	public List<String> getUuidsBefore(java.util.Date before) {
 		BrokerFactory.getLoggingBroker().logDebug(
 				"Getting notifs before " + new Timestamp(before.getTime()));
 		String sql = getUuidsSQLBeginning() + "time<?";
@@ -1163,7 +1157,7 @@ public abstract class GenericSQLNotificationBroker implements
 
 	}
 
-	public String[] getUuidsSince(long since) {
+	public List<String> getUuidsSince(long since) {
 		if (since > System.currentTimeMillis()) {
 			return getUuidsSince(new Date(0));
 		}

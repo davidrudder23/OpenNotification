@@ -23,7 +23,6 @@ import net.reliableresponse.notification.usermgmt.Group;
 import net.reliableresponse.notification.usermgmt.Member;
 import net.reliableresponse.notification.usermgmt.Roles;
 import net.reliableresponse.notification.usermgmt.User;
-import net.reliableresponse.notification.util.SortedVector;
 import net.reliableresponse.notification.util.StringUtils;
 
 /**
@@ -46,7 +45,7 @@ public class IndexAction implements Action {
 		return group.isMember(user);
 	}
 	
-	private boolean getView(ActionRequest actionRequest, String area, String type) {
+	private boolean getIsVisible(ActionRequest actionRequest, String area, String type) {
 		String viewString = actionRequest.getParameter("view_"+area+type);
 		boolean view = true;
 		if (viewString != null) view = viewString.toLowerCase().startsWith("t");
@@ -59,26 +58,26 @@ public class IndexAction implements Action {
 		
 	}
 	
-	private String makeTitle(String prefix, boolean viewActive, boolean viewConfirmed, boolean viewExpired, boolean viewOnhold, long pending, long confirmed, long expired, long onhold, int numHours) {
+	private String makeTitle(String prefix, String area, boolean viewActive, boolean viewConfirmed, boolean viewExpired, boolean viewOnhold, long pending, long confirmed, long expired, long onhold, int numHours) {
 		String title = "<font color=\"#17A1e2\">"+prefix+"</font></td>";
 		title += "<td align=\"right\" class=\"headercell\"><font color=\"#666666\"><input type=\"image\" src=\"images/led_";
 		title += viewActive?"green":"disabled";
-		title +=".gif\" width=\"11\" height=\"11\" name=\"toggle_active\">&nbsp;active: ";
+		title +=".gif\" width=\"11\" height=\"11\" name=\"toggle_"+area+"active\">&nbsp;active: ";
 		title += pending;
 		title += "&nbsp;&nbsp;&nbsp;<input type=\"image\" src=\"images/led_";
 		title += viewConfirmed?"yellow":"disabled";
-		title += ".gif\" width=\"11\" height=\"11\" name=\"toggle_confirmed\">&nbsp;confirmed: ";
+		title += ".gif\" width=\"11\" height=\"11\" name=\"toggle_"+area+"confirmed\">&nbsp;confirmed: ";
 		title += confirmed;
 		title += "&nbsp;&nbsp;&nbsp;<input type=\"image\" src=\"images/led_";
 		title += viewExpired?"red":"disabled";
-		title += ".gif\" width=\"11\" height=\"11\"  name=\"toggle_expired\">&nbsp;expired: ";
+		title += ".gif\" width=\"11\" height=\"11\"  name=\"toggle_"+area+"expired\">&nbsp;expired: ";
 		title += expired;
 		title += "&nbsp;&nbsp;&nbsp;<input type=\"image\" src=\"images/led_";
 		title += viewOnhold?"blue":"disabled";
-		title += ".gif\" width=\"11\" height=\"11\"  name=\"toggle_onhold\">&nbsp;on hold: ";
+		title += ".gif\" width=\"11\" height=\"11\"  name=\"toggle_"+area+"onhold\">&nbsp;on hold: ";
 		title += onhold;
 		title += "</font><img src=\"images/spacer.gif\" width=\"20\" height=\"10\"><font color=\"#000000\"> <span class=\"identity\">display past </span>";
-		title += "<input name=\"display_past\" type=\"text\" class=\"identity\" value=\"";
+		title += "<input name=\"display_"+area+"past\" type=\"text\" class=\"identity\" value=\"";
 		title += numHours;
 		title += "\" size=\"3\" onchange=\"document.mainform.submit();\"><span class=\"identity\">hrs.</span></font>";
 		
@@ -92,8 +91,7 @@ public class IndexAction implements Action {
 	public ServletRequest doAction(ServletRequest request, ServletResponse response) {
 		BrokerFactory.getLoggingBroker().logDebug("Index Action running");
 
-		ActionRequest actionRequest = new ActionRequest(
-				(HttpServletRequest) request);
+		ActionRequest actionRequest = new ActionRequest((HttpServletRequest) request);
 
 		// -- Sent To Me section --
 
@@ -120,10 +118,10 @@ public class IndexAction implements Action {
 			BrokerFactory.getLoggingBroker().logError(e);
 		}
 
-		boolean viewActive = getView(actionRequest, "", "active");
-		boolean viewConfirmed = getView(actionRequest, "", "confirmed");
-		boolean viewExpired = getView(actionRequest, "", "expired");
-		boolean viewOnhold = getView(actionRequest, "", "onhold");
+		boolean viewActive = getIsVisible(actionRequest, "", "active");
+		boolean viewConfirmed = getIsVisible(actionRequest, "", "confirmed");
+		boolean viewExpired = getIsVisible(actionRequest, "", "expired");
+		boolean viewOnhold = getIsVisible(actionRequest, "", "onhold");
 
 		User user = (User)BrokerFactory.getUserMgmtBroker().getUserByUuid((String)actionRequest.getSession().getAttribute("user"));
 		BrokerFactory.getLoggingBroker().logDebug("Current user = "+user);
@@ -146,7 +144,7 @@ public class IndexAction implements Action {
 		long onhold = recentNotifications.stream().filter(n->n.getStatus()==Notification.ONHOLD).count();
 
 
-		String notifsTitle = makeTitle("Notifications Sent To Me", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);
+		String notifsTitle = makeTitle("Notifications Sent To Me", "", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);
 
 		String systemMessage = request
 				.getParameter("pending_notification_message");
@@ -172,22 +170,12 @@ public class IndexAction implements Action {
 		}
 		
 		// Get the stored "display past" value
-		numHoursString = (String) actionRequest.getSession()
-				.getAttribute("notification_byme_hours");
-		if ((numHoursString == null) || (numHoursString.length() == 0)) {
-			numHoursString = "2";
-		}
-		numHours = 2;
-		try {
-			numHours = Integer.parseInt(numHoursString);
-		} catch (NumberFormatException e) {
-			BrokerFactory.getLoggingBroker().logError(e);
-		}
+		numHours = StringUtils.getInteger((String) actionRequest.getSession().getAttribute("notification_byme_hours"), 2);
 
-		viewActive = getView(actionRequest, "byme_", "active");
-		viewConfirmed = getView(actionRequest, "byme_", "confirmed");
-		viewExpired = getView(actionRequest, "byme_", "expired");
-		viewOnhold = getView(actionRequest, "byme_", "onhold");
+		viewActive = getIsVisible(actionRequest, "byme_", "active");
+		viewConfirmed = getIsVisible(actionRequest, "byme_", "confirmed");
+		viewExpired = getIsVisible(actionRequest, "byme_", "expired");
+		viewOnhold = getIsVisible(actionRequest, "byme_", "onhold");
 
 		List<Notification> myNotifications = broker.getNotificationsSentBy(user);
 		BrokerFactory.getLoggingBroker().logDebug("We have "+myNotifications.size()+" my notifs");
@@ -198,7 +186,7 @@ public class IndexAction implements Action {
 		expired = myNotifications.stream().filter(n->n.getStatus()==Notification.EXPIRED).count();
 		onhold = myNotifications.stream().filter(n->n.getStatus()==Notification.ONHOLD).count();
 
-		String sentNotifsTitle = makeTitle("Notifications Sent By Me", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);
+		String sentNotifsTitle = makeTitle("Notifications Sent By Me", "byme_", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);
 
 		systemMessage = request
 				.getParameter("sent_notification_message");
@@ -210,22 +198,32 @@ public class IndexAction implements Action {
 
 		actionRequest.addParameter("sentNotifsTitle", sentNotifsTitle);
 
-		viewActive = getView(actionRequest, "squelched_", "active");
-		viewConfirmed = getView(actionRequest, "squelched_", "confirmed");
-		viewExpired = getView(actionRequest, "squelched_", "expired");
-		viewOnhold = getView(actionRequest, "squelched_", "onhold");
+		viewActive = getIsVisible(actionRequest, "squelched_", "active");
+		viewConfirmed = getIsVisible(actionRequest, "squelched_", "confirmed");
+		viewExpired = getIsVisible(actionRequest, "squelched_", "expired");
+		viewOnhold = getIsVisible(actionRequest, "squelched_", "onhold");
 		
 		
-		// Squelched notifications
+		// -- Squelched notifications --
+		displayPast = request.getParameter("display_squelched_past");
+		if ((displayPast != null) && (displayPast.length() > 0)) {
+			try {
+				actionRequest.getSession().setAttribute("notification_squelched_hours", displayPast);
+			} catch (NumberFormatException e1) {
+				BrokerFactory.getLoggingBroker().logError(e1);
+			}
+		}
 		
-		List<Notification> squelchedNotifications = Squelcher.getSquelcherNotifications(user);
+		int squelchedHours = StringUtils.getInteger((String) actionRequest.getSession().getAttribute("notification_squelched_hours"), 2);
+
+		List<Notification> squelchedNotifications = Squelcher.getSquelcherNotifications(user).stream().filter(n->n.getTime().getTime()>System.currentTimeMillis()-(squelchedHours*3600000)).collect(Collectors.toList());
 		
 		BrokerFactory.getLoggingBroker().logDebug(pendingNotifications.size()+" pending notifs");
 		
-		viewActive = getView(actionRequest, "squelched_", "active");
-		viewConfirmed = getView(actionRequest, "squelched_", "confirmed");
-		viewExpired = getView(actionRequest, "squelched_", "expired");
-		viewOnhold = getView(actionRequest, "squelched_", "onhold");
+		viewActive = getIsVisible(actionRequest, "squelched_", "active");
+		viewConfirmed = getIsVisible(actionRequest, "squelched_", "confirmed");
+		viewExpired = getIsVisible(actionRequest, "squelched_", "expired");
+		viewOnhold = getIsVisible(actionRequest, "squelched_", "onhold");
 		
 		pending = squelchedNotifications.stream().filter(n->n.getStatus()==Notification.PENDING).count();
 		pending += squelchedNotifications.stream().filter(n->n.getStatus()==Notification.NORMAL).count();
@@ -233,7 +231,7 @@ public class IndexAction implements Action {
 		expired = squelchedNotifications.stream().filter(n->n.getStatus()==Notification.EXPIRED).count();
 		onhold = squelchedNotifications.stream().filter(n->n.getStatus()==Notification.ONHOLD).count();
 		
-		String squelchedNotifsTitle = makeTitle("Squelched Notifications", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);
+		String squelchedNotifsTitle = makeTitle("Squelched Notifications", "squelched_", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, squelchedHours);
 		systemMessage = request.getParameter("squelched_notification_message");
 		if (!StringUtils.isEmpty(systemMessage)) {
 			squelchedNotifsTitle += "</tr><tr><td colspan=\"2\" class=\"headercell\" width=\"100%\"><span class=\"systemalert\">";
