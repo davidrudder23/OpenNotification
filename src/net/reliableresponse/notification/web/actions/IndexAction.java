@@ -91,8 +91,7 @@ public class IndexAction implements Action {
 	public ServletRequest doAction(ServletRequest request, ServletResponse response) {
 		BrokerFactory.getLoggingBroker().logDebug("Index Action running");
 
-		ActionRequest actionRequest = new ActionRequest(
-				(HttpServletRequest) request);
+		ActionRequest actionRequest = new ActionRequest((HttpServletRequest) request);
 
 		// -- Sent To Me section --
 

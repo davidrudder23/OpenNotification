@@ -3,9 +3,10 @@
 DIR=/home/drig/workspace/OpenNotification
 
 
-for x in `ps ax|grep tomcat|grep -v grep|awk '{print $1}'`;do kill -9 $x;done
 
 #. $DIR/tools/setclasspath
 cd /opt/tomcat/webapps
-rm -rf ../logs/* notification* ; cd $DIR; ant clean_jsp war && cd /opt/tomcat/webapps/ && cp $DIR/notification.war  . && ../bin/startup.sh && tail -f ../logs/catalina.out
+rm -rf ../logs/* notification* ; cd $DIR; ant clean_jsp war && cd /opt/tomcat/webapps/ && 
+for x in `ps ax|grep tomcat|grep -v grep|awk '{print $1}'`;do kill -9 $x;done &&
+cp $DIR/notification.war  . && ../bin/startup.sh && tail -f ../logs/catalina.out
 

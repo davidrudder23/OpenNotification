@@ -8,6 +8,7 @@ package net.reliableresponse.notification.sender;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import net.reliableresponse.notification.Notification;
@@ -47,9 +48,9 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 		List<String> options;
 		BrokerFactory.getLoggingBroker().logDebug("Getting available responses for "+notification.getRecipient());
 		if (notification.getStatus() == Notification.ONHOLD) {
-			options = new ArrayList(BrokerFactory.getConfigurationBroker().getStringValues("responses.onhold", onHoldOptions));
+			options = new ArrayList<String>(BrokerFactory.getConfigurationBroker().getStringValues("responses.onhold", onHoldOptions));
 		} else if (notification.getStatus() == Notification.EXPIRED) {
-			options = new ArrayList(BrokerFactory.getConfigurationBroker().getStringValues("responses.expired", expiredOptions));
+			options = new ArrayList<String>(BrokerFactory.getConfigurationBroker().getStringValues("responses.expired", expiredOptions));
 		}
 		
 		Member recipient = notification.getRecipient();
@@ -60,19 +61,17 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 			}
 		}
 		if (notification.getUltimateParent().getRecipient() instanceof EscalationGroup) {
-			options = new ArrayList(BrokerFactory.getConfigurationBroker().getStringValues("responses.escalation", escalationOptions));
+			options = new ArrayList<String>(BrokerFactory.getConfigurationBroker().getStringValues("responses.escalation", escalationOptions));
 		} else {
-			options = new ArrayList(BrokerFactory.getConfigurationBroker().getStringValues("responses.individual", individualOptions));
+			options = new ArrayList<String>(BrokerFactory.getConfigurationBroker().getStringValues("responses.individual", individualOptions));
 		}
 		
 		BrokerFactory.getLoggingBroker().logDebug("Options has "+options.size()+" elems");
 
-		if (recipient.getType() == Member.USER) {
-			if (Squelcher.isSquelched(notification)) {
-				options.add("Unsquelch");
-			} else {
-				options.add("Squelch");
-			}
+		if (Squelcher.isSquelched(notification)) {
+			options.add("Unsquelch");
+		} else {
+			options.add("Squelch");
 		}
 		
 		BrokerFactory.getLoggingBroker().logDebug("Options has "+options.size()+" elems - "+options.stream().reduce("", (a,b)->a+" "+b));
@@ -95,12 +94,12 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 		BrokerFactory.getLoggingBroker().logDebug("Handling response "+response);
 		
 		if ("squelch".equalsIgnoreCase(response)) {
-			Squelcher.squelch(notification);
+			Optional.of(notification.getChildSentToThisUser(responder)).ifPresent(n->Squelcher.squelch(n));
 			return;
 		}
 		
 		if ("unsquelch".equalsIgnoreCase(response)) {
-			Squelcher.unsquelch(notification);
+			Optional.of(notification.getChildSentToThisUser(responder)).ifPresent(n->Squelcher.unsquelch(n));
 			return;
 		}
 		

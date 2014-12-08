@@ -19,8 +19,9 @@ function respond(response) {
 <td width="11"><img src="images/spacer.gif" width="1" height="1"></td>
 <td valign="middle">
 <%
+	User user = (BrokerFactory.getUserMgmtBroker().getUserByUuid((String)session.getAttribute("user")));
 	String uuid = (String)request.getAttribute ("notification_uuid");
-	Notification notification = BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid);
+	Notification notification = BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid).getChildSentToThisUser(user);
 	String respondTextName = "action_respond_text_"+uuid;
 	String respondText = request.getParameter(respondTextName);
 	

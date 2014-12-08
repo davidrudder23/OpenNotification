@@ -177,7 +177,7 @@
 			imageName = "images/led_yellow.gif";
 		} else if ((notification.getStatus() == Notification.PENDING) || (notification.getStatus() == Notification.NORMAL)) {
 			imageName = "images/led_green.gif";
-			if (Squelcher.isSquelched(notification)) {
+			if (Squelcher.isSquelched(notification.getChildSentToThisUser(user))) {
 				imageName = "images/led_squelched.gif";
 			}
 		} else if (notification.getStatus() == Notification.ONHOLD) {
