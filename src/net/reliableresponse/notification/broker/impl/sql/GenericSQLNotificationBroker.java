@@ -356,7 +356,7 @@ public abstract class GenericSQLNotificationBroker implements
 		return notifications.get(0);
 	}
 	
-	public NotificationMessage[] getNotificationMessages(Notification notification) {
+	public List<NotificationMessage> getNotificationMessages(Notification notification) {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		Connection connection = getConnection();
@@ -424,7 +424,7 @@ public abstract class GenericSQLNotificationBroker implements
 				BrokerFactory.getLoggingBroker().logError(e);
 			}
 		}
-		return (NotificationMessage[])messages.toArray(new NotificationMessage[0]);
+		return messages;
 	}
 
 	/**
@@ -551,9 +551,9 @@ public abstract class GenericSQLNotificationBroker implements
 					}
 
 					// Load the messages
-					NotificationMessage[] messages = getNotificationMessages(notification);
-					for (int msgNum = 0; msgNum < messages.length; msgNum++) {
-						notification.addMessage(messages[msgNum], false);
+					List<NotificationMessage> messages = getNotificationMessages(notification);
+					for (NotificationMessage message: messages) {
+						notification.addMessage(message, false);
 					}
 					// Load the providers
 					sql2 = "SELECT uuid,classname,status FROM notificationprovider WHERE notification=?";

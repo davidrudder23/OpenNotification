@@ -101,7 +101,7 @@ public interface NotificationBroker {
 	 * @param notification The notification to get the messages for
 	 * @return All the notification messages
 	 */
-	public NotificationMessage[] getNotificationMessages(Notification notification);
+	public List<NotificationMessage> getNotificationMessages(Notification notification);
 	
 	/**
 	 * Gets all the notifications before a specified date

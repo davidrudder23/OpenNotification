@@ -34,7 +34,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		realBroker.addMessage(notification, message);
 	}
 	
-	public NotificationMessage[] getNotificationMessages(
+	public List<NotificationMessage> getNotificationMessages(
 			Notification notification) {
 		BrokerFactory.getLoggingBroker().logDebug("S3 getting message from notification "+notification.getUuid());
 		return realBroker.getNotificationMessages(notification);

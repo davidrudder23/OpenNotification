@@ -56,7 +56,7 @@ public class CachingNotificationBroker implements NotificationBroker {
 	
 	
 	
-	public NotificationMessage[] getNotificationMessages(
+	public List<NotificationMessage> getNotificationMessages(
 			Notification notification) {
 		return realBroker.getNotificationMessages(notification);
 	}
