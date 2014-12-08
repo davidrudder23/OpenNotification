@@ -17,10 +17,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationException;
@@ -757,20 +759,12 @@ public abstract class GenericSQLNotificationBroker implements
 
 	public List<Notification> getUpdatedNotificationsTo(Member member,
 			java.util.Date since) {
-		String[] uuids = getUpdatedUuidsTo(member, since);
-		Vector notifs = new Vector();
-		for (int i = 0; i < uuids.length; i++) {
-			Notification notif = BrokerFactory.getNotificationBroker()
-					.getNotificationByUuid(uuids[i]);
-			if (notif != null) {
-				notifs.addElement(notif);
-			}
-		}
-		return notifs;
+		List<String> uuids = getUpdatedUuidsTo(member, since);
+		return uuids.stream().map(uuid->BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid)).collect(Collectors.toList());
 	}
 
-	public String[] getUpdatedUuidsTo(Member member, java.util.Date since) {
-		Vector uuids = new Vector();
+	public List<String> getUpdatedUuidsTo(Member member, java.util.Date since) {
+		List<String> uuids = new ArrayList<String>();
 		String sql = "SELECT m.notification FROM notificationmessages m, notification n "
 				+ "WHERE m.addedon>=? AND m.notification=n.uuid AND n.parent IS NULL AND n.recipient=? "
 				+ "GROUP BY m.notification";
@@ -784,7 +778,7 @@ public abstract class GenericSQLNotificationBroker implements
 			BrokerFactory.getLoggingBroker().logDebug("sql=" + (sql));
 			rs = stmt.executeQuery();
 			while (rs.next()) {
-				uuids.addElement(rs.getString(1));
+				uuids.add(rs.getString(1));
 			}
 		} catch (SQLException e) {
 			BrokerFactory.getLoggingBroker().logError(e);
@@ -801,7 +795,7 @@ public abstract class GenericSQLNotificationBroker implements
 			}
 		}
 
-		return (String[]) uuids.toArray(new String[0]);
+		return uuids;
 	}
 
 	public int deleteNotificationsBefore(java.util.Date before) {

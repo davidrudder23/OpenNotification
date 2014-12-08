@@ -85,7 +85,7 @@ public interface NotificationBroker {
 	 * @param since
 	 * @return
 	 */
-	public String[] getUpdatedUuidsTo (Member member, Date since);
+	public List<String> getUpdatedUuidsTo (Member member, Date since);
 		
 	/**
 	 * Retrieves all the notifications sent in the past number of milliseconds

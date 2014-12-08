@@ -146,7 +146,7 @@ public class S3NotificationMessageStorageBroker implements NotificationBroker {
 		return realBroker.getUpdatedNotificationsTo(member, since);
 	}
 
-	public String[] getUpdatedUuidsTo(Member member, Date since) {
+	public List<String> getUpdatedUuidsTo(Member member, Date since) {
 		return realBroker.getUpdatedUuidsTo(member, since);
 	}
 
