@@ -5,6 +5,7 @@
  */
 package net.reliableresponse.notification.providers;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -28,11 +29,11 @@ import net.reliableresponse.notification.util.SortedVector;
 public abstract class AbstractNotificationProvider implements
 		NotificationProvider {
 
-	Hashtable statusOfSends;
+	Hashtable<String,String> statusOfSends;
 
 	public void setStatusOfSend(Notification notification, String status) {
 		if (statusOfSends == null) {
-			statusOfSends = new Hashtable();
+			statusOfSends = new Hashtable<String,String>();
 		}
 
 		BrokerFactory.getLoggingBroker().logDebug(
@@ -43,7 +44,7 @@ public abstract class AbstractNotificationProvider implements
 
 	public String getStatusOfSend(Notification notification) {
 		if (statusOfSends == null) {
-			statusOfSends = new Hashtable();
+			statusOfSends = new Hashtable<String,String>();
 		}
 
 		String statusOfSend = (String) statusOfSends.get(this.getName()
@@ -82,9 +83,9 @@ public abstract class AbstractNotificationProvider implements
 	 *            The max number of parts to send
 	 * @return The split message
 	 */
-	public static String[] splitMessage(String message, int maxSize,
+	public static List<String> splitMessage(String message, int maxSize,
 			int maxMessages) {
-		Vector parts = new Vector();
+		List<String> parts = new ArrayList<String>();
 		String partEnding = "\nContinued...";
 		String ending = "\n** Truncated **";
 		int msgSize = maxSize - partEnding.length();
@@ -114,11 +115,11 @@ public abstract class AbstractNotificationProvider implements
 					part = part + ending;
 				}
 			}
-			parts.addElement(part);
+			parts.add(part);
 			processedSize += msgSize;
 
 		}
-		return (String[]) parts.toArray(new String[0]);
+		return parts;
 	}
 
 	public static String getResponseToAction(User user, String text) {

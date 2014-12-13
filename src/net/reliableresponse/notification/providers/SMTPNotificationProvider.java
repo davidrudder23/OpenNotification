@@ -9,6 +9,7 @@ package net.reliableresponse.notification.providers;
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 
@@ -212,15 +213,16 @@ public class SMTPNotificationProvider extends AbstractNotificationProvider {
 
 				// String[] parts = splitMessage(messageText,
 				// device.getMaxCharactersSize(), device.getMaxMessages());
-				String[] parts = splitMessage(messageText, 10240, device
-						.getMaxMessages());
-				for (int partNum = 0; partNum < parts.length; partNum++) {
-					if (parts.length < 2) {
+				List<String> parts = splitMessage(messageText, 10240, device.getMaxMessages());
+				int partNum = 0;
+				for (String part: parts) {
+					partNum++;
+					if (parts.size()< 2) {
 						message.setSubject(summary);
 					} else {
 						message.setSubject((partNum + 1) + ": " + summary);
 					}
-					message.setText(parts[partNum]);
+					message.setText(part);
 
 					if (BrokerFactory.getConfigurationBroker().getBooleanValue(
 							"email.attachments.attach", false)) {
@@ -228,7 +230,7 @@ public class SMTPNotificationProvider extends AbstractNotificationProvider {
 								.getMessages();
 						Multipart attachmentParts = new MimeMultipart();
 						MimeBodyPart attachmentPart = new MimeBodyPart();
-						attachmentPart.setText(parts[partNum]);
+						attachmentPart.setText(part);
 						attachmentParts.addBodyPart(attachmentPart);
 						
 						for (int i = 1; i < attachments.length; i++) {

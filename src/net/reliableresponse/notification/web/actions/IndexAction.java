@@ -132,7 +132,6 @@ public class IndexAction implements Action {
 		List<Notification> recentNotifications = broker.getNotificationsSince(timeSince.longValue()).stream().distinct().filter(n -> isVisible(user, n)).collect(Collectors.toList());
 		
 		// Add all the pending notifications
-		//List<Notification> pendingNotifications = broker.getAllPendingNotifications();
 		List<Notification> pendingNotifications = broker.getAllPendingNotifications().stream().distinct().filter(n -> isVisible(user, n)).collect(Collectors.toList());
 
 		BrokerFactory.getLoggingBroker().logDebug(pendingNotifications.size()+" pending notifs");

@@ -173,18 +173,22 @@
 		NotificationMessage[] messages = notification.getMessages();
 	
 		String imageName = "images/led_green.gif";
+		String className = "";
+		
 		if (notification.getStatus() == Notification.CONFIRMED) {
 			imageName = "images/led_yellow.gif";
 		} else if ((notification.getStatus() == Notification.PENDING) || (notification.getStatus() == Notification.NORMAL)) {
 			imageName = "images/led_green.gif";
-			if (Squelcher.isSquelched(notification.getChildSentToThisUser(user))) {
-				imageName = "images/led_squelched.gif";
-			}
 		} else if (notification.getStatus() == Notification.ONHOLD) {
 			imageName = "images/led_blue.gif";
 		} else {
 			imageName = "images/led_red.gif";
 		}
+		
+		if (Squelcher.isSquelched(notification.getChildSentToThisUser(user))) {
+			className = "squelched";
+		}
+
 		
 	if (i > 500) {
 	%>	
@@ -203,7 +207,7 @@
 	<td><% if (i>0) { %><font color="#FFFFFF"><% } %>Confirm</td></tr>
 	
 	<tr>
-      <td width="11" valign="top"><img src="<%= imageName %>" alt="" width="11" height="11">
+      <td width="11" valign="top"><img src="<%= imageName %>" class="<%= className %>" alt="" width="11" height="11">
       </td>
       
       <% String subject = notification.getSubject();

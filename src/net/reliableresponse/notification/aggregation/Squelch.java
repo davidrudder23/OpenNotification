@@ -14,7 +14,7 @@ public class Squelch {
 	private Date endDate;
 	
 	private int distancePercentage = 80;
-	private int minCharacters = 8;
+	public static final int MIN_CHARACTERS = 8;
 	
 	public Squelch (Notification notification, Date startDate, int numberOfMinutes) {
 		if (notification != null) {
@@ -47,18 +47,18 @@ public class Squelch {
 	}
 	
 	public boolean shouldSquelch(Notification notification) {
-		BrokerFactory.getLoggingBroker().logDebug("Running shouldSquelch for squelched notif "+notificationUuid);
+		BrokerFactory.getLoggingBroker().logDebug("Running shouldSquelch for squelched notif "+notificationUuid+" vs supplied notif "+notification.getUuid()+" with recipient "+notification.getRecipient().getUuid());
 		
 		// Quickly see if we can discard this notification
 		if (notification == null) return false;
 		if (notification.getSubject() == null) return false;
-		if (notification.getSubject().length()<minCharacters) return false;
+		if (notification.getSubject().length()<Squelch.MIN_CHARACTERS) return false;
 		
 		Notification squelchedNotif = BrokerFactory.getNotificationBroker().getNotificationByUuid(notificationUuid);
 		if (squelchedNotif == null) return false;
 		
 		if (squelchedNotif.getSubject() == null) return false;
-		if (squelchedNotif.getSubject().length()<minCharacters) return false;
+		if (squelchedNotif.getSubject().length()<Squelch.MIN_CHARACTERS) return false;
 		
 		// it passes sanity, now check if it should squelch
 		int distance = notification.getSubject().length() - StringUtils.distance(notification.getSubject(), squelchedNotif.getSubject());

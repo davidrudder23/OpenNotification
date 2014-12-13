@@ -137,6 +137,10 @@ a.headercell {
 	padding: 2px;
 }
 
+.squelched {
+	border: 2px solid grey;
+}
+
 .nomembers {
 	color: #990000;
 }

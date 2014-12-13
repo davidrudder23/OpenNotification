@@ -114,9 +114,9 @@ public class AIMNotificationProvider extends AbstractNotificationProvider implem
 			String accountToSendTo =((AIMDevice)device).getAccount();
 			BrokerFactory.getLoggingBroker().logDebug("Sending AIM message to "+accountToSendTo);
 			
-			String[] parts = splitMessage(message, device.getMaxCharactersSize(), device.getMaxMessages());
-			for (int partNum = 0; partNum < parts.length; partNum++) {
-				client.send(accountToSendTo, parts[partNum]);
+			List<String> parts = splitMessage(message, device.getMaxCharactersSize(), device.getMaxMessages());
+			for (String part: parts) {
+				client.send(accountToSendTo, part);
 			}
 			
 			return params;

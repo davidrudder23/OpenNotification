@@ -16,6 +16,7 @@ import net.reliableresponse.notification.NotificationException;
 import net.reliableresponse.notification.actions.EscalationThread;
 import net.reliableresponse.notification.actions.EscalationThreadManager;
 import net.reliableresponse.notification.actions.SendNotification;
+import net.reliableresponse.notification.aggregation.Squelch;
 import net.reliableresponse.notification.aggregation.Squelcher;
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.device.Device;
@@ -68,10 +69,12 @@ public abstract class AbstractNotificationSender implements NotificationSender {
 		
 		BrokerFactory.getLoggingBroker().logDebug("Options has "+options.size()+" elems");
 
-		if (Squelcher.isSquelched(notification)) {
-			options.add("Unsquelch");
-		} else {
-			options.add("Squelch");
+		if (notification.getSubject().length()>= Squelch.MIN_CHARACTERS) {
+			if (Squelcher.isSquelched(notification)) {
+				options.add("Unsquelch");
+			} else {
+				options.add("Squelch");
+			}
 		}
 		
 		BrokerFactory.getLoggingBroker().logDebug("Options has "+options.size()+" elems - "+options.stream().reduce("", (a,b)->a+" "+b));
