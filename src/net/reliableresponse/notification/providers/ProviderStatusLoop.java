@@ -5,6 +5,7 @@
  */
 package net.reliableresponse.notification.providers;
 
+import java.util.List;
 import java.util.Vector;
 
 import net.reliableresponse.notification.Notification;
@@ -59,18 +60,16 @@ public class ProviderStatusLoop extends Thread {
 				} else {
 					// If it's not expired, then we need to check it
 					// Loop over each provider
-					NotificationProvider[] providers = notification
-							.getNotificationProviders();
-					for (int p = 0; p < providers.length; p++) {
-						BrokerFactory.getLoggingBroker().logDebug("Provider Status Loop checking provider "+providers[p]);
-						if (providers[p] != null) {
+					List<NotificationProvider> providers = notification.getNotificationProviders();
+					for (NotificationProvider provider: providers) {
+						BrokerFactory.getLoggingBroker().logDebug("Provider Status Loop checking provider "+provider);
+						if (provider != null) {
 							// Make sure we were successful when sending it
-							if (providers[p].getStatusOfSend(notification)
-								.toLowerCase().startsWith("succee")) {
+							if (provider.getStatusOfSend(notification).toLowerCase().startsWith("succee")) {
 								
 								// Call getResponses().  If the device doesn't support polling, it'll
 								// just returnan empty array
-								String[] responses = providers[p].getResponses(notification);
+								String[] responses = provider.getResponses(notification);
 								if (responses == null)
 									responses = new String[0];
 								for (int r = 0; r < responses.length; r++) {

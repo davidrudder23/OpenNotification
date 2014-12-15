@@ -16,27 +16,19 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 
 import net.reliableresponse.notification.Notification;
-import net.reliableresponse.notification.actions.SendNotification;
-import net.reliableresponse.notification.asterisk.AgiServer;
-import net.reliableresponse.notification.asterisk.InboundAGI;
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.broker.ConfigurationBroker;
 import net.reliableresponse.notification.broker.JobsBroker;
 import net.reliableresponse.notification.broker.impl.clustered.ClusteredBrokerTransmitter;
-import net.reliableresponse.notification.device.Device;
 import net.reliableresponse.notification.device.SameTimeDevice;
 import net.reliableresponse.notification.dialogic.DialogicIncoming;
 import net.reliableresponse.notification.ldap.LDAPImporter;
 import net.reliableresponse.notification.pop.PopMailRetriever;
-import net.reliableresponse.notification.providers.AsteriskVoIPNotificationProvider;
-import net.reliableresponse.notification.providers.NotificationProvider;
 import net.reliableresponse.notification.providers.ProviderStatusLoop;
 import net.reliableresponse.notification.purge.PurgeJob;
-import net.reliableresponse.notification.sip.SipIVR;
 import net.reliableresponse.notification.smtp.SMTP;
 import net.reliableresponse.notification.snmp.SNMPLibrary;
 import net.reliableresponse.notification.usermgmt.Group;
-import net.reliableresponse.notification.usermgmt.Member;
 import net.reliableresponse.notification.usermgmt.User;
 
 /**
@@ -49,10 +41,9 @@ public class InitializationServlet extends HttpServlet {
 	public static String realPath;
 
 	private boolean isClusterMember(String name) {
-		String[] clusterMembers = BrokerFactory.getConfigurationBroker()
-				.getStringValues("cluster.server");
-		for (int i = 0; i < clusterMembers.length; i++) {
-			if (name.equals(clusterMembers[i])) {
+		List<String> clusterMembers = BrokerFactory.getConfigurationBroker().getStringValues("cluster.server");
+		for (String clusterMember: clusterMembers) {
+			if (name.equals(clusterMember)) {
 				return true;
 			}
 		}
@@ -112,30 +103,6 @@ public class InitializationServlet extends HttpServlet {
 			anyErr.printStackTrace();
 		}
 
-		try {
-			boolean doSip = BrokerFactory.getConfigurationBroker()
-					.getBooleanValue("sip.incoming", true);
-			if (doSip) {
-				SipIVR ivr = new SipIVR();
-				ivr.init("127.0.0.1", 5060);
-			}
-		} catch (Exception anyExc) {
-			anyExc.printStackTrace();
-		} catch (Error anyErr) {
-			anyErr.printStackTrace();
-		}
-
-		try {
-			boolean doAsterisk = BrokerFactory.getConfigurationBroker()
-					.getBooleanValue("asterisk.incoming", true);
-			if (doAsterisk) {
-				AgiServer.getInstance();
-			}
-		} catch (Exception anyExc) {
-			anyExc.printStackTrace();
-		} catch (Error anyErr) {
-			anyErr.printStackTrace();
-		}
 		boolean doSNMP = BrokerFactory.getConfigurationBroker()
 				.getBooleanValue("snmp");
 		if (doSNMP) {

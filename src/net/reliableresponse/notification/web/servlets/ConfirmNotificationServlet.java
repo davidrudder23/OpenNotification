@@ -26,6 +26,11 @@ import net.reliableresponse.notification.usermgmt.User;
  */
 public class ConfirmNotificationServlet extends HttpServlet {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 2214750915238225535L;
+	
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#doGet(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
 	 */

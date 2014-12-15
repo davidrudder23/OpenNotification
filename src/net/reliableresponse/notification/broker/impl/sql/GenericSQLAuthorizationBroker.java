@@ -217,6 +217,7 @@ public abstract class GenericSQLAuthorizationBroker implements
 			HttpServletRequest request = (HttpServletRequest) resource;
 			if (member == null) {
 				String requestURI = request.getRequestURI();
+				BrokerFactory.getLoggingBroker().logDebug("requestURI="+requestURI);
 				String page = request.getParameter("page");
 				if (page == null) page = "";
 				if ((page.equals("/register.jsp")) ||
@@ -233,6 +234,7 @@ public abstract class GenericSQLAuthorizationBroker implements
                                                 || (requestURI.indexOf("LicenseServlet")>=0)
 						|| (requestURI.indexOf("/images/")>=0)
 						|| (requestURI.indexOf("/noauth/")>=0)
+						|| (requestURI.indexOf("TwilioServlet")>=0)
 						|| (requestURI.indexOf("register.jsp")>=0)
 						|| (requestURI.indexOf("processRegister.jsp")>=0)
 						|| (requestURI.indexOf("beta.jsp")>=0)

@@ -7,6 +7,7 @@ package net.reliableresponse.notification.broker.impl.clustered;
 
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
@@ -25,10 +26,10 @@ public class ClusteredBrokerTransmitter {
 
 	public static void sendInvalidate(String callName, String uuid) {
 		BrokerFactory.getLoggingBroker().logDebug("Sending invalidate: "+callName+" uuid="+uuid);
-		String[] urls = BrokerFactory.getConfigurationBroker().getStringValues("cluster.server");
-		for (int i = 0; i < urls.length; i++) {
+		List<String> urls = BrokerFactory.getConfigurationBroker().getStringValues("cluster.server");
+		for (String url: urls) {
             try {
-				String endpoint =urls[i]+"/ClusterManager.jws";
+				String endpoint =url+"/ClusterManager.jws";
 					  
 				Service service = new Service();
 				Call call = (Call) service.createCall();

@@ -43,12 +43,12 @@ public class GenerateNotificationLog {
 			output.append ("Sent On: ");
 			output.append (notification.getTime());
 			output.append ("\n");
-			NotificationProvider[] providers = notification.getNotificationProviders();
-			for (int p = 0; p < providers.length; p++) {
+			List<NotificationProvider> providers = notification.getNotificationProviders();
+			for (NotificationProvider provider: providers) {
 				output.append ("Device ");
-				output.append (providers[p].getName());
+				output.append (provider.getName());
 				output.append (" ");
-				output.append (providers[p].getStatusOfSend(notification));
+				output.append (provider.getStatusOfSend(notification));
 				output.append ("\n");
 			}
 			

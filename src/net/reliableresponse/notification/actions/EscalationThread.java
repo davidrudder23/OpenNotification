@@ -6,6 +6,7 @@
  */
 package net.reliableresponse.notification.actions;
 
+import java.util.List;
 import java.util.Vector;
 
 import net.reliableresponse.notification.Notification;
@@ -118,14 +119,10 @@ public class EscalationThread extends Thread {
 				individualNotification.setPriority(priority);
 
 				try {
-					NotificationProvider[] originalProviders = notification
-							.getNotificationProviders();
-					if ((originalProviders != null)
-							&& (originalProviders.length > 0)) {
-
-						for (int i = 1; i < originalProviders.length; i++) {
-							individualNotification
-									.addNotificationProvider(originalProviders[i]);
+					List<NotificationProvider> originalProviders = notification.getNotificationProviders();
+					if (originalProviders != null) {
+						for (NotificationProvider originalProvider: originalProviders) {
+							individualNotification.addNotificationProvider(originalProvider);
 						}
 					}
 

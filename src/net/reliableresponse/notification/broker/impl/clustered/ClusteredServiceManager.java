@@ -3,6 +3,7 @@ package net.reliableresponse.notification.broker.impl.clustered;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.Hashtable;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.ServiceException;
@@ -91,12 +92,12 @@ public class ClusteredServiceManager {
 				return false;
 			}
 		}
-		String[] urls = BrokerFactory.getConfigurationBroker().getStringValues("cluster.server");
-		for (int i = 0; i < urls.length; i++) {
-			if (!StringUtils.isEmpty(urls[i])) {
-				BrokerFactory.getLoggingBroker().logDebug("Checking if "+urls[i]+" owns "+identifier);
-				if (checkServer(urls[i], identifier)) {
-					BrokerFactory.getLoggingBroker().logDebug(urls[i]+" owns "+identifier);
+		List<String> urls = BrokerFactory.getConfigurationBroker().getStringValues("cluster.server");
+		for (String url: urls) {
+			if (!StringUtils.isEmpty(url)) {
+				BrokerFactory.getLoggingBroker().logDebug("Checking if "+url+" owns "+identifier);
+				if (checkServer(url, identifier)) {
+					BrokerFactory.getLoggingBroker().logDebug(url+" owns "+identifier);
 					return false;
 				}
 			}			
@@ -114,11 +115,11 @@ public class ClusteredServiceManager {
 			if (checkServer(knownHost, identifier))
 				return knownHost;
 		}
-		String[] urls = BrokerFactory.getConfigurationBroker().getStringValues("cluster.server");
-		for (int i = 0; i < urls.length; i++) {
-			if (!StringUtils.isEmpty(urls[i])) {
-				if (checkServer(urls[i], identifier))
-					return urls[i];
+		List<String> urls = BrokerFactory.getConfigurationBroker().getStringValues("cluster.server");
+		for (String url: urls) {
+			if (!StringUtils.isEmpty(url)) {
+				if (checkServer(url, identifier))
+					return url;
 			}			
 		}
 

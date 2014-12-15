@@ -19,6 +19,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.Vector;
+import java.util.function.Function;
 
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.broker.ConfigurationBroker;
@@ -51,25 +52,35 @@ public class PropertiesConfigurationBroker implements ConfigurationBroker {
 		if (value == null) return defaultValue;
 		return value;
 	}
+	
+	
 
-	public String[] getStringValues(String key) {
-        Vector values = new Vector();
+	@Override
+	public String getStringValue(String key, Function<String, String> ifNotFound) {
+		String value = getStringValue(key);
+		if (value == null) return ifNotFound.apply(key);
+		
+		return value;
+	}
+
+	public List<String> getStringValues(String key) {
+		List<String> values = new ArrayList<String>();
         String allValues = props.getProperty(key);
         if (allValues != null) {
         	StringTokenizer tok = new StringTokenizer(allValues, ",");
         	while (tok.hasMoreElements()) {
-        		values.addElement(tok.nextElement());
+        		values.add((String)tok.nextElement());
         	}
         }
-        return (String[])values.toArray(new String[0]);
+        return values;
     }
 	
 	public String[] getStringValues(String key, String[] defaultValue) {
-		String[] values = getStringValues(key);
-		if ((values == null) || (values.length ==0)) {
+		List<String> values = getStringValues(key);
+		if ((values == null) || (values.size() ==0)) {
 			return defaultValue;
 		}
-		return values;
+		return (String[])values.toArray(new String[0]);
 	}
 	
 	public List<String> getStringValues(String key, List<String> defaultValue) {
@@ -226,4 +237,5 @@ public class PropertiesConfigurationBroker implements ConfigurationBroker {
 			e.printStackTrace();
 		}
 	}
+
 }

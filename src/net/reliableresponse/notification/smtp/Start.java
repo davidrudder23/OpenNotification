@@ -23,7 +23,7 @@ public class Start extends Thread {
 
 		try {
 			// listen to the given port
-			String serverIP = BrokerFactory.getConfigurationBroker().getStringValue("smtp.bindaddress", null);
+			String serverIP = BrokerFactory.getConfigurationBroker().getStringValue("smtp.bindaddress");
 			if (serverIP == null) {
 				serverSocket = new ServerSocket(intPort);
 			} else {

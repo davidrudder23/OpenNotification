@@ -3,12 +3,14 @@
 package net.reliableresponse.notification.smtp;
 
 
+import java.util.List;
+
 import net.reliableresponse.notification.broker.BrokerFactory;
 
 public class SMTP extends Thread {
-	static String[] vNamesOfPlugIns = null; // the names of each plugin
+	static List<String> vNamesOfPlugIns = null; // the names of each plugin
 
-	static String[] vServerNames; // the names of all the servers
+	static List<String> vServerNames; // the names of all the servers
 	
 	public static boolean shutdown = false;
 
@@ -16,7 +18,7 @@ public class SMTP extends Thread {
 
 	public void run() {
 		int i;
-		String[] vPorts = null;
+		List<String> vPorts = null;
 		String strCurrentLine;
 		String strTemp;
 
@@ -28,7 +30,7 @@ public class SMTP extends Thread {
 		vServerNames = BrokerFactory.getConfigurationBroker().getStringValues(
 				"smtp.server.hostname");
 		// make sure at least one plugin is wanted
-		if ((vServerNames == null) || (vServerNames.length == 0)) {
+		if ((vServerNames == null) || (vServerNames.size() == 0)) {
 			BrokerFactory.getLoggingBroker().logError(
 					"SMTP: No servers are local.  Mail will NOT be received");
 			return;
@@ -37,14 +39,14 @@ public class SMTP extends Thread {
 		// load what ports to listen to
 		vPorts = BrokerFactory.getConfigurationBroker().getStringValues(
 				"smtp.port");
-		if ((vPorts == null) || (vPorts.length == 0)) {
+		if ((vPorts == null) || (vPorts.size() == 0)) {
 			BrokerFactory.getLoggingBroker().logInfo(
 					"SMTP: no ports to listen to.  Mail will NOT be received");
 			return;
 		}
 
-		for (i = 0; i < vPorts.length; i++) {
-			Start start = new Start(Integer.parseInt(vPorts[i]));
+		for (String vPort: vPorts) {
+			Start start = new Start(Integer.parseInt(vPort));
 			start.setDaemon(true);
 			start.start();
 		}

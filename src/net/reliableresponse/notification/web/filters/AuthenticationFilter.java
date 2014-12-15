@@ -96,6 +96,7 @@ public class AuthenticationFilter implements Filter {
 		HttpServletRequest httpRequest =(HttpServletRequest) request; 
 		if (!httpRequest.getRequestURI().endsWith("license.jsp") &&
 				(httpRequest.getRequestURI().indexOf("LicenseServlet")<0) &&
+				(httpRequest.getRequestURI().indexOf("TwilioServlet")<0) &&
 				!httpRequest.getRequestURI().endsWith("css") &&
 				!httpRequest.getRequestURI().endsWith("login.jsp") &&
 				httpRequest.getRequestURI().indexOf("/rest/")<0 &&
@@ -196,6 +197,7 @@ public class AuthenticationFilter implements Filter {
 			BrokerFactory.getLoggingBroker().logDebug("Filter checking authz");
 			String actionID = request.getParameter("actionID");
 			if ((actionID == null) || (!actionID.equals("sendPage"))) {
+				BrokerFactory.getLoggingBroker().logDebug("authorizer.isResourceAllowed(httpRequest, user)="+authorizer.isResourceAllowed(httpRequest, user));
 				if (!authorizer.isResourceAllowed(httpRequest, user)) {
 					if ( needsBasicAuth(httpRequest)) {
 						((HttpServletResponse)response).addHeader("WWW-Authenticate", "Basic realm=\"Reliable Response Notification\"");
@@ -213,24 +215,11 @@ public class AuthenticationFilter implements Filter {
 					return;
 				}
 			}
-			
-//			if (user != null) {
-//				if (!authenticator.getPaymentAuthorized(user)) {
-//					httpRequest.getSession().setAttribute("authentication.message", "This account is not paid for");
-//					String referer = httpRequest.getRequestURI();
-//					httpRequest.getSession().setAttribute("referer", referer);
-//					httpRequest.getSession().setAttribute("params", params);
-//					if (httpRequest.getRequestURI().endsWith("wml")) {
-//						((HttpServletResponse)response).sendRedirect("login.wml");
-//					} else {
-//						((HttpServletResponse)response).sendRedirect("login.jsp");
-//					}
-//					return;
-//				}
-//		    }
+
 	    } else {
 	    	log.logWarn("Request is not an HttpServletRequest");
 	    }
+	    log.logDebug("Chaining request");
 	    
 	    chain.doFilter(actionRequest, response);
 	}

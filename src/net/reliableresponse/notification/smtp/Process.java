@@ -65,13 +65,11 @@ public class Process extends Thread {
 
 			// make an instance of all the plugins
 			vPlugIns = new Vector();
-			for (i = 0; i < SMTP.vNamesOfPlugIns.length; i++) {
-				vPlugIns.addElement((Class.forName(SMTP.vNamesOfPlugIns[i]))
+			for (String vNameOfPlugIn: SMTP.vNamesOfPlugIns) {
+				vPlugIns.addElement((Class.forName(vNameOfPlugIn))
 						.newInstance());
 				BrokerFactory.getLoggingBroker()
-						.logWarn(
-								"+++load "
-										+ SMTP.vNamesOfPlugIns[i]);
+						.logWarn("+++load "+ vNameOfPlugIn);
 			}
 
 			// i'm ready...

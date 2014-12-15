@@ -137,7 +137,7 @@ public class InstallerAction implements Action {
 			putValue(config, request, props, propNames[i]);
 		}
 
-		String emailMethod = config.getStringValue("email.method", null);
+		String emailMethod = config.getStringValue("email.method");
 
 		boolean valid = false;
 		if (emailMethod != null) {

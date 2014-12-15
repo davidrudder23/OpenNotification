@@ -84,7 +84,7 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 	private String owner;
 
 	// We use this to keep track of who sent it
-	Vector notificationProviders;
+	List<NotificationProvider> notificationProviders;
 
 	public static final int NORMAL = 0;
 
@@ -195,7 +195,7 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 		this.recipient = recipient;
 
 		time = new Date();
-		notificationProviders = new Vector();
+		notificationProviders = new ArrayList<NotificationProvider>();
 
 		this.messages = new Vector();
 		for (int i = 0; i < messages.length; i++) {
@@ -662,14 +662,13 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 		return getUuid();
 	}
 
-	public NotificationProvider[] getNotificationProviders() {
-		return (NotificationProvider[]) notificationProviders
-				.toArray(new NotificationProvider[0]);
+	public List<NotificationProvider> getNotificationProviders() {
+		return notificationProviders;
 	}
 
 	public void addNotificationProvider(
 			NotificationProvider NotificationProvider) {
-		notificationProviders.addElement(NotificationProvider);
+		notificationProviders.add(NotificationProvider);
 	}
 
 	public synchronized String getUuid() {

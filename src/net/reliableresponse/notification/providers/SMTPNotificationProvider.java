@@ -8,6 +8,8 @@ package net.reliableresponse.notification.providers;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Properties;
@@ -158,22 +160,17 @@ public class SMTPNotificationProvider extends AbstractNotificationProvider {
 
 		if (props == null)
 			props = new Properties();
-		String[] smtpServers = BrokerFactory.getConfigurationBroker()
-				.getStringValues("smtp.server");
-		if ((smtpServers == null) || (smtpServers.length <= 0)) {
-			smtpServers = new String[1];
-			smtpServers[0] = "localhost";
-		}
-
+		List<String> smtpServers = BrokerFactory.getConfigurationBroker().getStringValues("smtp.server", Arrays.asList("localhost"));
+		
 		int smtpServerNum = 0;
 		boolean succeeded = false;
 		int errorNum = 0;
 		String error = "";
 		String id = "unknown_" + System.currentTimeMillis();
 
-		while ((smtpServerNum < smtpServers.length) && (!succeeded)) {
+		while ((smtpServerNum < smtpServers.size()) && (!succeeded)) {
 			try {
-				String smtpServer = smtpServers[smtpServerNum];
+				String smtpServer = smtpServers.get(smtpServerNum);
 				BrokerFactory.getLoggingBroker().logDebug(
 						"Trying SMTP Server num " + smtpServerNum + ": "
 								+ smtpServer + ".");
@@ -256,11 +253,9 @@ public class SMTPNotificationProvider extends AbstractNotificationProvider {
 					// If we do, use the more complicated method that allows
 					// authn
 					String smtpUsername = BrokerFactory
-							.getConfigurationBroker().getStringValue(
-									"smtp.username", null);
+							.getConfigurationBroker().getStringValue("smtp.username");
 					String smtpPassword = BrokerFactory
-							.getConfigurationBroker().getStringValue(
-									"smtp.password", null);
+							.getConfigurationBroker().getStringValue("smtp.password");
 					if ((smtpUsername == null) || (smtpPassword == null)) {
 						Transport.send(message);
 					} else {

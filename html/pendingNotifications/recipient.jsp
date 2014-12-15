@@ -19,17 +19,17 @@
 	Notification notification = BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid);
 	
 	Notification[] notifs = notification.getAllChildrenSentToUsers();
-	for (int i = 0; i < notifs.length; i++) {
-			NotificationProvider[] providers = notifs[i].getNotificationProviders();
-			User user = (User)notifs[i].getRecipient();
-			BrokerFactory.getLoggingBroker().logDebug("We got "+providers.length+" providers for user "+user);
+	for (Notification notif: notifs) {
+			List<NotificationProvider> providers = notif.getNotificationProviders();
+			User user = (User)notif.getRecipient();
+			BrokerFactory.getLoggingBroker().logDebug("We got "+providers.size()+" providers for user "+user);
 		%>
-		<strong><%= user %> (sent <%= notifs[i].getTime() %>)</strong><br>
+		<strong><%= user %> (sent <%= notif.getTime() %>)</strong><br>
 		<%
-			for (int p = 0; p < providers.length; p++) {
+			for (NotificationProvider provider: providers) {
 				String status = "Pending";
 				String icon = "images/led_yellow.gif";
-				switch (providers[p].getStatus(notifs[i])) {
+				switch (provider.getStatus(notif)) {
 				case Notification.CONFIRMED:
 					status = "Received";
 					icon = "images/led_green.gif";
@@ -51,7 +51,7 @@
 					icon = "images/led_disabled.gif";
 					break;
 				}
-				%><img src="<%= icon %>">&nbsp;&nbsp;&nbsp;&nbsp;<%= providers[p].getName() %>: <%= status %><br><%
+				%><img src="<%= icon %>">&nbsp;&nbsp;&nbsp;&nbsp;<%= provider.getName() %>: <%= status %><br><%
 			}
 		%><br><%
 	}

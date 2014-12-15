@@ -22,6 +22,11 @@
 		<load-on-startup>10</load-on-startup>
 	</servlet>
 	<servlet>
+		<servlet-name>TwilioServlet</servlet-name>
+		<servlet-class>net.reliableresponse.notification.web.servlets.TwilioServlet</servlet-class>
+		<load-on-startup>10</load-on-startup>
+	</servlet>
+	<servlet>
 		<servlet-name>SendNotificationServlet</servlet-name>
 		<servlet-class>net.reliableresponse.notification.web.servlets.SendNotificationServlet</servlet-class>
 		<load-on-startup>10</load-on-startup>
@@ -93,6 +98,10 @@
 	<servlet-mapping>
 		<servlet-name>ManagePendingUsersServlet</servlet-name>
 		<url-pattern>/ManagePendingUsers</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>TwilioServlet</servlet-name>
+		<url-pattern>/TwilioServlet/*</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>SendNotificationServlet</servlet-name>

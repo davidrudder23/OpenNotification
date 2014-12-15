@@ -7,6 +7,10 @@
 		<url-pattern>/ManagePendingUsers</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
+		<servlet-name>TwilioServlet</servlet-name>
+		<url-pattern>/TwilioServlet/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
 		<servlet-name>SendNotificationServlet</servlet-name>
 		<url-pattern>/SendNotification</url-pattern>
 	</servlet-mapping>

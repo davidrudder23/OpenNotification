@@ -6,6 +6,7 @@
 package net.reliableresponse.notification.pop;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -51,14 +52,14 @@ import org.quartz.StatefulJob;
  */
 public class PopMailRetriever implements StatefulJob {
 	String address;
-	String[] hostnames;
-	String[] usernames;
-	String[] passwords;
+	List<String> hostnames;
+	List<String> usernames;
+	List<String> passwords;
 	String sslPort;
 	boolean useSSL;
 	boolean catchAll;
 	
-	Vector folders;
+	List<Folder> folders;
 
 	public PopMailRetriever() {
 		ConfigurationBroker config = BrokerFactory.getConfigurationBroker();
@@ -70,23 +71,9 @@ public class PopMailRetriever implements StatefulJob {
 		sslPort = config.getStringValue("email.pop.sslport", "995");
 		
 		catchAll = config.getBooleanValue("email.pop.catchall");
-		folders = new Vector();
+		folders = new ArrayList<Folder>();
 	}
 	
-	private Member findRecipientFromEmail (String email) {
-		Member member = BrokerFactory.getUserMgmtBroker().getUserByEmailAddress(email);
-		if (member == null) member = BrokerFactory.getGroupMgmtBroker().getGroupByEmail(email);
-		if (member == null) {
-			Member[] members = BrokerFactory.getUserMgmtBroker().getUsersWithInformationLike("Incoming Email Aliases", ","+email);
-			if ((members != null) && (members.length>0)) {
-				member = members[0];
-			}
-		}
-		
-		BrokerFactory.getLoggingBroker().logDebug ("Found recipient from "+email+": "+member);
-		return member;
-	}
-
 	private Member findSenderFromEmail (String email) {
 		BrokerFactory.getLoggingBroker().logDebug("Looking for sender with email "+email);
 		User[] users= BrokerFactory.getUserMgmtBroker().getUsersWithEmailAddress(email);
@@ -120,11 +107,11 @@ public class PopMailRetriever implements StatefulJob {
 	}
 
 	private Message[] getMessages() {
-		Vector messages = new Vector();
-		for (int i = 0; i < hostnames.length; i++) {
-			String hostname = hostnames[i];
-			String username = usernames[i];
-			String password = passwords[i];
+		List<Message> messages = new ArrayList<Message>();
+		for (int i = 0; i < hostnames.size(); i++) {
+			String hostname = hostnames.get(i);
+			String username = usernames.get(i);
+			String password = passwords.get(i);
 			BrokerFactory.getLoggingBroker().logDebug("Connecting to pop server at "+hostname+" with "+username);
 			try {
 				Properties props = new Properties();
@@ -147,7 +134,7 @@ public class PopMailRetriever implements StatefulJob {
 				for (int m = 0; m < numMessages; m++) {
 					try {
 						BrokerFactory.getLoggingBroker().logDebug("Adding message "+m);
-						messages.addElement (folder.getMessage(m+1));
+						messages.add(folder.getMessage(m+1));
 					} catch (Exception e) {
 						BrokerFactory.getLoggingBroker().logDebug("Got a bad email");
 						BrokerFactory.getLoggingBroker().logError(e);
@@ -155,7 +142,7 @@ public class PopMailRetriever implements StatefulJob {
 				}
 
 				if (!folders.contains(folder)) {
-					folders.addElement(folder);
+					folders.add(folder);
 				}
 
 			} catch (Exception e) {
@@ -174,7 +161,7 @@ public class PopMailRetriever implements StatefulJob {
 	 */
 
 	private Message[] handleBounces(Message[] messages) {
-		Vector<Message> newMessages = new Vector();
+		List<Message> newMessages = new ArrayList<Message>();
 
 		for (int messageNum = 0; messageNum < messages.length; messageNum++) {
 			Message message = messages[messageNum];
@@ -209,7 +196,7 @@ public class PopMailRetriever implements StatefulJob {
 						// TODO: What now?  Should we actually remove the device?
 					} else {
 						// if this isn't a bounce, add it back
-						newMessages.addElement(message);
+						newMessages.add(message);
 					}
 				}
 			} catch (MessagingException e) {
@@ -221,7 +208,7 @@ public class PopMailRetriever implements StatefulJob {
 
 	private PopMessage[] getNewNotifications(Message[] messages) {
 		// This works by finding all the messages with a recipient in the subject or body.
-		Vector newMessages = new Vector();
+		List<PopMessage> newMessages = new ArrayList<PopMessage>();
 
 		for (int i = 0; i < messages.length; i++) {
 			try {
@@ -250,7 +237,7 @@ public class PopMailRetriever implements StatefulJob {
 							if (toMember != null) {
 								PopMessage message = new PopMessage(messages[i]);
 								message.setParam("recipient-uuid", toMember.getUuid());
-								newMessages.addElement(message);
+								newMessages.add(message);
 								found = true;
 							}
 						}
@@ -264,7 +251,7 @@ public class PopMailRetriever implements StatefulJob {
 						found = true;
 						PopMessage message = new PopMessage(messages[i]);
 						message.setParam("recipient-uuid", recipient);
-						newMessages.addElement(message);
+						newMessages.add(message);
 					}
 				}
 
@@ -283,7 +270,7 @@ public class PopMailRetriever implements StatefulJob {
 						found = true;
 						PopMessage message = new PopMessage(messages[i]);
 						message.setParam("recipient-uuid", recipient);
-						newMessages.addElement(message);
+						newMessages.add(message);
 					}
 				}
 			} catch (MessagingException e) {
@@ -335,7 +322,7 @@ public class PopMailRetriever implements StatefulJob {
 		return content;
 	}
 	private BodyPart[] getAttachments(Message message) throws IOException, MessagingException {
-		Vector bodyParts = new Vector();
+		List<BodyPart> bodyParts = new ArrayList<BodyPart>();
 		
 		Object contentParts = message.getContent();
 		BrokerFactory.getLoggingBroker().logDebug("contentParts="+contentParts);
@@ -348,7 +335,7 @@ public class PopMailRetriever implements StatefulJob {
 				BrokerFactory.getLoggingBroker().logDebug("content-type["+p+"]="+bodyPart.getContentType());
 				
 				if ((p>0) || (!bodyPart.getContentType().toLowerCase().startsWith("text"))) {  // don't return the 1st attachment if its text, because it's actually the body
-				byte[] content = new byte[0];
+				byte[] content;
 				Object bodyPartContents =  bodyPart.getContent();
 
 				if (bodyPartContents instanceof String) {
@@ -365,7 +352,7 @@ public class PopMailRetriever implements StatefulJob {
 					content = (byte[])bodyPartContents;
 				}
 				
-				bodyParts.addElement(bodyPart);
+				bodyParts.add(bodyPart);
 				}
 			}
 		}
@@ -597,7 +584,7 @@ public class PopMailRetriever implements StatefulJob {
 		}
 		
 		for (int i = 0; i < folders.size(); i++) {
-			Folder folder = (Folder)folders.elementAt(i);
+			Folder folder = (Folder)folders.get(i);
 			try {
 				folder.close(true);
 			} catch (MessagingException e) {

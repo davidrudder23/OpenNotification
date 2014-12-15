@@ -8,7 +8,7 @@ package net.reliableresponse.notification.broker;
 
 import java.io.InputStream;
 import java.util.List;
-
+import java.util.function.Function;
 /**
  * @author drig
  *
@@ -33,12 +33,23 @@ public interface ConfigurationBroker {
 	 * @return The value, as a String
 	 */
 	public String getStringValue(String key, String defaultValue);
+	
+	/**
+	 * Gets a String from the configuration
+	 * 
+	 * @param key The name of the value to get
+	 * @param defaultValue The default value to return
+	 * @return The value, as a String
+	 */
+	public String getStringValue(String key, Function<String, String> ifNotFound);
+
+	
 	/**
 	 * Gets a list of comma-separated values
 	 * @param key
 	 * @return
 	 */
-	public String[] getStringValues(String key);
+	public List<String> getStringValues(String key);
 
 	/**
 	 * Gets a list of comma-separated values

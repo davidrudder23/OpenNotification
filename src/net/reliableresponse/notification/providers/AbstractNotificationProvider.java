@@ -8,11 +8,6 @@ package net.reliableresponse.notification.providers;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
-
-import org.syntax.jedit.InputHandler.end;
-
-import com.echomine.common.SendMessageFailedException;
 
 import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.broker.BrokerFactory;

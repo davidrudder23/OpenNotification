@@ -21,15 +21,15 @@
 			<td><img src="images/spacer.gif" width="12"></td>
 			<td>Sent On: <%=notification.getTime()%></td></tr>
 			<%
-			NotificationProvider[] providers = notification.getNotificationProviders();
-			for (int p = 0; p < providers.length; p++) {
-				String statusOfSend = providers[p].getStatusOfSend(notification);
+			List<NotificationProvider> providers = notification.getNotificationProviders();
+			for (NotificationProvider provider: providers) {
+				String statusOfSend = provider.getStatusOfSend(notification);
 				if (statusOfSend == null) statusOfSend = "unknown";
 				String color = "#FF0000";
 				if (statusOfSend.toLowerCase().startsWith("succeed")) {
 					color = "#02CD34";
 				}
-				%><tr><td>Device <%=providers[p].getName()%> <font color="<%= color %>"><%= statusOfSend %></font></td></tr>
+				%><tr><td>Device <%=provider.getName()%> <font color="<%= color %>"><%= statusOfSend %></font></td></tr>
 				<%
 			}
 			
