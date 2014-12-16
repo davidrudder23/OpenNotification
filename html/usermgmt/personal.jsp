@@ -192,4 +192,17 @@
 </tr>
 <% } %>
 <tr><td>&nbsp;</td></tr>
+<tr>
+<td><img src="images/spacer.gif"></td>
+<td><img src="images/spacer.gif"></td>
+<td>Device Escalation</td>
+<td colspan="4"><select name="deviceEscalationPolicy">
+<option value="Simultaneous" <%= User.DEVICE_ESCALATION_SIMULTANEOUS.equals(user.getDeviceEscalationPolicy())?"SELECTED":"" %>>Alert all devices simultaneously</option>
+<option value="Static" <%= User.DEVICE_ESCALATION_STATIC_TIMING.equals(user.getDeviceEscalationPolicy())?"SELECTED":"" %>>1 at a time, specify the interval</option>
+<option value="Proportional"  <%= User.DEVICE_ESCALATION_PROPORTIONAL_TIMING.equals(user.getDeviceEscalationPolicy())?"SELECTED":"" %>>1 at a time, automatic interval</option>
+<span id="deviceEscalationTimeArea"><label>Minutes</label><input type="text" name="deviceEscalationTime" style="max-width: 2em" value="<%= user.getDeviceEscalationTime() %>"></span>
+</td>
+</tr>
+
+<tr><td>&nbsp;</td></tr>
 </table>

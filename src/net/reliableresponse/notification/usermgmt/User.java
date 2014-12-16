@@ -16,6 +16,7 @@ import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.TimeZone;
 import java.util.Vector;
+import java.util.function.Function;
 
 import org.jfree.data.time.Hour;
 
@@ -34,6 +35,11 @@ import net.reliableresponse.notification.util.StringUtils;
  * Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class User implements Member {
+	
+	public static final String DEVICE_ESCALATION_SIMULTANEOUS = "Simultaneous";
+	public static final String DEVICE_ESCALATION_STATIC_TIMING = "Static";
+	public static final String DEVICE_ESCALATION_PROPORTIONAL_TIMING = "Proportional";
+	
 	/**
 	 * This stores all the user-specific information, like phone number, email,
 	 * first and last names, etc.
@@ -77,6 +83,10 @@ public class User implements Member {
 	boolean onVacation = false;
 	
 	private int priority = 3; 
+	
+	private String escalationPolicy = User.DEVICE_ESCALATION_SIMULTANEOUS;
+	
+	private int escalationTiming = 5;
 
 	public User() {
 		autocommit = false;
@@ -138,6 +148,25 @@ public class User implements Member {
 	 */
 	public String getLastName() {
 		return (String) information.get("lastName");
+	}
+	
+	/**
+	 * This sets up how the devices are called.  All at once, or as an escalation and with 
+	 * what delay between them (if it's static) 
+	 * @param type
+	 * @param minutes
+	 */
+	public void setDeviceEscalation (String policy, int minutes) {
+		setInformation("deviceEscalationPolicy", policy);
+		setInformation("deviceEscalationTime", minutes+"");
+	}
+	
+	public String getDeviceEscalationPolicy() {
+		return getInformation("deviceEscalationPolicy", t->"Simultaneous");
+	}
+
+	public int getDeviceEscalationTime() {
+		return StringUtils.getInteger(getInformation("deviceEscalationTime"), 5);
 	}
 
 	/**
@@ -362,7 +391,15 @@ public class User implements Member {
 		if (!informationLoaded) {
 			loadInformation();
 		}
-		return (String) information.get(type);
+		String informationValue = information.get(type);
+		return informationValue;
+	}
+	public String getInformation(String type, Function<String, String> defaultFunction) {
+		String informationValue = getInformation(type);
+		if (StringUtils.isEmpty(informationValue)) {
+			informationValue = defaultFunction.apply(type);
+		}
+		return informationValue;
 	}
 
 	/**

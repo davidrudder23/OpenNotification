@@ -110,6 +110,9 @@ public class PersonalInfoAction implements Action {
 				}
 			}
 			
+			user.setDeviceEscalation(request.getParameter("deviceEscalationPolicy"), 
+					StringUtils.getInteger(request.getParameter("deviceEscalationTime"), 5)	);
+			
 			user.setInformation("freebusyURL", freebusyURL);
 		}
 		return actionRequest;
