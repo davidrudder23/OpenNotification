@@ -10,6 +10,10 @@
 		<servlet-name>TwilioServlet</servlet-name>
 		<url-pattern>/TwilioServlet/*</url-pattern>
 	</servlet-mapping>
+		<servlet-mapping>
+		<servlet-name>ResponseServlet</servlet-name>
+		<url-pattern>/ResponseServlet/*</url-pattern>
+	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>SendNotificationServlet</servlet-name>
 		<url-pattern>/SendNotification</url-pattern>

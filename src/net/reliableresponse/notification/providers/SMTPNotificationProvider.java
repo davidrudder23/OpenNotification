@@ -8,6 +8,7 @@ package net.reliableresponse.notification.providers;
 
 import java.io.ByteArrayInputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -42,6 +43,7 @@ import net.reliableresponse.notification.sender.EmailSender;
 import net.reliableresponse.notification.sender.NotificationSender;
 import net.reliableresponse.notification.sender.UserSender;
 import net.reliableresponse.notification.usermgmt.User;
+import net.reliableresponse.notification.util.IPUtil;
 
 /**
  * @author drig
@@ -129,6 +131,15 @@ public class SMTPNotificationProvider extends AbstractNotificationProvider {
 						"email.pop.catchall", true)) {
 					messageText += " " + notification.getUuid();
 				}
+				
+				messageText += "\n";
+			}
+			messageText += "Or you may click on any of these links:\n";
+			for (int i = 0; i < responses.length; i++) {
+				messageText += " - "+IPUtil.getExternalBaseURL()+
+						BrokerFactory.getConfigurationBroker().getStringValue("contextPath","")+
+						"/ResponseServlet/"+notification.getUuid()+"/"
+						+ URLEncoder.encode(responses[i]);
 				messageText += "\n";
 			}
 			BrokerFactory.getLoggingBroker().logDebug(

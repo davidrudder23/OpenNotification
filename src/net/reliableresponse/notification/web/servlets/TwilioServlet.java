@@ -42,7 +42,12 @@ public class TwilioServlet extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		
+		String contextPath = request.getContextPath();
+		BrokerFactory.getConfigurationBroker().setStringValue("contextPath", contextPath);
+		BrokerFactory.getLoggingBroker().logDebug("Context path = "+contextPath);
+		int restOffset = contextPath.split("\\/").length;
+		BrokerFactory.getLoggingBroker().logDebug("restOffset = "+restOffset);
+
 		String requestURI = request.getRequestURI();
 		BrokerFactory.getLoggingBroker().logDebug("Twilio request uri="+requestURI);
 		
@@ -51,16 +56,18 @@ public class TwilioServlet extends HttpServlet {
 			BrokerFactory.getLoggingBroker().logDebug("peice["+i+"]: "+peices[i]);
 		}
 		
-		String action = peices[3];
+		String action = peices[restOffset+1];
 		BrokerFactory.getLoggingBroker().logDebug("action="+action);
 		
 		if (action.equals("twiml")) {
-			String uuid = peices[4];
+			String uuid = peices[restOffset+2];
 			handleTwiMLRequest(request, response, uuid);
 		} else if (action.equals("respond")) {
-			String uuid = peices[4];
+			String uuid = peices[restOffset+2];
 			handleTwilioResponse(request, response, uuid);
 		}
+		
+		super.service(request, response);
 	}
 	
 	protected void handleTwilioResponse(HttpServletRequest request, HttpServletResponse response, String uuid) throws ServletException, IOException {
@@ -89,12 +96,13 @@ public class TwilioServlet extends HttpServlet {
 			String message = "You have a new notification from " + notification.getSender() + ".  The subject is " + notification.getSubject()
 					+ ".  The message is " + notification.getMessages()[0].getMessage() + ".";
 			
+			message = "Test";
 			TwiMLResponse twilioResponse = new TwiMLResponse();
 			Say messageSay = new Say(message);
 			twilioResponse.append(messageSay);
 			
 			Gather gather = new Gather();
-			gather.setAction(IPUtil.getExternalBaseURL()+"/TwilioServlet/respond/uuid"+notification.getUuid());
+			gather.setAction(IPUtil.getExternalBaseURL()+"/TwilioServlet/respond/"+notification.getUuid());
 			gather.setNumDigits(1);
 			Say gatherSay = new Say("Press 1 to do something");
 			gather.append(gatherSay);

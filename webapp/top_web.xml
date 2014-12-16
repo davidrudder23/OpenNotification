@@ -36,6 +36,11 @@
 		<load-on-startup>10</load-on-startup>
 	</servlet>
 	<servlet>
+		<servlet-name>ResponseServlet</servlet-name>
+		<servlet-class>net.reliableresponse.notification.web.servlets.ResponseServlet</servlet-class>
+		<load-on-startup>10</load-on-startup>
+	</servlet>
+	<servlet>
 		<servlet-name>SendNotificationServlet</servlet-name>
 		<servlet-class>net.reliableresponse.notification.web.servlets.SendNotificationServlet</servlet-class>
 		<load-on-startup>10</load-on-startup>

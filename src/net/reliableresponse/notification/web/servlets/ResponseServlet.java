@@ -18,36 +18,43 @@ public class ResponseServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = -7273776203931909855L;
-	
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		User user = (User)BrokerFactory.getUserMgmtBroker().getUserByUuid((String)request.getSession().getAttribute("user"));
-		if (user == null) {
-			response.sendRedirect("/login.jsp");
-			return;	
-		}
 
-		String action = request.getParameter("action");
-		if (StringUtils.isEmpty(action)) {
-			response.getOutputStream().write("No action supplied".getBytes());
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return;
+	@Override
+	protected void service(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+		String contextPath = request.getContextPath();
+		BrokerFactory.getConfigurationBroker().setStringValue("contextPath", contextPath);
+		BrokerFactory.getLoggingBroker().logDebug("Context path = "+contextPath);
+		int restOffset = contextPath.split("\\/").length;
+		BrokerFactory.getLoggingBroker().logDebug("restOffset = "+restOffset);
+		
+		String requestURI = request.getRequestURI();
+		BrokerFactory.getLoggingBroker().logDebug("Twilio request uri="+requestURI);
+		
+		String[] peices = requestURI.split("\\/");
+		for (int i = 0; i < peices.length; i++) {
+			BrokerFactory.getLoggingBroker().logDebug("peice["+i+"]: "+peices[i]);
 		}
 		
-		String uuid = request.getParameter("uuid");
-		if (StringUtils.isEmpty(uuid)) {
-			response.getOutputStream().write("No uuid supplied".getBytes());
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return;
-		}
+		String action = peices[restOffset+1];
+		BrokerFactory.getLoggingBroker().logDebug("action="+action);
 		
+		if (action.equals("respond")) {
+			String uuid = peices[restOffset+2];
+			String responseText = peices[restOffset+3];
+			handleResponse(request, response, uuid, responseText);
+		}
+	}
+	
+	protected void handleResponse(HttpServletRequest request, HttpServletResponse response, String uuid, String responseText)
+			throws ServletException, IOException {
 		Notification notification = BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid);
 		if (notification == null) {
-			response.getOutputStream().write("Could not find notification".getBytes());
-			response.sendError(HttpServletResponse.SC_BAD_REQUEST);
-			return;
+			response.sendError(500, "No notification found");
 		}
 		
-		notification.getSender().handleResponse(notification, user,null, null);
+    	User user = BrokerFactory.getUserMgmtBroker().getUserByUuid((String)request.getSession().getAttribute("user"));
+		
+		notification.getSender().handleResponse(notification, user, responseText, "");
 	}
 }
