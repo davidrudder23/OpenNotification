@@ -43,6 +43,21 @@
 		}
 	}
 %>
+
+<script>
+
+function deviceEscalationOnChange() {
+	console.log("device esc on change");
+	console.log($("#deviceEscalationPolicy").val());
+	
+	if ($("#deviceEscalationPolicy").val() == "Static") {
+		$("#deviceEscalationTimeArea").show();
+	} else {
+		$("#deviceEscalationTimeArea").hide();
+	}
+}
+</script>
+
 <tr><td colspan="25" class="abovecell" width="100%">&nbsp;</td></tr>
 <tr><td align="left" colspan="25">
 <table>
@@ -196,11 +211,15 @@
 <td><img src="images/spacer.gif"></td>
 <td><img src="images/spacer.gif"></td>
 <td>Device Escalation</td>
-<td colspan="4"><select name="deviceEscalationPolicy">
-<option value="Simultaneous" <%= User.DEVICE_ESCALATION_SIMULTANEOUS.equals(user.getDeviceEscalationPolicy())?"SELECTED":"" %>>Alert all devices simultaneously</option>
-<option value="Static" <%= User.DEVICE_ESCALATION_STATIC_TIMING.equals(user.getDeviceEscalationPolicy())?"SELECTED":"" %>>1 at a time, specify the interval</option>
-<option value="Proportional"  <%= User.DEVICE_ESCALATION_PROPORTIONAL_TIMING.equals(user.getDeviceEscalationPolicy())?"SELECTED":"" %>>1 at a time, automatic interval</option>
-<span id="deviceEscalationTimeArea"><label>Minutes</label><input type="text" name="deviceEscalationTime" style="max-width: 2em" value="<%= user.getDeviceEscalationTime() %>"></span>
+<td colspan="4">
+	<select name="deviceEscalationPolicy" id="deviceEscalationPolicy" onchange="deviceEscalationOnChange()">
+		<option value="Simultaneous" <%= User.DEVICE_ESCALATION_SIMULTANEOUS.equals(user.getDeviceEscalationPolicy())?"SELECTED":"" %>>Alert all devices simultaneously</option>
+		<option value="Static" <%= User.DEVICE_ESCALATION_STATIC_TIMING.equals(user.getDeviceEscalationPolicy())?"SELECTED":"" %>>1 at a time, specify the interval</option>
+		<option value="Proportional"  <%= User.DEVICE_ESCALATION_PROPORTIONAL_TIMING.equals(user.getDeviceEscalationPolicy())?"SELECTED":"" %>>1 at a time, automatic interval</option>
+	</select>
+	<span id="deviceEscalationTimeArea" style="display: <%= User.DEVICE_ESCALATION_STATIC_TIMING.equals(user.getDeviceEscalationPolicy())?"":"none"%> ">
+		<label>Minutes </label><input type="text" name="deviceEscalationTime" style="max-width: 2em" value="<%= user.getDeviceEscalationTime() %>">
+	</span>
 </td>
 </tr>
 

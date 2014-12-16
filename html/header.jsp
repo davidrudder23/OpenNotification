@@ -14,6 +14,7 @@
 
 <input type="image" src="images/hidden.gif" name="action_mispress">
 <input type="hidden" name="action" value="unset">
+<script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script type="text/javascript" language="JavaScript">
 function setAction(action) {
    document.mainform.action.value = action;
