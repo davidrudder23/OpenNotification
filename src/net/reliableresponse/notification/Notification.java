@@ -79,7 +79,7 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 
 	Vector options;
 
-	Vector devices;
+	List<Device> devices;
 
 	private String owner;
 
@@ -134,7 +134,7 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 		init(parent, recipient, sender, summary, messages);
 	}
 
-	public Notification(String parent, Member recipient, Vector devices,
+	public Notification(String parent, Member recipient, List<Device> devices,
 			NotificationSender sender, String summary, String message) {
 		NotificationMessage[] messages = new NotificationMessage[1];
 		messages[0] = new NotificationMessage(message, "", new Date());
@@ -142,7 +142,7 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 		this.devices = devices;
 	}
 
-	public Notification(String parent, Member recipient, Vector devices,
+	public Notification(String parent, Member recipient, List<Device> devices,
 			NotificationSender sender, String summary,
 			NotificationMessage[] messages) {
 		init(parent, recipient, sender, summary, messages);
@@ -270,9 +270,9 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 		}
 
 		User user = (User) recipient;
-		BrokerFactory.getLoggingBroker().logDebug(recipient+" has "+user.getDevices().length+" devices");
+		BrokerFactory.getLoggingBroker().logDebug(recipient+" has "+user.getDevices().size()+" devices");
 		if ((devices == null) || (devices.size() == 0)) {
-			return user.getDevices();
+			devices = user.getDevices();
 		}
 		return (Device[]) devices.toArray(new Device[0]);
 	}
@@ -1045,10 +1045,10 @@ public class Notification implements UniquelyIdentifiable, Comparable,
 								"net.reliableresponse.notification.device.CellPhoneEmailDevice");
 				if (users != null) {
 					for (int i = 0; i < users.length; i++) {
-						Device[] devices = users[i].getDevices();
-						for (int d = 0; d < devices.length; d++) {
-							if (devices[d] instanceof CellPhoneEmailDevice) {
-								CellPhoneEmailDevice cellDevice = (CellPhoneEmailDevice) devices[d];
+						List<Device> devices = users[i].getDevices();
+						for (Device device: devices) {
+							if (device instanceof CellPhoneEmailDevice) {
+								CellPhoneEmailDevice cellDevice = (CellPhoneEmailDevice) device;
 								if (cellDevice.getEmailAddress()
 										.equalsIgnoreCase(identifier)) {
 									return users[i];

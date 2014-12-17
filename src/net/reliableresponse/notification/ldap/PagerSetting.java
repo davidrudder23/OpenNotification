@@ -8,6 +8,7 @@ package net.reliableresponse.notification.ldap;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 
 import net.reliableresponse.notification.NotSupportedException;
 import net.reliableresponse.notification.broker.BrokerFactory;
@@ -60,11 +61,11 @@ public class PagerSetting implements LDAPSetting {
 		}
 		// Get the new LDAP pager device
 		PagerDevice ldapPagerDevice = null;
-		Device[] ldapDevices = ldapUser.getDevices();
-		for (int i = 0; i < ldapDevices.length; i++) {
-			if (ldapDevices[i] instanceof PagerDevice) {
-				if (((PagerDevice)ldapDevices[i]).getNormalizedNumber().equals (ldapPagerNumber)) {
-					ldapPagerDevice = (PagerDevice)ldapDevices[i];
+		List<Device> ldapDevices = ldapUser.getDevices();
+		for (Device ldapDevice: ldapDevices) {
+			if (ldapDevice instanceof PagerDevice) {
+				if (((PagerDevice)ldapDevice).getNormalizedNumber().equals (ldapPagerNumber)) {
+					ldapPagerDevice = (PagerDevice)ldapDevice;
 				}
 			}
 		}
@@ -85,10 +86,10 @@ public class PagerSetting implements LDAPSetting {
 		storedUser.setInformation("LDAP-Pager", ldapPagerNumber);
 		// Check to see if the old pager is still there.  If so, change it
 		PagerDevice storedPagerDevice = null;
-		Device[] storedDevices = storedUser.getDevices();
-		for (int i = 0; i < storedDevices.length; i++) {
-			if (storedDevices[i] instanceof PagerDevice) {
-				PagerDevice pagerDevice = (PagerDevice)storedDevices[i];
+		List<Device> storedDevices = storedUser.getDevices();
+		for (Device storedDevice: storedDevices) {
+			if (storedDevice instanceof PagerDevice) {
+				PagerDevice pagerDevice = (PagerDevice)storedDevice;
 				if (pagerDevice.getNormalizedNumber().equals (storedPagerNumber)) {
 					storedPagerDevice = pagerDevice;
 				}
@@ -114,12 +115,12 @@ public class PagerSetting implements LDAPSetting {
 	}
 
 	public void postCheck(User user) {
-		Device[] devices = user.getDevices();
+		List<Device> devices = user.getDevices();
 		Device pager = null;
 		
-		for (int i = 0; i < devices.length; i++) {
-			if (devices[i] instanceof PagerDevice) {
-				pager = devices[i];
+		for (Device device: devices) {
+			if (device instanceof PagerDevice) {
+				pager = device;
 				String pagerNumber = (String) pager.getSettings().get("Pager Number");
 				if (pagerNumber != null) {
 					NotificationProvider provider = pager.getNotificationProvider();

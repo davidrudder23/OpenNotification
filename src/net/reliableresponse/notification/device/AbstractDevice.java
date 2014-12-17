@@ -32,6 +32,8 @@ public abstract class AbstractDevice implements Device {
 
 	private String uuid;
 	
+	private int deviceOrder;
+	
 	/* (non-Javadoc)
 	 * @see net.reliableresponse.notification.UniquelyIdentifiable#getUuid()
 	 */
@@ -83,6 +85,14 @@ public abstract class AbstractDevice implements Device {
 
 	public int getMaxMessages() {
 		return BrokerFactory.getConfigurationBroker().getIntValue("messages.maxparts", 5);
+	}
+	
+	public int getDeviceOrder() {
+		return deviceOrder;
+	}
+	
+	public void setDeviceOrder(int deviceOrder) {
+		this.deviceOrder = deviceOrder;
 	}
 	
 	public boolean willSend (User user, int priority, Notification notification) {

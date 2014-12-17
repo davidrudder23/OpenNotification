@@ -27,8 +27,8 @@ import net.reliableresponse.notification.usermgmt.User;
 /**
  * @author drig
  * 
- * To change the template for this generated type comment go to
- * Window>Preferences>Java>Code Generation>Code and Comments
+ *         To change the template for this generated type comment go to
+ *         Window>Preferences>Java>Code Generation>Code and Comments
  */
 public class SendNotification {
 	private static SendNotification sendPage;
@@ -40,108 +40,86 @@ public class SendNotification {
 		return sendPage;
 	}
 
-	private void doSend(Notification notification, Member member)
-			throws NotificationException {
-		
+	private void doSend(Notification notification, Member member) throws NotificationException {
+
 		if (notification.isPersistent()) {
 			try {
-				BrokerFactory.getNotificationBroker().addNotification(
-						notification);
+				BrokerFactory.getNotificationBroker().addNotification(notification);
 			} catch (Exception anyExc) {
 				BrokerFactory.getLoggingBroker().logWarn(anyExc);
 			}
 			try {
-				BrokerFactory.getNotificationBroker().setNotificationStatus(
-						notification, "pending");
+				BrokerFactory.getNotificationBroker().setNotificationStatus(notification, "pending");
 			} catch (Exception anyExc) {
 				BrokerFactory.getLoggingBroker().logWarn(anyExc);
 			}
-			
+
 			if (Squelcher.isSquelched(notification.getChildSentToThisUser(member))) {
-				BrokerFactory.getLoggingBroker().logDebug(notification.getUuid()+" is squelched");
+				BrokerFactory.getLoggingBroker().logDebug(notification.getUuid() + " is squelched");
 
 				notification.setStatus(Notification.ONHOLD);
 				notification.addMessage("Notification squelched", null);
-			}	
+			}
 		}
-		
+
 		if (member.getType() == Member.USER) {
 			User user = (User) member;
-			
-			Device[] devices = notification.getDevices();
-			
-			BrokerFactory.getLoggingBroker().logDebug("Sending notification to "+member+" with "+devices.length+" devices");
 
-			for (int i = 0; i < devices.length; i++) {
-				if (devices[i].willSend(user, notification.getUltimateParent().getPriority(), notification)) {
-					NotificationProvider provider = devices[i]
-							.getNotificationProvider();
-					Hashtable<String, String> params = new Hashtable<String, String>();
-					try {
+			Device[] devices = notification.getDevices();
+			BrokerFactory.getLoggingBroker().logDebug("Sending notification to " + member + " with " + devices.length + " devices");
+
+			if ((!User.DEVICE_ESCALATION_SIMULTANEOUS.equals(user.getDeviceEscalationPolicy()) && devices.length > 1)) {
+				new DeviceEscalationThread(notification).start();
+			} else {
+				for (int i = 0; i < devices.length; i++) {
+					if (devices[i].willSend(user, notification.getUltimateParent().getPriority(), notification)) {
+						NotificationProvider provider = devices[i].getNotificationProvider();
+						Hashtable<String, String> params = new Hashtable<String, String>();
 						try {
-							BrokerFactory.getLoggingBroker().logInfo(
-									"Sending notification to " + user + " via "
-											+ provider);
+							try {
+								BrokerFactory.getLoggingBroker().logInfo("Sending notification to " + user + " via " + provider);
+							} catch (Exception anyExc) {
+								BrokerFactory.getLoggingBroker().logWarn(anyExc);
+							}
+							notification.addNotificationProvider(provider);
+							provider.setStatusOfSend(notification, "succeeded");
+							params = provider.sendNotification(notification, devices[i]);
+							if (notification.isPersistent()) {
+								ProviderStatusLoop.getInstance().addNotification(notification);
+								BrokerFactory.getNotificationBroker().addProviderInformation(notification, provider, params, "succeeded");
+								BrokerFactory.getNotificationLoggingBroker().logNotification(notification, notification.getRecipient(), devices[i], "succeeded");
+							}
+							notification.addMessage("Notification delivered to " + notification.getRecipient().toString() + " via device " + devices[i].toString(), null, NotificationMessage.NOTIFICATION_CONTENT_TYPE);
+						} catch (NotificationException nfExc) {
+							// Check to see if it's a temporary failure
+							if ((nfExc.getCode() >= 300) && (nfExc.getCode() < 400)) {
+								FailedNotificationThread.getInstance().addNotification(new FailedNotification(notification, devices[i], provider, user));
+								SendNotification.flagError(notification, devices[i], provider, nfExc, "temporarily failed");
+							} else {
+								SendNotification.flagError(notification, devices[i], provider, nfExc, "failed");
+							}
 						} catch (Exception anyExc) {
-							BrokerFactory.getLoggingBroker().logWarn(anyExc);
+							SendNotification.flagError(notification, devices[i], provider, anyExc, "failed");
 						}
-						notification.addNotificationProvider(provider);
-						provider.setStatusOfSend(notification, "succeeded");
-						params = provider.sendNotification(notification,
-								devices[i]);
-						if (notification.isPersistent()) {
-							ProviderStatusLoop.getInstance().addNotification(notification);
-							BrokerFactory.getNotificationBroker()
-									.addProviderInformation(notification,
-											provider, params, "succeeded");
-							BrokerFactory.getNotificationLoggingBroker()
-									.logNotification(notification,
-											notification.getRecipient(),
-											devices[i], "succeeded");
-						}
-						notification.addMessage("Notification delivered to "
-								+ notification.getRecipient().toString()
-								+ " via device " + devices[i].toString(), null, NotificationMessage.NOTIFICATION_CONTENT_TYPE);
-					} catch (NotificationException nfExc) {
-						// Check to see if it's a temporary failure
-						if ((nfExc.getCode() >= 300) && (nfExc.getCode()<400)) {
-							FailedNotificationThread.getInstance().addNotification(new FailedNotification(notification, devices[i], provider, user));
-							SendNotification.flagError(notification, devices[i], provider, nfExc, "temporarily failed");
-						} else {
-							SendNotification.flagError(notification, devices[i], provider, nfExc, "failed");
-						}						
-					} catch (Exception anyExc) {
-						SendNotification.flagError(notification, devices[i], provider, anyExc, "failed");
+					} else {
+						BrokerFactory.getLoggingBroker().logInfo("Not sending notification to " + user + " via " + devices[i] + " because the priority blocks it");
+
+						notification.addMessage("Not sending notification to " + user + " via " + devices[i] + " because the priority blocks it", null);
 					}
-				} else {
-					BrokerFactory.getLoggingBroker().logInfo(
-							"Not sending notification to " + user + " via "
-									+ devices[i]
-									+ " because the priority blocks it");
-					
-					notification.addMessage(
-							"Not sending notification to " + user + " via "
-							+ devices[i]
-							+ " because the priority blocks it", null);
 				}
 			}
-			BrokerFactory.getNotificationBroker().setNotificationStatus(
-					notification, "sent");
+			BrokerFactory.getNotificationBroker().setNotificationStatus(notification, "sent");
 		} else {
 
 			// Recurse into the group
-			Notification sendPage = new Notification(notification.getUuid(),
-					member, notification.getSender(),
-					notification.getSubject(), notification.getMessages());
+			Notification sendPage = new Notification(notification.getUuid(), member, notification.getSender(), notification.getSubject(), notification.getMessages());
 			int priority = notification.getPriority();
 			sendPage.setPriority(priority);
-			sendPage.setRequireConfirmation(notification
-					.isRequireConfirmation());
+			sendPage.setRequireConfirmation(notification.isRequireConfirmation());
 			sendPage.setIncludeTimestamp(notification.isIncludeTimestamp());
 
 			for (int i = 0; i < notification.getOptions().size(); i++) {
-				sendPage.addOption((String) notification.getOptions()
-						.elementAt(i));
+				sendPage.addOption((String) notification.getOptions().elementAt(i));
 			}
 			doSend(sendPage);
 		}
@@ -157,27 +135,14 @@ public class SendNotification {
 	public static void flagError(Notification notification, Device device, NotificationProvider provider, Exception anyExc, String status) {
 		Hashtable<String, String> params;
 		if (notification.isPersistent()) {
-			BrokerFactory.getNotificationLoggingBroker()
-					.logNotification(notification,
-							notification.getRecipient(),
-							device, status);
-			BrokerFactory.getLoggingBroker()
-					.logAction(
-							"Notification not sent to "
-									+ provider + " because "
-									+ anyExc.getMessage());
-			params = provider.getParameters(notification,
-					device);
-			BrokerFactory.getNotificationBroker()
-					.addProviderInformation(notification,
-							provider, params, status);
+			BrokerFactory.getNotificationLoggingBroker().logNotification(notification, notification.getRecipient(), device, status);
+			BrokerFactory.getLoggingBroker().logAction("Notification not sent to " + provider + " because " + anyExc.getMessage());
+			params = provider.getParameters(notification, device);
+			BrokerFactory.getNotificationBroker().addProviderInformation(notification, provider, params, status);
 		}
 		provider.setStatusOfSend(notification, status);
 		anyExc.printStackTrace();
-		NotificationMessage errorMessage = new NotificationMessage(
-				"ERROR Sending to " + device + "\n\n"
-						+ anyExc.getMessage(), "system",
-				new Date());
+		NotificationMessage errorMessage = new NotificationMessage("ERROR Sending to " + device + "\n\n" + anyExc.getMessage(), "system", new Date());
 		notification.addMessage(errorMessage);
 	}
 
@@ -199,27 +164,20 @@ public class SendNotification {
 			Member[] members = ((BroadcastGroup) recipient).getMembers();
 
 			for (int memNum = 0; memNum < members.length; memNum++) {
-				Notification directNotification = new Notification(notification
-						.getUuid(), members[memNum], notification.getSender(),
-						notification.getSubject(), notification.getMessages());
+				Notification directNotification = new Notification(notification.getUuid(), members[memNum], notification.getSender(), notification.getSubject(), notification.getMessages());
 				directNotification.setPersistent(notification.isPersistent());
 				int priority = notification.getPriority();
 				if (members[memNum].getType() == Member.USER) {
-					priority = BrokerFactory.getUserMgmtBroker()
-							.getPriorityOfGroup((User) members[memNum],
-									(Group) recipient);
+					priority = BrokerFactory.getUserMgmtBroker().getPriorityOfGroup((User) members[memNum], (Group) recipient);
 				}
 				directNotification.setPriority(priority);
 				doSend(directNotification, members[memNum]);
 			}
 		} else if (recipient.getType() == Member.ESCALATION) {
 			if (notification.isPersistent()) {
-				BrokerFactory.getNotificationBroker().addNotification(
-						notification);
-				BrokerFactory.getNotificationBroker().setNotificationStatus(
-						notification, "sent");
-				EscalationThreadManager.getInstance().addEscalation(
-						notification);
+				BrokerFactory.getNotificationBroker().addNotification(notification);
+				BrokerFactory.getNotificationBroker().setNotificationStatus(notification, "sent");
+				EscalationThreadManager.getInstance().addEscalation(notification);
 			} else {
 				doSend(notification, recipient);
 			}
@@ -227,18 +185,14 @@ public class SendNotification {
 			if (notification.isPersistent()) {
 				BrokerFactory.getNotificationBroker().addNotification(notification);
 			}
-			Member[] members = ((OnCallGroup)recipient).getOnCallMembers(new Date());	
+			Member[] members = ((OnCallGroup) recipient).getOnCallMembers(new Date());
 
 			for (int memNum = 0; memNum < members.length; memNum++) {
-				Notification directNotification = new Notification(notification
-						.getUuid(), members[memNum], notification.getSender(),
-						notification.getSubject(), notification.getMessages());
+				Notification directNotification = new Notification(notification.getUuid(), members[memNum], notification.getSender(), notification.getSubject(), notification.getMessages());
 				directNotification.setPersistent(notification.isPersistent());
 				int priority = notification.getPriority();
 				if (members[memNum].getType() == Member.USER) {
-					priority = BrokerFactory.getUserMgmtBroker()
-							.getPriorityOfGroup((User) members[memNum],
-									(Group) recipient);
+					priority = BrokerFactory.getUserMgmtBroker().getPriorityOfGroup((User) members[memNum], (Group) recipient);
 				}
 				directNotification.setPriority(priority);
 				doSend(directNotification, members[memNum]);
@@ -247,8 +201,8 @@ public class SendNotification {
 			doSend(notification, recipient);
 		}
 	}
-	
-	public static void addFailedNotification (Notification notification, Device device, NotificationProvider provider, User user) {
+
+	public static void addFailedNotification(Notification notification, Device device, NotificationProvider provider, User user) {
 		FailedNotification failedNotif = new FailedNotification(notification, device, provider, user);
 		FailedNotificationThread.getInstance().addNotification(failedNotif);
 	}
@@ -257,98 +211,80 @@ public class SendNotification {
 
 class FailedNotificationThread extends Thread {
 	private Vector<FailedNotification> failedNotifications;
-	
+
 	private static FailedNotificationThread instance = null;
-	
+
 	private FailedNotificationThread() {
-		failedNotifications = new Vector<FailedNotification>();		
+		failedNotifications = new Vector<FailedNotification>();
 	}
-	
-	public void addNotification (FailedNotification notification) {
-		BrokerFactory.getLoggingBroker().logDebug("Adding failed notification to retry thread: "+notification.getNotification().getUuid());
+
+	public void addNotification(FailedNotification notification) {
+		BrokerFactory.getLoggingBroker().logDebug("Adding failed notification to retry thread: " + notification.getNotification().getUuid());
 		failedNotifications.addElement(notification);
 	}
-	
+
 	public static FailedNotificationThread getInstance() {
 		if (instance == null) {
 			instance = new FailedNotificationThread();
 			instance.start();
 		}
-		
+
 		return instance;
 	}
-	
+
 	public void run() {
 		while (true) {
 			// Run once a minute
 			try {
-				Thread.sleep(60*1000);
+				Thread.sleep(60 * 1000);
 			} catch (InterruptedException e) {
 				BrokerFactory.getLoggingBroker().logWarn(e);
 			}
-			
-			BrokerFactory.getLoggingBroker().logDebug("Running Failed Notification thread on "+failedNotifications.size()+" notifs");
+
+			BrokerFactory.getLoggingBroker().logDebug("Running Failed Notification thread on " + failedNotifications.size() + " notifs");
 			for (int n = 0; n < failedNotifications.size(); n++) {
-				FailedNotification failedNotification = (FailedNotification)failedNotifications.elementAt(n);
+				FailedNotification failedNotification = (FailedNotification) failedNotifications.elementAt(n);
 				Device device = failedNotification.getDevice();
 				Notification oldNotification = failedNotification.getNotification();
 				Vector<Device> deviceToSendTo = new Vector<Device>();
 				deviceToSendTo.addElement(device);
-				Notification notification = new Notification(oldNotification.getUuid(), 
-											failedNotification.getUser(),
-											deviceToSendTo,
-											oldNotification.getSender(), 
-											oldNotification.getSubject(), 
-											oldNotification.getMessages()[0].getMessage());
+				Notification notification = new Notification(oldNotification.getUuid(), failedNotification.getUser(), deviceToSendTo, oldNotification.getSender(), oldNotification.getSubject(), oldNotification.getMessages()[0].getMessage());
 				notification.setPersistent(false);
-				
-				BrokerFactory.getLoggingBroker().logDebug("Resending "+notification);
+
+				BrokerFactory.getLoggingBroker().logDebug("Resending " + notification);
 				NotificationProvider provider = failedNotification.getProvider();
 				User user = failedNotification.getUser();
-				
+
 				if (device.willSend(user, notification.getPriority(), notification)) {
 					Hashtable<String, String> params = new Hashtable<String, String>();
 					try {
 						try {
-							BrokerFactory.getLoggingBroker().logInfo(
-								"Sending notification to " + user + " via "
-								+ provider);
+							BrokerFactory.getLoggingBroker().logInfo("Sending notification to " + user + " via " + provider);
 						} catch (Exception anyExc) {
 							BrokerFactory.getLoggingBroker().logWarn(anyExc);
 						}
-						params = provider.sendNotification(notification,
-							device);
+						params = provider.sendNotification(notification, device);
 						provider.setStatusOfSend(notification, "succeeded");
 						if (notification.isPersistent()) {
 							ProviderStatusLoop.getInstance().addNotification(notification);
-							BrokerFactory.getNotificationBroker()
-								.addProviderInformation(notification,
-										provider, params, "succeeded");
-							BrokerFactory.getNotificationLoggingBroker()
-								.logNotification(notification,
-										notification.getRecipient(),
-										device, "succeeded");
+							BrokerFactory.getNotificationBroker().addProviderInformation(notification, provider, params, "succeeded");
+							BrokerFactory.getNotificationLoggingBroker().logNotification(notification, notification.getRecipient(), device, "succeeded");
 						}
-						notification.addMessage("Notification delivered to "
-							+ notification.getRecipient().toString()
-							+ " via device " + device.toString(), null);
+						notification.addMessage("Notification delivered to " + notification.getRecipient().toString() + " via device " + device.toString(), null);
 						failedNotifications.removeElementAt(n);
 					} catch (NotificationException nfExc) {
-                                               // Check to see if it's a temporary failure
-                                                if ((nfExc.getCode() >= 300) && (nfExc.getCode()<400)) {
-                                                        SendNotification.flagError(notification, device, provider, nfExc, "temporarily failed");
-                                                } else {
-                                                        SendNotification.flagError(notification, device, provider, nfExc, "failed");
+						// Check to see if it's a temporary failure
+						if ((nfExc.getCode() >= 300) && (nfExc.getCode() < 400)) {
+							SendNotification.flagError(notification, device, provider, nfExc, "temporarily failed");
+						} else {
+							SendNotification.flagError(notification, device, provider, nfExc, "failed");
 							failedNotifications.removeElementAt(n);
 						}
 					} catch (Exception anyExc) {
-						SendNotification.flagError(notification, device, provider, anyExc, "failed");					
+						SendNotification.flagError(notification, device, provider, anyExc, "failed");
 					}
 				} else {
-					BrokerFactory.getLoggingBroker().logInfo(
-						"Not sending notification to " + user + " via "
-						+ device
-						+ " because the priority blocks it");
+					BrokerFactory.getLoggingBroker().logInfo("Not sending notification to " + user + " via " + device + " because the priority blocks it");
 				}
 			}
 		}
@@ -362,8 +298,8 @@ class FailedNotification {
 	NotificationProvider provider;
 	int retryCount;
 	User user;
-	
-	public FailedNotification (Notification notification, Device device, NotificationProvider provider, User user) {
+
+	public FailedNotification(Notification notification, Device device, NotificationProvider provider, User user) {
 		this.time = System.currentTimeMillis();
 		this.notification = notification;
 		this.device = device;
@@ -371,15 +307,15 @@ class FailedNotification {
 		this.retryCount = 0;
 		this.user = user;
 	}
-	
+
 	public boolean doRetry() {
-		return doRetry(BrokerFactory.getConfigurationBroker().getIntValue("notification.retryseconds", 10*60));
+		return doRetry(BrokerFactory.getConfigurationBroker().getIntValue("notification.retryseconds", 10 * 60));
 	}
-	
+
 	public boolean doRetry(int seconds) {
 		long now = System.currentTimeMillis();
 		long difference = now - time;
-		difference = difference/1000;
+		difference = difference / 1000;
 		if (difference > seconds) {
 			retryCount++;
 			return true;

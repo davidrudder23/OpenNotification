@@ -7,6 +7,7 @@ package net.reliableresponse.notification.web.actions;
 
 import java.net.URLEncoder;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletRequest;
@@ -189,9 +190,9 @@ public class SearchAction implements Action {
 						actionRequest.setParameter("selected_user_"
 								+ userUuids[i], newUser.toString());
 						
-						Device[] devices = newUser.getDevices();
-						for (int d = 0; d < devices.length; d++) {
-									actionRequest.addParameter("selected_userdevice_" + userUuids[i], devices[d].getUuid());
+						List<Device> devices = newUser.getDevices();
+						for (Device device: devices) {
+							actionRequest.addParameter("selected_userdevice_" + userUuids[i], device.getUuid());
 						}
 					}
 				}

@@ -6,6 +6,7 @@
 package net.reliableresponse.notification.ldap;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import net.reliableresponse.notification.device.CellPhoneEmailDevice;
 import net.reliableresponse.notification.device.Device;
@@ -52,15 +53,15 @@ public class CellPhoneSetting implements LDAPSetting {
 	public void checkForUpdates (User storedUser, User ldapUser) {
 		String storedMobileNumber = storedUser.getInformation("LDAP-Mobile");
 		String ldapMobileNumber = null;
-		Device[] ldapDevices = ldapUser.getDevices();
-		Device[] storedDevices = storedUser.getDevices();
+		List<Device> ldapDevices = ldapUser.getDevices();
+		List<Device> storedDevices = storedUser.getDevices();
 		Device ldapMobileDevice = null;
 
 		// Check for the cell device in the new guy
-		for (int i = 0; i < ldapDevices.length; i++) {
-			if (ldapDevices[i] instanceof CellPhoneEmailDevice) {
-				ldapMobileNumber = (String) ldapDevices[i].getSettings().get("Phone Number");
-				ldapMobileDevice = ldapDevices[i];
+		for (Device ldapDevice: ldapDevices) {
+			if (ldapDevice instanceof CellPhoneEmailDevice) {
+				ldapMobileNumber = (String) ldapDevice.getSettings().get("Phone Number");
+				ldapMobileDevice = ldapDevice;
 			}
 		}
 		// If we can't find a cell device, something went wrong, so just bail
@@ -77,11 +78,11 @@ public class CellPhoneSetting implements LDAPSetting {
 		// Now, look for the cell that was set by LDAP
 		CellPhoneEmailDevice storedMobileDevice =  null;
 		if (ldapMobileNumber != storedMobileNumber) {
-			for (int i = 0; i < storedDevices.length; i++) {
-				if (storedDevices[i] instanceof CellPhoneEmailDevice) {
-					String thisMobileNumber = (String) storedDevices[i].getSettings().get("Phone Number");
+			for (Device storedDevice: storedDevices) {
+				if (storedDevice instanceof CellPhoneEmailDevice) {
+					String thisMobileNumber = (String) storedDevice.getSettings().get("Phone Number");
 					if (!(thisMobileNumber.equals(ldapMobileNumber))) {
-						storedMobileDevice = (CellPhoneEmailDevice)storedDevices[i];
+						storedMobileDevice = (CellPhoneEmailDevice)storedDevice;
 					}
 				}
 			}

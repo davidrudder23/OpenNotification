@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.Vector;
 import java.util.function.Function;
@@ -500,10 +501,10 @@ public class User implements Member {
 	public int removeAllDevicesOfType (String type) {
 		int count = 0;
 		
-		Device[] devices = getDevices();
-		for (int i = 0; i < devices.length; i++) {
+		List<Device> devices = getDevices();
+		for (Device device:devices) {
 			if (devices.getClass().equals(type)) {
-				removeDevice(devices[i]);
+				removeDevice(device);
 			}
 		}
 		return count;
@@ -513,21 +514,21 @@ public class User implements Member {
 		if (!devicesLoaded) {
 			loadDevices();
 		}
-		Device[] devices = getDevices();
-		for (int i = 0; i < devices.length; i++) {
-			if (devices[i].getUuid().equals(uuid)) {
-				return devices[i];
+		List<Device> devices = getDevices();
+		for (Device device:devices) {
+			if (device.getUuid().equals(uuid)) {
+				return device;
 			}
 		}
 
 		return null;
 	}
 
-	public Device[] getDevices() {
+	public List<Device> getDevices() {
 		if (!devicesLoaded) {
 			loadDevices();
 		}
-		return (Device[]) devices.toArray(new Device[0]);
+		return devices;
 	}
 
 	/**

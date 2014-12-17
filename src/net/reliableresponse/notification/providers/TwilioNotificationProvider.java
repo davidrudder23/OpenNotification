@@ -110,5 +110,9 @@ public class TwilioNotificationProvider extends AbstractNotificationProvider {
 			throw new NotificationException(400, e.getErrorMessage());
 		}
 	}
+	
+	public String getStatusOfSend(Notification notification) {
+		return "pending";
+	}
 
 }

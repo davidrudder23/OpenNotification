@@ -5,8 +5,10 @@
  */
 package net.reliableresponse.notification.usermgmt;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.List;
 
 import net.reliableresponse.notification.device.Device;
 import net.reliableresponse.notification.util.StringUtils;
@@ -44,8 +46,8 @@ public class UnknownUser extends User {
 	public String getDepartment() {
 		return "Reliable Response Notification";
 	}
-	public Device[] getDevices() {
-		return new Device[0];
+	public List<Device> getDevices() {
+		return new ArrayList<Device>();
 	}
 	
 	public Device getDeviceWithUuid(String uuid) {

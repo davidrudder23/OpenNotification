@@ -84,6 +84,10 @@ public interface Device extends UniquelyIdentifiable{
 	 */
 	public String getFormattedResponse(String response, Notification notification);
 	
+	public int getDeviceOrder();
+	
+	public void setDeviceOrder(int deviceOrder);
+	
 	/**
 	 * 
 	 * @return does this device support sending text?

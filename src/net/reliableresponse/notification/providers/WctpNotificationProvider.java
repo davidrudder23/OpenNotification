@@ -9,6 +9,7 @@ package net.reliableresponse.notification.providers;
 
 import java.io.IOException;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import net.reliableresponse.notification.Notification;
@@ -185,14 +186,13 @@ public class WctpNotificationProvider extends AbstractNotificationProvider {
 		ClientResponse clientResponse = null;
 		if (System.currentTimeMillis() > (lastUpdated + pollTime)) {
 			try {
-				Device[] devices = ((User) page.getRecipient())
-						.getDevices();
+				List<Device> devices = ((User) page.getRecipient()).getDevices();
 				String recipientPager = "";
-				if (devices.length > 0) {
+				if (devices.size() > 0) {
 					int i = 0;
-					while ((i < devices.length) && (!(devices[i] instanceof PagerDevice))) i++;
-					if (i<devices.length) {
-						recipientPager = ((PagerDevice)devices[i]).getNormalizedNumber();
+					while ((i < devices.size()) && (!(devices.get(i) instanceof PagerDevice))) i++;
+					if (i<devices.size()) {
+						recipientPager = ((PagerDevice)devices.get(i)).getNormalizedNumber();
 					}	
 				}
 

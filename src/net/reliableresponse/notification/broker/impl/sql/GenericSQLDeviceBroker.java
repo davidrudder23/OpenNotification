@@ -10,8 +10,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.Vector;
+import java.util.List;
 
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.broker.DeviceBroker;
@@ -31,7 +32,7 @@ public abstract class GenericSQLDeviceBroker implements DeviceBroker {
 	 */
 	public String[] getDeviceClassNames() {
 		String sql = "SELECT classname FROM devicetype";
-		Vector classNames = new Vector();
+		List<String> classNames = new ArrayList<String>();
 		PreparedStatement stmt = null;
 		Connection connection = getConnection();
 		ResultSet rs = null;
@@ -42,7 +43,7 @@ public abstract class GenericSQLDeviceBroker implements DeviceBroker {
 			rs = stmt.executeQuery();
 
 			while (rs.next()) {
-				classNames.addElement(rs.getString(1));
+				classNames.add(rs.getString(1));
 			}
 		} catch (SQLException e) {
 			BrokerFactory.getLoggingBroker().logError(e);
@@ -63,7 +64,7 @@ public abstract class GenericSQLDeviceBroker implements DeviceBroker {
 	}
 
 	public Device getDeviceByUuid(String uuid) {
-		String sql = "SELECT t.classname FROM device d, devicetype t WHERE d.uuid=? AND d.type=t.uuid";
+		String sql = "SELECT t.classname, d.deviceorder FROM device d, devicetype t WHERE d.uuid=? AND d.type=t.uuid";
 		PreparedStatement stmt = null;
 		Connection connection = getConnection();
 		ResultSet rs = null;
@@ -83,7 +84,7 @@ public abstract class GenericSQLDeviceBroker implements DeviceBroker {
 				try {
 					Device device = (Device) Class.forName(type).newInstance();
 					device.setUuid(uuid);
-					Hashtable options = new Hashtable();
+					Hashtable<String,String> options = new Hashtable<String,String>();
 
 					sql = "SELECT name,value FROM devicesetting WHERE device=?";
 					stmt2 = connection.prepareStatement(sql);
@@ -100,6 +101,7 @@ public abstract class GenericSQLDeviceBroker implements DeviceBroker {
 										+ " to " + device);
 						options.put(name, value);
 					}
+					device.setDeviceOrder(rs.getInt(2));
 					device.initialize(options);
 					return device;
 				} catch (Exception e) {

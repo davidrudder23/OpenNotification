@@ -7,6 +7,7 @@
 package net.reliableresponse.notification.web.util;
 
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.http.HttpServletRequest;
@@ -125,9 +126,9 @@ public class FindSearchMembers {
 			User user = BrokerFactory.getUserMgmtBroker().getUserByUuid(userUuid);
 			if (user != null) {
 				Vector devices = new Vector();
-				Device[] deviceArray = user.getDevices();
-				for (int d = 0; d < deviceArray.length; d++) {
-					devices.addElement(deviceArray[d].getUuid());
+				List<Device> deviceArray = user.getDevices();
+				for (Device device: deviceArray) {
+					devices.addElement(device.getUuid());
 				}
 				deviceList.put (userUuid, devices);
 			}

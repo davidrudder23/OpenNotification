@@ -169,10 +169,10 @@ public class AIMNotificationProvider extends AbstractNotificationProvider implem
 		BrokerFactory.getLoggingBroker().logDebug("Got "+usersWithAIM.length+" users with AIM");
 		for (int i = 0; i < usersWithAIM.length; i++) {
 			BrokerFactory.getLoggingBroker().logDebug("user w/ aim ["+i+"]="+usersWithAIM[i]);
-			Device[] devices = usersWithAIM[i].getDevices();
-			for (int d = 0; d < devices.length; d++) {
-				if (devices[d] instanceof AIMDevice) {
-					if (((AIMDevice)devices[d]).getAccount().equals(buddyName)) {
+			List<Device> devices = usersWithAIM[i].getDevices();
+			for (Device device: devices) {
+				if (device instanceof AIMDevice) {
+					if (((AIMDevice)device).getAccount().equals(buddyName)) {
 						user = usersWithAIM[i];
 					}
 				}

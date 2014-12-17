@@ -1,3 +1,4 @@
+<%@page import="java.util.List"%>
 <%@ page import="net.reliableresponse.notification.broker.*" %>
 <%@ page import="net.reliableresponse.notification.usermgmt.*" %>
 <%@ page import="net.reliableresponse.notification.device.*" %>
@@ -13,9 +14,9 @@
 		user = BrokerFactory.getUserMgmtBroker().getUserByUuid((String)session.getAttribute("user"));
 	}
 
-	Device[] devices = user.getDevices();
-	for (int d = 0; d < devices.length; d++) {
-		String tagName = "deviceDetails_"+devices[d].getUuid();
+	List<Device> devices = user.getDevices();
+	for (Device device: devices) {
+		String tagName = "deviceDetails_"+device.getUuid();
 		
 		String openedString = request.getParameter("opened."+tagName);
 		boolean opened =  ((openedString != null) && (openedString.toLowerCase().equals ("true")));
@@ -25,16 +26,16 @@
 		
 		String deviceDetailsTitle = "<strong>";
 		if (!opened) {
-			deviceDetailsTitle += devices[d].toString();
+			deviceDetailsTitle += device.toString();
 		} else {
-			deviceDetailsTitle += devices[d].getName();
+			deviceDetailsTitle += device.getName();
 		}
 		deviceDetailsTitle += "</strong></td>\n";
 
 		if (!opened) {
 			deviceDetailsTitle += "<td>";
 			for (int num = 1; num <= 3; num++) {
-				Priority priority = BrokerFactory.getPriorityBroker().getPriority(user, devices[d], num);
+				Priority priority = BrokerFactory.getPriorityBroker().getPriority(user, device, num);
 				String initials = "Free";
 				if (priority != null) {
 					initials = priority.getInitials();
@@ -44,7 +45,7 @@
 			deviceDetailsTitle += "</td>";
 		}
 		
-		request.setAttribute ("devicedetails", devices[d].getUuid());
+		request.setAttribute ("devicedetails", device.getUuid());
 		%><reliable:collapseable tag="<%= tagName %>" title="<%= deviceDetailsTitle %>"
 contentURL="/devicemgmt/devicedetails.jsp" tagClass="individualgroup">
 </reliable:collapseable><%

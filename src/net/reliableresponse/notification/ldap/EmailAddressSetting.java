@@ -6,6 +6,8 @@
  */
 package net.reliableresponse.notification.ldap;
 
+import java.util.List;
+
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.device.Device;
 import net.reliableresponse.notification.device.EmailDevice;
@@ -34,15 +36,15 @@ public class EmailAddressSetting implements LDAPSetting {
 	public void checkForUpdates (User storedUser, User ldapUser) {
 		String storedEmailNumber = storedUser.getInformation("LDAP-Email");
 		String ldapEmailAddress = null;
-		Device[] ldapDevices = ldapUser.getDevices();
-		Device[] storedDevices = storedUser.getDevices();
+		List<Device> ldapDevices = ldapUser.getDevices();
+		List<Device> storedDevices = storedUser.getDevices();
 		Device ldapEmailDevice = null;
 
 		// Check for the Email device in the new guy 
-		for (int i = 0; i < ldapDevices.length; i++) {
-			if (ldapDevices[i] instanceof EmailDevice) {
-				ldapEmailAddress = (String) ldapDevices[i].getSettings().get("Address");
-				ldapEmailDevice = ldapDevices[i];
+		for (Device ldapDevice: ldapDevices) {
+			if (ldapDevice instanceof EmailDevice) {
+				ldapEmailAddress = (String) ldapDevice.getSettings().get("Address");
+				ldapEmailDevice = ldapDevice;
 			}
 		}
 		// If we can't find a Email device, something went wrong, so just bail out
@@ -62,11 +64,11 @@ public class EmailAddressSetting implements LDAPSetting {
 		// Now, look for the Email that was set by LDAP
 		EmailDevice storedEmailDevice =  null;
 		if (ldapEmailAddress != storedEmailNumber) {
-			for (int i = 0; i < storedDevices.length; i++) {
-				if (storedDevices[i] instanceof EmailDevice) {
-					String thisEmailNumber = (String) storedDevices[i].getSettings().get("Address");
+			for (Device storedDevice: storedDevices) {
+				if (storedDevice instanceof EmailDevice) {
+					String thisEmailNumber = (String) storedDevice.getSettings().get("Address");
 					if ((thisEmailNumber != null) && (thisEmailNumber.equals(storedEmailNumber))) {
-						storedEmailDevice = (EmailDevice)storedDevices[i];
+						storedEmailDevice = (EmailDevice)storedDevice;
 					}
 				}
 			}

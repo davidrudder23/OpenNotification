@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Vector;
 
 import javax.servlet.ServletRequest;
@@ -381,10 +382,10 @@ public class ConfigurationAction implements Action {
 	private void removeDeviceType(String deviceName, String className) {
 		User[] users = BrokerFactory.getUserMgmtBroker().getUsersWithDeviceType(className);
 		for (int i = 0; i < users.length; i++) {
-			Device[] devices = users[i].getDevices();
-			for (int d = 0; d < devices.length; d++) {
-				if (devices[d].getName().equals (deviceName)) {
-					users[i].removeDevice(devices[d]);
+			List<Device> devices = users[i].getDevices();
+			for (Device device: devices) {
+				if (device.getName().equals (deviceName)) {
+					users[i].removeDevice(device);
 				}
 			}
 		}

@@ -1,5 +1,7 @@
 package net.reliableresponse.notification.rest;
 
+import java.util.List;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,15 +23,14 @@ public class RestDevicesResource extends AbstractRestResource {
 	public String getRepresentation(String contentType, String method, HttpServletRequest req) throws NotificationException {
 
 		
-		Device[] devices = BrokerFactory.getUserMgmtBroker().getUserByUuid(userUuid).getDevices(); 
+		List<Device> devices = BrokerFactory.getUserMgmtBroker().getUserByUuid(userUuid).getDevices(); 
 		
 		if (contentType.equalsIgnoreCase("text/xml")) {
 			XStream xstream = new XStream();
 			xstream.alias("notification", Notification.class);
 			StringBuffer xml = new StringBuffer();
 			xml.append ("<notifications>\n");
-			for (int devNum = 0 ; devNum < devices.length; devNum++) {
-				Device device = devices[devNum];
+			for (Device device: devices) {
 				xml.append(xstream.toXML(device));
 			}
 			xml.append ("</notifications>");
@@ -37,8 +38,7 @@ public class RestDevicesResource extends AbstractRestResource {
 		} else if (contentType.equalsIgnoreCase("text/json")) {
 			XStream xstream = new XStream(new JettisonMappedXmlDriver());
 			StringBuffer xml = new StringBuffer();
-			for (int devNum = 0 ; devNum < devices.length; devNum++) {
-				Device device = devices[devNum];
+			for (Device device: devices) {
 				xstream.alias("device", Device.class);
 				xstream.registerConverter(new NotificationMessageConverter());
 				xml.append(xstream.toXML(device));
@@ -47,8 +47,7 @@ public class RestDevicesResource extends AbstractRestResource {
 		} else if (contentType.equalsIgnoreCase("text/javascript")) {
 			XStream xstream = new XStream(new JettisonMappedXmlDriver());
 			StringBuffer xml = new StringBuffer();
-			for (int devNum = 0 ; devNum < devices.length; devNum++) {
-				Device device = devices[devNum];
+			for (Device device: devices) {
 				xstream.alias("device", Device.class);
 				xstream.registerConverter(new NotificationMessageConverter());
 				xml.append("addDevice("+xstream.toXML(device));
@@ -57,8 +56,7 @@ public class RestDevicesResource extends AbstractRestResource {
 			return xml.toString();
 		} else if (contentType.equalsIgnoreCase("text/plain")) {
 			StringBuffer text = new StringBuffer();
-			for (int notifNum = 0 ; notifNum < devices.length; notifNum++) {
-				Device device = devices[notifNum];
+			for (Device device: devices) {
 				text.append (device.toString());
 				text.append ("---------");
 			}

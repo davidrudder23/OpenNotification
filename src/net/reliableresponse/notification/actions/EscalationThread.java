@@ -47,13 +47,6 @@ public class EscalationThread extends Thread {
 		loopCount = 0;
 	}
 
-	public String getConfirmationHTMLLink() {
-		// TODO: Fix this whole function
-		return "http://www.reliableresponse.net/paging/ConfirmNotification?id="
-				+ EscalationThreadManager.getInstance()
-						.getEscalationThreadIDForThread(this);
-	}
-
 	private Member[] getOrderedMembers(Group group) {
 		Member member = null;
 

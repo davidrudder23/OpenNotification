@@ -14,6 +14,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import net.reliableresponse.notification.NotSupportedException;
@@ -122,11 +123,11 @@ public abstract class GenericSQLUserMgmtBroker implements UserMgmtBroker {
 		}
 
 		// Add the devices
-		Device[] devices = user.getDevices();
+		List<Device> devices = user.getDevices();
 
 		try {
-			for (int i = 0; i < devices.length; i++) {
-				addDeviceToUser(user, connection, devices[i]);
+			for (Device device: devices) {
+				addDeviceToUser(user, connection, device);
 			}
 		} finally {
 			try {
@@ -970,9 +971,9 @@ compi
 			// Add, update or delete devices
 			
 			Vector usersDevices = new Vector();
-			Device[] temp = user.getDevices();
-			for (int i = 0; i < temp.length; i++) {
-				usersDevices.addElement(temp[i].getUuid());
+			List<Device> temp = user.getDevices();
+			for (Device device: temp) {
+				usersDevices.addElement(device.getUuid());
 			}
 			
 			Vector existingUuids = new Vector();

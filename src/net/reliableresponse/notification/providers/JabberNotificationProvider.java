@@ -263,13 +263,12 @@ public class JabberNotificationProvider extends AbstractNotificationProvider
 			for (int i = 0; i < usersWithJabber.length; i++) {
 				BrokerFactory.getLoggingBroker().logDebug(
 						"user w/ jabber [" + i + "]=" + usersWithJabber[i]);
-				Device[] devices = usersWithJabber[i].getDevices();
-				for (int d = 0; d < devices.length; d++) {
-					if (devices[d] instanceof JabberDevice) {
+				List<Device> devices = usersWithJabber[i].getDevices();
+				for (Device device: devices) {
+					if (device instanceof JabberDevice) {
 						BrokerFactory.getLoggingBroker().logDebug(
-								"User's JID = "
-										+ ((JabberDevice) devices[d]).getJID());
-						if (((JabberDevice) devices[d]).getJID().equals(from)) {
+								"User's JID = "+ ((JabberDevice) device).getJID());
+						if (((JabberDevice) device).getJID().equals(from)) {
 							user = usersWithJabber[i];
 						}
 					}

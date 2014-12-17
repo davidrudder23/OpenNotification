@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -181,10 +182,10 @@ public class ResponseMailHandler implements MailHandler {
 			users = BrokerFactory.getUserMgmtBroker().getUsersWithDeviceType("net.reliableresponse.notification.device.CellPhoneEmailDevice");
 			if (users != null) {
 				for (int i = 0; i < users.length; i++) {
-					Device[] devices = users[i].getDevices();
-					for (int d = 0; d < devices.length; d++) {
-						if (devices[d] instanceof CellPhoneEmailDevice) {
-							CellPhoneEmailDevice cellDevice = (CellPhoneEmailDevice)devices[d];
+					List<Device> devices = users[i].getDevices();
+					for (Device device: devices) {
+						if (device instanceof CellPhoneEmailDevice) {
+							CellPhoneEmailDevice cellDevice = (CellPhoneEmailDevice)device;
 							if (cellDevice.getEmailAddress().equalsIgnoreCase(email)) {
 								return users[i];
 							}

@@ -314,10 +314,10 @@ public class YahooMessengerProvider extends AbstractNotificationProvider impleme
 		BrokerFactory.getLoggingBroker().logDebug("Got "+usersWithYahoo.length+" users with Yahoo");
 		for (int i = 0; i < usersWithYahoo.length; i++) {
 			BrokerFactory.getLoggingBroker().logDebug("user w/ Yahoo ["+i+"]="+usersWithYahoo[i]);
-			Device[] devices = usersWithYahoo[i].getDevices();
-			for (int d = 0; d < devices.length; d++) {
-				if (devices[d] instanceof YahooMessengerDevice) {
-					if (((YahooMessengerDevice)devices[d]).getAccount().equals(buddy)) {
+			List<Device> devices = usersWithYahoo[i].getDevices();
+			for (Device device: devices) {
+				if (device instanceof YahooMessengerDevice) {
+					if (((YahooMessengerDevice)device).getAccount().equals(buddy)) {
 						user = usersWithYahoo[i];
 					}
 				}

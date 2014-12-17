@@ -57,7 +57,7 @@ public class PagingTest extends TestCase {
 	}
 	
 	public void testHasDevices() {
-		int numDevices = user.getDevices().length; 
+		int numDevices = user.getDevices().size(); 
 		assertTrue("User does not have the same number of devices as were set.  User has "+numDevices,
 				numDevices == 1);
 	}

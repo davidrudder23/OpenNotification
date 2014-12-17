@@ -1,3 +1,5 @@
+<%@page import="java.util.List"%>
+<%@page import="java.util.ArrayList"%>
 <%@ page import="net.reliableresponse.notification.broker.*" %>
 <%@ page import="net.reliableresponse.notification.usermgmt.*" %>
 <%@ page import="net.reliableresponse.notification.device.*" %>
@@ -37,8 +39,8 @@
 </textarea></td>
 <%} else {
 	User user = (User)member;
-	Device[] devices = user.getDevices();
-	if (devices == null) devices = new Device[0];
+	List<Device> devices = user.getDevices();
+	if (devices == null) devices = new ArrayList<Device>();
 %>
 
 	<td width="11">&nbsp;</td>
@@ -58,10 +60,10 @@
 		<tr><td align="right"><font color="#666666">Department</font></td><td valign="center" align="left">: <%= user.getDepartment() %></td></tr>
         </font>
         <%
-        	for (int i = 0; i < devices.length; i++) {
-        	String deviceUserCheckName = "add_device_notification_"+user.getUuid()+"_"+devices[i].getUuid();
+    	for (Device device: devices) {
+        	String deviceUserCheckName = "add_device_notification_"+user.getUuid()+"_"+device.getUuid();
         %>
-        <tr><td align="right"><font color="#666666"><%= devices[i].getName() %></font></td><td align="left">: <%= devices[i].getShortIdentifier() %></td>
+        <tr><td align="right"><font color="#666666"><%= device.getName() %></font></td><td align="left">: <%= device.getShortIdentifier() %></td>
         <td><input type="checkbox" name="<%= deviceUserCheckName %>"></td></tr>
         <%}%>
 		</table></td><td>

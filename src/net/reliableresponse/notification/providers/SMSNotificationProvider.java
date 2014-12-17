@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.TooManyListenersException;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -193,12 +194,11 @@ public void getNewMessages() {
 										+ " users with SMS phones");
 						if ((users != null) && (users.length > 0)) {
 							for (int userNum = 0; userNum < users.length; userNum++) {
-								Device[] devices = users[userNum].getDevices();
-								for (int deviceNum = 0; deviceNum < devices.length; deviceNum++) {
-									if (devices[deviceNum] instanceof SMSDevice) {
-										SMSDevice smsDevice = (SMSDevice) devices[deviceNum];
-										if (smsDevice.getNormalizedNumber()
-												.equals(phoneNum)) {
+								List<Device> devices = users[userNum].getDevices();
+								for (Device device: devices) {
+									if (device instanceof SMSDevice) {
+										SMSDevice smsDevice = (SMSDevice) device;
+										if (smsDevice.getNormalizedNumber().equals(phoneNum)) {
 											user = users[userNum];
 										}
 									}

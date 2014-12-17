@@ -310,10 +310,10 @@ public class SameTimeNotificationProvider extends AbstractNotificationProvider
 		BrokerFactory.getLoggingBroker().logDebug("Got "+usersWithSameTime.length+" users with SameTime");
 		for (int i = 0; i < usersWithSameTime.length; i++) {
 			BrokerFactory.getLoggingBroker().logDebug("user w/ sametime ["+i+"]="+usersWithSameTime[i]);
-			Device[] devices = usersWithSameTime[i].getDevices();
-			for (int d = 0; d < devices.length; d++) {
-				if (devices[d] instanceof SameTimeDevice) {
-					if (((SameTimeDevice)devices[d]).getAccount().equals(from)) {
+			List<Device> devices = usersWithSameTime[i].getDevices();
+			for (Device device: devices) {
+				if (device instanceof SameTimeDevice) {
+					if (((SameTimeDevice)device).getAccount().equals(from)) {
 						user = usersWithSameTime[i];
 					}
 				}
