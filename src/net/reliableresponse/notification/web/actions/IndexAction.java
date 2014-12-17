@@ -136,11 +136,11 @@ public class IndexAction implements Action {
 
 		BrokerFactory.getLoggingBroker().logDebug(pendingNotifications.size()+" pending notifs");
 		
-		long pending = recentNotifications.stream().filter(n->n.getStatus()==Notification.PENDING).count();
-		pending += recentNotifications.stream().filter(n->n.getStatus()==Notification.NORMAL).count();
-		long confirmed = recentNotifications.stream().filter(n->n.getStatus()==Notification.CONFIRMED).count();
-		long expired = recentNotifications.stream().filter(n->n.getStatus()==Notification.EXPIRED).count();
-		long onhold = recentNotifications.stream().filter(n->n.getStatus()==Notification.ONHOLD).count();
+		long pending = recentNotifications.stream().filter(n->n.getParentUuid()==null).filter(n->n.getStatus()==Notification.PENDING).count();
+		pending += recentNotifications.stream().filter(n->n.getParentUuid()==null).filter(n->n.getStatus()==Notification.NORMAL).count();
+		long confirmed = recentNotifications.stream().filter(n->n.getParentUuid()==null).filter(n->n.getStatus()==Notification.CONFIRMED).count();
+		long expired = recentNotifications.stream().filter(n->n.getParentUuid()==null).filter(n->n.getStatus()==Notification.EXPIRED).count();
+		long onhold = recentNotifications.stream().filter(n->n.getParentUuid()==null).filter(n->n.getStatus()==Notification.ONHOLD).count();
 
 
 		String notifsTitle = makeTitle("Notifications Sent To Me", "", viewActive, viewConfirmed, viewExpired, viewOnhold, pending, confirmed, expired, onhold, numHours);

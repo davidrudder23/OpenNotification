@@ -71,12 +71,47 @@ public class TwilioServlet extends HttpServlet {
 	}
 	
 	protected void handleTwilioResponse(HttpServletRequest request, HttpServletResponse response, String uuid) throws ServletException, IOException {
-		BrokerFactory.getLoggingBroker().logDebug("Twilio uuid="+uuid);
 		Enumeration<String> paramNames = request.getParameterNames();
 		while (paramNames.hasMoreElements()) {
 			String name = paramNames.nextElement();
 			BrokerFactory.getLoggingBroker().logDebug("Param: "+name+": "+request.getParameter(name));
 		}
+		
+		BrokerFactory.getLoggingBroker().logDebug("Twilio uuid="+uuid);
+		Notification notification = BrokerFactory.getNotificationBroker().getNotificationByUuid(uuid);
+		if (notification == null) {
+			response.sendError(404, "Notification not found");
+			return;
+		}
+		
+		int digit = StringUtils.getInteger(request.getParameter("Digits"), 0);
+		if (digit < 1) {
+			response.sendError(500, "Bad response chosen");
+			return;
+		}
+		
+		String[] availableResponses = notification.getSender().getAvailableResponses(notification);
+		if ((availableResponses == null) || (availableResponses.length < digit)) {
+			response.sendError(500, "Bad response chosen");
+			return;
+		}
+		
+		digit--; // account for the starts-with-0 thing
+		notification.getSender().handleResponse(notification, null, availableResponses[digit], "");
+		
+        response.setContentType("application/xml");
+		TwiMLResponse twilioResponse = new TwiMLResponse();
+		Say messageSay = new Say("Thank you for responding with "+availableResponses[digit]);
+		try {
+			twilioResponse.append(messageSay);
+		} catch (TwiMLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		response.getWriter().println(twilioResponse.toXML());
+		
+		return;
 	}
 	
 	protected void handleTwiMLRequest(HttpServletRequest request, HttpServletResponse response, String uuid) throws ServletException, IOException {
@@ -96,7 +131,6 @@ public class TwilioServlet extends HttpServlet {
 			String message = "You have a new notification from " + notification.getSender() + ".  The subject is " + notification.getSubject()
 					+ ".  The message is " + notification.getMessages()[0].getMessage() + ".";
 			
-			message = "Test";
 			TwiMLResponse twilioResponse = new TwiMLResponse();
 			Say messageSay = new Say(message);
 			twilioResponse.append(messageSay);
@@ -104,8 +138,12 @@ public class TwilioServlet extends HttpServlet {
 			Gather gather = new Gather();
 			gather.setAction(IPUtil.getExternalBaseURL()+"/TwilioServlet/respond/"+notification.getUuid());
 			gather.setNumDigits(1);
-			Say gatherSay = new Say("Press 1 to do something");
-			gather.append(gatherSay);
+			
+			String[] responses = notification.getSender().getAvailableResponses(notification);
+			for (int i = 0; i < responses.length; i++) {
+				Say gatherSay = new Say("Press "+(i+1)+" to respond with "+responses[i]);
+				gather.append(gatherSay);
+			}
 			twilioResponse.append(gather);
 			
 			BrokerFactory.getLoggingBroker().logDebug(twilioResponse.toXML());
