@@ -67,7 +67,7 @@ public class TwilioServlet extends HttpServlet {
 			handleTwilioResponse(request, response, uuid);
 		}
 		
-		super.service(request, response);
+		//super.service(request, response);
 	}
 	
 	protected void handleTwilioResponse(HttpServletRequest request, HttpServletResponse response, String uuid) throws ServletException, IOException {
@@ -108,10 +108,13 @@ public class TwilioServlet extends HttpServlet {
 			gather.append(gatherSay);
 			twilioResponse.append(gather);
 			
+			BrokerFactory.getLoggingBroker().logDebug(twilioResponse.toXML());
 			BrokerFactory.getLoggingBroker().logDebug("We're good up to here");
 			
-			response.getOutputStream().write(twilioResponse.toXML().getBytes());
-			response.flushBuffer();
+	        response.setContentType("application/xml");
+			response.getWriter().print(twilioResponse.toXML());
+			//response.getOutputStream().write(twilioResponse.toXML().getBytes());
+			//response.flushBuffer();
 		} catch (TwiMLException e) {
 			// TODO Auto-generated catch block
 			response.sendError(23, e.getMessage());

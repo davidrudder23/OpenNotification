@@ -33,7 +33,7 @@ public class IPUtil {
 	
 	public static String getExternalBaseURL() {
 		externalURL = BrokerFactory.getConfigurationBroker().getStringValue("external.url", 
-				k->"http://"+getExternalIPAddress()+":8080/"+BrokerFactory.getConfigurationBroker().getStringValue("contextPath",""));
+				k->"http://"+getExternalIPAddress()+":8080"+BrokerFactory.getConfigurationBroker().getStringValue("contextPath","/notification"));
 		return externalURL;
 	}
 	
