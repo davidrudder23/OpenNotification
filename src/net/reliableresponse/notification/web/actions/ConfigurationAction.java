@@ -21,7 +21,6 @@ import net.reliableresponse.notification.broker.CalendarBroker;
 import net.reliableresponse.notification.broker.ConfigurationBroker;
 import net.reliableresponse.notification.broker.impl.ExchangeCalendarBroker;
 import net.reliableresponse.notification.device.Device;
-import net.reliableresponse.notification.dialogic.DialogicIncoming;
 import net.reliableresponse.notification.ldap.LDAPImporter;
 import net.reliableresponse.notification.pop.PopMailRetriever;
 import net.reliableresponse.notification.providers.AIMNotificationProvider;
@@ -155,8 +154,6 @@ public class ConfigurationAction implements Action {
 				BrokerFactory.reset();
 			}
 
-		} else if (configurator.equalsIgnoreCase("dialogic")) {
-			configDialogic(request, broker, actionRequest);		
 		} else if (configurator.equalsIgnoreCase("freebusy_calendaring")) {
 			configFreebusyCalendaring(request, broker, actionRequest);
 		} else if (configurator.equalsIgnoreCase("snmp")) {
@@ -524,64 +521,6 @@ public class ConfigurationAction implements Action {
 		}
 	}
 
-	/**
-	 * @param request
-	 * @param broker
-	 * @param actionRequest
-	 */
-	private void configDialogic(ServletRequest request,
-			ConfigurationBroker broker, ActionRequest actionRequest) {
-		boolean dialogicIncoming = request.getParameter("dialogic.incoming") != null;
-		boolean dialogicIncomingAlready = broker.getBooleanValue(
-				"dialogic.incoming", false);
-		boolean dialogicOutgoing = request.getParameter("dialogic.outgoing") != null;
-		boolean dialogicOutgoingAlready = broker.getBooleanValue(
-				"dialogic.outgoing", false);
-		String dialogicIncomingBoardname = request
-				.getParameter("dialogic.incoming.boardname");
-		String dialogicOutgoingBoardname = request
-				.getParameter("dialogic.outgoing.boardname");
-
-		if ((dialogicIncomingBoardname != null)
-				|| (dialogicIncomingBoardname != null)) {
-			if ((dialogicIncomingBoardname != null)
-					&& (dialogicIncomingBoardname != null)
-					&& (dialogicIncomingBoardname
-							.equalsIgnoreCase(dialogicOutgoingBoardname))
-					&& (dialogicIncoming)) {
-				actionRequest
-						.addParameter("configuration.errors",
-								"The incoming and outgoing board names can not be the same");
-			}
-
-			broker.setStringValue("dialogic.incoming.boardname",
-					dialogicIncomingBoardname);
-			broker.setStringValue("dialogic.outgoing.boardname",
-					dialogicOutgoingBoardname);
-
-			if (dialogicIncoming && !dialogicIncomingAlready) {
-				DialogicIncoming dialogic = new DialogicIncoming();
-				dialogic.setDaemon(true);
-				dialogic.start();
-			}
-
-			if (dialogicOutgoing && !dialogicOutgoingAlready) {
-				BrokerFactory
-						.getDeviceBroker()
-						.addDeviceType(
-								"net.reliableresponse.notification.device.TelephoneDevice",
-								"Telephone");
-				BrokerFactory
-						.getDeviceBroker()
-						.addDeviceType(
-								"net.reliableresponse.notification.device.StandardPagerDevice",
-								"Standard Numeric Pager");
-			} else if (!dialogicOutgoing && dialogicOutgoingAlready) {
-				removeDeviceType("Telephone", "net.reliableresponse.notification.device.TelephoneDevice");
-				removeDeviceType("Standard Numeric Pager", "net.reliableresponse.notification.device.StandardPagerDevice");
-			}
-		}
-	}
 
 	/**
 	 * @param request

@@ -406,26 +406,4 @@ public class TAPNotificationProvider extends AbstractNotificationProvider implem
 		return "One-way modem pager";
 	}
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) throws Exception {
-
-		BrokerFactory.getConfigurationBroker().setConfiguration(
-				new FileInputStream("conf/reliable.properties"));
-		TAPDevice device = new TAPDevice();
-		Hashtable options = new Hashtable ();
-		options.put("Pager Number", "7205308877");
-		options.put("Provider", "Cingular");
-		device.initialize(options);
-
-		NotificationProvider provider = device.getNotificationProvider();
-		Notification notif = new Notification(null, new UnknownUser(),  new EmailSender("drig@noses.org"),
-				"test", "this is a test of cingular tap");
-		
-		provider.sendNotification(notif, device);
-		
-		//800-250-6325
-	}
-
 }

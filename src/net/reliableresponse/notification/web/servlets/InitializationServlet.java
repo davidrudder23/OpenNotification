@@ -21,7 +21,6 @@ import net.reliableresponse.notification.broker.ConfigurationBroker;
 import net.reliableresponse.notification.broker.JobsBroker;
 import net.reliableresponse.notification.broker.impl.clustered.ClusteredBrokerTransmitter;
 import net.reliableresponse.notification.device.SameTimeDevice;
-import net.reliableresponse.notification.dialogic.DialogicIncoming;
 import net.reliableresponse.notification.ldap.LDAPImporter;
 import net.reliableresponse.notification.pop.PopMailRetriever;
 import net.reliableresponse.notification.providers.ProviderStatusLoop;
@@ -89,19 +88,6 @@ public class InitializationServlet extends HttpServlet {
 			smtp.start();
 		}
 
-		try {
-			boolean doDialogic = BrokerFactory.getConfigurationBroker()
-					.getBooleanValue("dialogic.incoming", false);
-			if (doDialogic) {
-				DialogicIncoming dialogic = new DialogicIncoming();
-				dialogic.setDaemon(true);
-				dialogic.start();
-			}
-		} catch (Exception anyExc) {
-			anyExc.printStackTrace();
-		} catch (Error anyErr) {
-			anyErr.printStackTrace();
-		}
 
 		boolean doSNMP = BrokerFactory.getConfigurationBroker()
 				.getBooleanValue("snmp");

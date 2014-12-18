@@ -90,7 +90,7 @@ public class TwilioTelephoneNotificationProvider extends AbstractNotificationPro
 			
 			Map<String, String> params = new HashMap<String, String>();
 			params.put("To", twilio.getPhoneNumber());
-			params.put("From", BrokerFactory.getConfigurationBroker().getStringValue("twilio.phone.from", "(720)530-8877"));
+			params.put("From", BrokerFactory.getConfigurationBroker().getStringValue("twilio.phone.from", "(720)555-1212"));
 			params.put("Url", url);
 
 			TwilioRestResponse response;
