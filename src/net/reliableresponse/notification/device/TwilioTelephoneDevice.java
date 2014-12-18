@@ -6,12 +6,12 @@
 package net.reliableresponse.notification.device;
 
 import net.reliableresponse.notification.providers.NotificationProvider;
-import net.reliableresponse.notification.providers.TwilioNotificationProvider;
+import net.reliableresponse.notification.providers.TwilioTelephoneNotificationProvider;
 
-public class TwilioDevice extends TelephoneDevice {
+public class TwilioTelephoneDevice extends TelephoneDevice {
 
 	public NotificationProvider getNotificationProvider() {
-		TwilioNotificationProvider twilioProvider = new TwilioNotificationProvider();
+		TwilioTelephoneNotificationProvider twilioProvider = new TwilioTelephoneNotificationProvider();
 		return twilioProvider;
 	}
 

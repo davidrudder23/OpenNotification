@@ -26,21 +26,21 @@ import net.reliableresponse.notification.Notification;
 import net.reliableresponse.notification.NotificationException;
 import net.reliableresponse.notification.broker.BrokerFactory;
 import net.reliableresponse.notification.device.Device;
-import net.reliableresponse.notification.device.TwilioDevice;
+import net.reliableresponse.notification.device.TwilioTelephoneDevice;
 import net.reliableresponse.notification.util.IPUtil;
 
-public class TwilioNotificationProvider extends AbstractNotificationProvider {
+public class TwilioTelephoneNotificationProvider extends AbstractNotificationProvider {
 	public static final String APIVERSION = "2010-04-01";
 
-	public static TwilioNotificationProvider instance = null;
+	public static TwilioTelephoneNotificationProvider instance = null;
 
-	public TwilioNotificationProvider() {
+	public TwilioTelephoneNotificationProvider() {
 
 	}
 
-	public static TwilioNotificationProvider getInstance() {
+	public static TwilioTelephoneNotificationProvider getInstance() {
 		if (instance == null) {
-			instance = new TwilioNotificationProvider();
+			instance = new TwilioTelephoneNotificationProvider();
 		}
 
 		return instance;
@@ -52,7 +52,7 @@ public class TwilioNotificationProvider extends AbstractNotificationProvider {
 	}
 
 	public String getName() {
-		return "Twilio";
+		return "Twilio Telephone";
 	}
 
 	public Hashtable<String, String> getParameters(Notification notification, Device device) {
@@ -70,7 +70,7 @@ public class TwilioNotificationProvider extends AbstractNotificationProvider {
 
 	public Hashtable<String, String> sendNotification(Notification notification, Device device) throws NotificationException {
 		try {
-			if (!(device instanceof TwilioDevice)) {
+			if (!(device instanceof TwilioTelephoneDevice)) {
 				throw new NotificationException(NotificationException.NOT_ACCEPTABLE, "Supplied device is not a Twilio device");
 			}
 
@@ -79,13 +79,13 @@ public class TwilioNotificationProvider extends AbstractNotificationProvider {
 			//String url = "http://twimlets.com/message?Message%5B0%5D=" + URLEncoder.encode(message);
 			String url = IPUtil.getExternalBaseURL()+"/TwilioServlet/twiml/"+notification.getUuid();
 
-			TwilioDevice twilio = (TwilioDevice) device;
+			TwilioTelephoneDevice twilio = (TwilioTelephoneDevice) device;
 
 			String accountSid = BrokerFactory.getConfigurationBroker().getStringValue("twilio.sid");
-			String authToken = BrokerFactory.getConfigurationBroker().getStringValue("twilio.token");
-			
+			String authToken = BrokerFactory.getConfigurationBroker().getStringValue("twilio.token");			
 			BrokerFactory.getLoggingBroker().logDebug("Sid="+accountSid);
 			BrokerFactory.getLoggingBroker().logDebug("token="+authToken);
+			
 			TwilioRestClient client = new TwilioRestClient(accountSid, authToken);
 			
 			Map<String, String> params = new HashMap<String, String>();

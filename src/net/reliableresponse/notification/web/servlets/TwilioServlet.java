@@ -65,9 +65,20 @@ public class TwilioServlet extends HttpServlet {
 		} else if (action.equals("respond")) {
 			String uuid = peices[restOffset+2];
 			handleTwilioResponse(request, response, uuid);
+		} else if (action.equals("handleSMS")) {
+			handleSMS(request, response);
 		}
 		
 		//super.service(request, response);
+	}
+	protected void handleSMS(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		BrokerFactory.getLoggingBroker().logDebug("Handling SMS");
+		Enumeration<String> paramNames = request.getParameterNames();
+		while (paramNames.hasMoreElements()) {
+			String name = paramNames.nextElement();
+			BrokerFactory.getLoggingBroker().logDebug("Param: "+name+": "+request.getParameter(name));
+		}
+		
 	}
 	
 	protected void handleTwilioResponse(HttpServletRequest request, HttpServletResponse response, String uuid) throws ServletException, IOException {

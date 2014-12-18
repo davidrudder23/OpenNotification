@@ -88,6 +88,7 @@ public class DeviceEscalationThread extends Thread {
 				individualNotification.addOption("Confirm");
 				individualNotification.addOption("Pass");
 				individualNotification.setAutocommit(true);
+				individualNotification.setPersistent(notification.isPersistent());
 				SendNotification.getInstance().doSend(individualNotification);
 
 				int totalTime = 0;
@@ -131,14 +132,6 @@ public class DeviceEscalationThread extends Thread {
 			return;
 		}
 
-		// NotificationProvider providers[] =
-		// notification.getNotificationProviders();
-		// for (int i = 0; i < providers.length; i++) {
-		// if (providers[i].isConfirmed(notification))
-		// confirm (notification.getRecipient());
-		// if (providers[i].isPassed(notification))
-		// pass (notification.getRecipient());
-		// }
 	}
 
 	/**

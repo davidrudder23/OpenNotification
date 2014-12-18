@@ -68,7 +68,7 @@ public class SendNotification {
 			Device[] devices = notification.getDevices();
 			BrokerFactory.getLoggingBroker().logDebug("Sending notification to " + member + " with " + devices.length + " devices");
 
-			if ((!User.DEVICE_ESCALATION_SIMULTANEOUS.equals(user.getDeviceEscalationPolicy()) && devices.length > 1)) {
+			if (notification.isPersistent() && (!User.DEVICE_ESCALATION_SIMULTANEOUS.equals(user.getDeviceEscalationPolicy()) && devices.length > 1)) {
 				new DeviceEscalationThread(notification).start();
 			} else {
 				for (int i = 0; i < devices.length; i++) {

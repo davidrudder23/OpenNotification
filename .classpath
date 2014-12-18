@@ -137,8 +137,8 @@
 	<classpathentry kind="lib" path="tools/lib/xmlParserAPIs-2.0.2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="/opt/tomcat/common/lib/servlet-api.jar"/>
-	<classpathentry kind="lib" path="lib/twilio-client-3.3.8-jar-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="/opt/tomcat/common/lib/jsp-api.jar"/>
 	<classpathentry kind="lib" path="lib/log4j-1.2.8.jar"/>
+	<classpathentry kind="lib" path="lib/twilio-java-sdk-3.6.1-jar-with-dependencies.jar"/>
 	<classpathentry kind="output" path="eclipse_bin"/>
 </classpath>

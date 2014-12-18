@@ -138,7 +138,7 @@ public class SMTPNotificationProvider extends AbstractNotificationProvider {
 			for (int i = 0; i < responses.length; i++) {
 				messageText += " - "+IPUtil.getExternalBaseURL()+
 						BrokerFactory.getConfigurationBroker().getStringValue("contextPath","")+
-						"/ResponseServlet/"+notification.getUuid()+"/"
+						"/ResponseServlet/respond/"+notification.getUuid()+"/"
 						+ URLEncoder.encode(responses[i]);
 				messageText += "\n";
 			}
