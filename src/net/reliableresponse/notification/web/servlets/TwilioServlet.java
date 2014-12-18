@@ -108,7 +108,7 @@ public class TwilioServlet extends HttpServlet {
 		}
 		
 		digit--; // account for the starts-with-0 thing
-		notification.getSender().handleResponse(notification, null, availableResponses[digit], "");
+		notification.getSender().handleResponse(notification, notification.getRecipient(), availableResponses[digit], "");
 		
         response.setContentType("application/xml");
 		TwiMLResponse twilioResponse = new TwiMLResponse();
